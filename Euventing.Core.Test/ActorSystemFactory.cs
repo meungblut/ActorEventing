@@ -1,0 +1,111 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Akka.Actor;
+using Akka.Configuration;
+
+namespace Euventing.Core.Test
+{
+    public class ActorSystemFactory
+    {
+        public ActorSystem GetActorSystem(int portNumber, string akkaSystemName, params string[] seedNodes)
+        {
+            List<string> fullSeedNodes = new List<string>();
+
+            foreach (var seedNode in seedNodes)
+            {
+                fullSeedNodes.Add("\"akka.tcp://" + akkaSystemName + "@" + seedNode + "\"");
+            }
+
+            string seedNodeString = string.Join(",", fullSeedNodes);
+            var config = ConfigurationFactory.ParseString(@"
+
+            akka {
+
+                actor {
+                  provider = ""Akka.Cluster.ClusterActorRefProvider, Akka.Cluster""
+                  serializers {
+                    akka-singleton = ""Akka.Cluster.Tools.Singleton.Serialization.ClusterSingletonMessageSerializer, Akka.Cluster.Tools""
+                  }
+                  serialization-bindings {
+                    ""Akka.Cluster.Tools.Singleton.ClusterSingletonMessage, Akka.Cluster.Tools"" = akka-singleton
+                  }
+                  serialization-identifiers {
+                    ""Akka.Cluster.Tools.Singleton.Serialization.ClusterSingletonMessageSerializer, Akka.Cluster.Tools"" = 14
+                  }
+                }
+            remote {
+                  #log-remote-lifecycle-events = DEBUG
+                  #log-received-messages = on
+              
+                  helios.tcp {
+                    transport-class = ""Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote""
+		                applied-adapters = []
+		                transport-protocol = tcp
+                    #will be populated with a dynamic host-name at runtime if left uncommented
+                    #public-hostname = ""POPULATE STATIC IP HERE""
+                    hostname = ""127.0.0.1""
+                    port = {0}
+                  }
+                }
+                cluster {
+                    seed-nodes = [{1}]
+				    roles = [cluster]
+                    coordinator-singleton = ""singleton""
+                    singleton {
+                      singleton-name = ""singleton""
+                      role = ""cluster""
+                      hand-over-retry-interval = 1s
+                      min-number-of-hand-over-retries = 10
+                    }
+                    singleton-proxy {
+                      # The actor name of the singleton actor that is started by the ClusterSingletonManager
+                      singleton-name = ""singleton""
+                      role = ""cluster""
+                      singleton-identification-interval = 1s
+                      buffer-size = 1000 
+                    }
+                    sharding {
+                        guardian-name = sharding
+                        coordinator-singleton = ""akka.cluster.singleton""
+                        role = ""cluster""
+                        remember-entities = off
+                        coordinator-failure-backoff = 5s
+                        retry-interval = 2s
+                        buffer-size = 100000
+                        handoff-timeout = 60s
+                        shard-start-timeout = 10s
+                        shard-failure-backoff = 10s
+                        entity-restart-backoff = 10s
+                        rebalance-interval = 10s
+                        journal-plugin-id = """"
+                        snapshot-plugin-id = """"
+                        state-store-mode = ""persistence""
+                        snapshot-after = 1000
+                          least-shard-allocation-strategy {
+                            rebalance-threshold = 10
+                            max-simultaneous-rebalance = 3
+                          }
+                    }  
+                }
+                actor.deployment {
+                   /routerPool {
+                        router = consistent-hashing-pool
+                        routees.paths = [""/user/routerPool""]  
+                        nr-of-instances = 50
+                        virtual-nodes-factor = 10
+                            cluster {
+                                enabled = on
+                                max-nr-of-instances-per-node = 2
+                                allow-local-routees = on
+                                use-role = cluster
+                            }
+                        }
+                }
+            }
+            ".Replace("{0}", portNumber.ToString()).Replace("{1}", seedNodeString));
+        }
+    }
+}

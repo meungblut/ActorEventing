@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Core", "Euventing.Core\Euventing.Core.csproj", "{D95822CD-502D-4E0E-88FE-BBBF34123871}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Core.Test", "Euventing.Core.Test\Euventing.Core.Test.csproj", "{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D95822CD-502D-4E0E-88FE-BBBF34123871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D95822CD-502D-4E0E-88FE-BBBF34123871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D95822CD-502D-4E0E-88FE-BBBF34123871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D95822CD-502D-4E0E-88FE-BBBF34123871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
