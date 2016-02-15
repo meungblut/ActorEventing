@@ -27,10 +27,12 @@ namespace Euventing.Core.Test
                   provider = ""Akka.Cluster.ClusterActorRefProvider, Akka.Cluster""
                   serializers {
                     akka-singleton = ""Akka.Cluster.Tools.Singleton.Serialization.ClusterSingletonMessageSerializer, Akka.Cluster.Tools""
-                  }
+                    wire = ""Akka.Serialization.WireSerializer, Akka.Serialization.Wire""                  
+}   
                   serialization-bindings {
                     ""Akka.Cluster.Tools.Singleton.ClusterSingletonMessage, Akka.Cluster.Tools"" = akka-singleton
-                  }
+                    ""System.Object"" = wire                 
+}
                   serialization-identifiers {
                     ""Akka.Cluster.Tools.Singleton.Serialization.ClusterSingletonMessageSerializer, Akka.Cluster.Tools"" = 14
                   }

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Cluster.Tools.PublishSubscribe;
+using Euventing.Core.Messages;
 
 namespace Euventing.Core
 {
@@ -16,12 +19,10 @@ namespace Euventing.Core
             this.actorSystem = actorSystem;
         }
 
-        //akka://eventActorSystemForTesting/user/sharding/SubscriptionActor
-        public void PublishMessages(object thingToPublish)
+        public void PublishMessage(DomainEvent thingToPublish)
         {
-            var actorRef =
-                actorSystem.ActorSelection("/user/sharding/SubscriptionActor/*");
-            actorRef.Tell(thingToPublish);
+            var mediator = DistributedPubSub.Get(actorSystem).Mediator;
+            mediator.Tell(new Publish("publishedEventsTopic", thingToPublish));
         }
     }
 }
