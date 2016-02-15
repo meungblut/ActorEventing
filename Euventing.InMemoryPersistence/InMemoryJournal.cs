@@ -20,6 +20,7 @@ namespace Euventing.InMemoryPersistence
 
         public override Task ReplayMessagesAsync(string persistenceId, long fromSequenceNr, long toSequenceNr, long max, Action<IPersistentRepresentation> replayCallback)
         {
+            Console.WriteLine("Persistence Id:" + persistenceId);
             var persistentRepresentations = repository.GetData<JournalEntry>(persistenceId, fromSequenceNr, toSequenceNr, max);
 
             foreach (var persistentRepresentation in persistentRepresentations)

@@ -86,10 +86,13 @@
   <ItemGroup>
     <Compile Include="EventMatching\AllEventMatcher.cs" />
     <Compile Include="EventMatching\IEventMatcher.cs" />
+    <Compile Include="EventPublisher.cs" />
     <Compile Include="Messages\AtomNotificationChannel.cs" />
     <Compile Include="Messages\NotificationChannel.cs" />
+    <Compile Include="Messages\NullSubscription.cs" />
     <Compile Include="Messages\SubscriptionId.cs" />
     <Compile Include="Messages\SubscriptionMessage.cs" />
+    <Compile Include="Messages\SubscriptionQuery.cs" />
     <Compile Include="Messages\UserId.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubscriptionManager.cs" />
