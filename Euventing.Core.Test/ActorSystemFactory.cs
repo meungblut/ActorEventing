@@ -23,7 +23,6 @@ namespace Euventing.Core.Test
             var config = ConfigurationFactory.ParseString(@"
 
             akka {
-
                 actor {
                   provider = ""Akka.Cluster.ClusterActorRefProvider, Akka.Cluster""
                   serializers {
@@ -104,8 +103,40 @@ namespace Euventing.Core.Test
                             }
                         }
                 }
+    persistence {
+        journal {
+            # Path to the journal plugin to be used
+            plugin = ""akka.persistence.journal.inmem""
+            # In-memory journal plugin.
+                inmem {
+                    # Class name of the plugin.
+                    class = ""Euventing.InMemoryPersistence.InMemoryJournal, Euventing.InMemoryPersistence""
+                    # Dispatcher for the plugin actor.
+                    plugin-dispatcher = ""akka.actor.default-dispatcher""
+                }
+        }
+            snapshot-store {
+
+            # Path to the snapshot store plugin to be used
+            plugin = ""akka.persistence.snapshot-store.inmem""
+
+            # Local filesystem snapshot store plugin.
+            inmem {
+
+                # Class name of the plugin.
+                class = ""Euventing.InMemoryPersistence.InMemorySnapshotStore, Euventing.InMemoryPersistence""
+
+                # Dispatcher for the plugin actor.
+                plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
+
+                # Dispatcher for streaming snapshot IO.
+                stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
+            }
+        }
+    }
             }
             ".Replace("{0}", portNumber.ToString()).Replace("{1}", seedNodeString));
+            return ActorSystem.Create(akkaSystemName, config);
         }
     }
 }

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Core", "Euventing
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Core.Test", "Euventing.Core.Test\Euventing.Core.Test.csproj", "{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.InMemoryPersistence", "Euventing.InMemoryPersistence\Euventing.InMemoryPersistence.csproj", "{34575E3F-3B5B-437D-B551-E9DEC5B325D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34575E3F-3B5B-437D-B551-E9DEC5B325D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34575E3F-3B5B-437D-B551-E9DEC5B325D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34575E3F-3B5B-437D-B551-E9DEC5B325D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34575E3F-3B5B-437D-B551-E9DEC5B325D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,13 +7,10 @@ namespace Euventing.Core
 {
     public class SubscriptionManager
     {
-        private readonly ActorSystem actorSystem;
         private readonly IActorRef shardedSubscriptionActorRef;
 
         public SubscriptionManager(ActorSystem actorSystem)
         {
-            this.actorSystem = actorSystem;
-
             var settings = ClusterShardingSettings.Create(actorSystem);
 
             shardedSubscriptionActorRef = ClusterSharding.Get(actorSystem).Start(
