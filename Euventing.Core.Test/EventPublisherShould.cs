@@ -26,7 +26,7 @@ namespace Euventing.Core.Test
         }
 
         [Test]
-        public async Task CreateANewAtomSubscriptionIfTheAtomSubscriptionDoesntExist()
+        public async Task NotifyALocalCallbackWhenAnEventIsPublished()
         {
             var subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),

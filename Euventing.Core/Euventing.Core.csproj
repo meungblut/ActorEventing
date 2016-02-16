@@ -96,13 +96,16 @@
     <Compile Include="EventMatching\IEventMatcher.cs" />
     <Compile Include="EventPublisher.cs" />
     <Compile Include="Messages\AtomNotificationChannel.cs" />
-    <Compile Include="Messages\IDomainEvent.cs" />
+    <Compile Include="Messages\DomainEvent.cs" />
     <Compile Include="Messages\NotificationChannel.cs" />
     <Compile Include="Messages\NullSubscription.cs" />
     <Compile Include="Messages\SubscriptionId.cs" />
     <Compile Include="Messages\SubscriptionMessage.cs" />
     <Compile Include="Messages\SubscriptionQuery.cs" />
     <Compile Include="Messages\UserId.cs" />
+    <Compile Include="Notifications\IEventNotifier.cs" />
+    <Compile Include="Notifications\NotificationSettings.cs" />
+    <Compile Include="Notifications\NotifierFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubscriptionManager.cs" />
     <Compile Include="Subscriptions\SubscriptionActor.cs" />
