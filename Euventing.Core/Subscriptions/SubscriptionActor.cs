@@ -26,8 +26,13 @@ namespace Euventing.Core.Subscriptions
         //Inbound messages stream
         protected override bool ReceiveCommand(object message)
         {
+            if (message == null)
+            {
+                return false;
+            }
             if (message is DomainEvent)
             {
+                Console.Write("************************* " + message.GetType().ToString());
                 string s = "";
             }
             else if (message is SubscriptionQuery)
@@ -43,11 +48,13 @@ namespace Euventing.Core.Subscriptions
                 var mediator = DistributedPubSub.Get(Context.System).Mediator;
                 mediator.Tell(new Subscribe("publishedEventsTopic", Self), Self);
             }
-            else if (message as string == "snap")
-                SaveSnapshot(this);
+            else if (message is SubscribeAck)
+            {
+                
+            }
             else
             {
-                Console.Write("************************* " + message.GetType().ToString());
+
                 return false;
             }
             return true;

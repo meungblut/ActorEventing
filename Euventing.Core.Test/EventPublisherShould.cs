@@ -22,6 +22,7 @@ namespace Euventing.Core.Test
             var actorSystem = actorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
             _subscriptionManager = new SubscriptionManager(actorSystem);
             _eventPublisher = new EventPublisher(actorSystem);
+            Thread.Sleep(TimeSpan.FromSeconds(4));
         }
 
         [Test]
@@ -35,9 +36,12 @@ namespace Euventing.Core.Test
 
             _subscriptionManager.CreateSubscription(subscriptionMessage);
 
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+
             _eventPublisher.PublishMessage(new DummyDomainEvent());
 
-            Thread.Sleep(TimeSpan.FromSeconds(4));
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+
         }
     }
 }
