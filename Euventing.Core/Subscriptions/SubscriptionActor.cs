@@ -9,7 +9,7 @@ namespace Euventing.Core.Subscriptions
     public class SubscriptionActor : PersistentActor
     {
         private SubscriptionMessage subscriptionMessage;
-        private NotifierFactory notifierFactory;
+        private readonly NotifierFactory notifierFactory;
 
         public SubscriptionActor()
         {

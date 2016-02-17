@@ -9,7 +9,18 @@ namespace Euventing.Atom.Test
 {
     public class AtomEventNotifierShould
     {
-        ActorSystemFactory factory = new ActorSystemFactory();
+        private static ActorSystemFactory factory = new ActorSystemFactory();
+        private static AtomEventNotifier _notifier;
+        private static AtomDocumentRetriever _retriever;
+
+        [OneTimeSetUp]
+        public static void SetupActorSystem()
+        {
+            var actorSystemFactory = new ActorSystemFactory();
+            var actorSystem = factory.GetActorSystem(3624, "atomActorSystem", "127.0.0.1:3624");
+            _notifier = new AtomEventNotifier(actorSystem);
+            _retriever = new AtomDocumentRetriever(actorSystem);
+        }
 
         [Test]
         public void CreateANewAtomFeedWithTheSubscriptionId()
@@ -20,14 +31,12 @@ namespace Euventing.Atom.Test
                 new SubscriptionId(Guid.NewGuid().ToString()), 
                 new AllEventMatcher());
 
-            var actorSystem = factory.GetActorSystem(3624, "atomActorSystem");
-            AtomEventNotifier notifier = new AtomEventNotifier(actorSystem);
+
 
             Thread.Sleep(TimeSpan.FromSeconds(2));
-            notifier.Create(subscriptionMessage);
+            _notifier.Create(subscriptionMessage);
 
-            AtomDocumentRetriever retriever = new AtomDocumentRetriever(actorSystem);
-            var document = retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
+            var document = _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
         }
     }
 }
