@@ -31,7 +31,7 @@ namespace Euventing.Core.Test
         }
 
         [Test]
-        public async Task CreateANewAtomSubscriptionIfTheAtomSubscriptionDoesntExist()
+        public async Task CreateANewSubscriptionIfTheSubscriptionDoesntExist()
         {
             var subscriptionMessage = new SubscriptionMessage(
                 new LocalEventNotificationChannel(), 
