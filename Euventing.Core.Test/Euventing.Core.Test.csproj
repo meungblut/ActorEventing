@@ -63,8 +63,9 @@
     <Compile Include="ActorSystemFactory.cs" />
     <Compile Include="DummyDomainEvent.cs" />
     <Compile Include="EventPublisherShould.cs" />
-    <Compile Include="LocalEventNotification\EventNotifier.cs" />
+    <Compile Include="LocalEventNotification\LocalEventNotifier.cs" />
     <Compile Include="LocalEventNotification\LocalEventNotificationChannel.cs" />
+    <Compile Include="LocalEventNotification\LocalNotificationSettings.cs" />
     <Compile Include="SubscriptionManagerShould.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

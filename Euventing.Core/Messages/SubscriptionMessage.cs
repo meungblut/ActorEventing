@@ -9,15 +9,15 @@ namespace Euventing.Core.Messages
 {
     public class SubscriptionMessage
     {
-        public AtomNotificationChannel AtomNotificationChannel { get; private set; }
+        public INotificationChannel NotificationChannel { get; private set; }
         public UserId UserId { get; private set; }
         public SubscriptionId SubscriptionId { get; private set; }
         public IEventMatcher AllEventMatcher { get; private set; }
 
 
-        public SubscriptionMessage(AtomNotificationChannel atomNotificationChannel, UserId userId, SubscriptionId subscriptionId, IEventMatcher allEventMatcher)
+        public SubscriptionMessage(INotificationChannel notificationChannel, UserId userId, SubscriptionId subscriptionId, IEventMatcher allEventMatcher)
         {
-            AtomNotificationChannel = atomNotificationChannel;
+            NotificationChannel = notificationChannel;
             UserId = userId;
             SubscriptionId = subscriptionId;
             AllEventMatcher = allEventMatcher;

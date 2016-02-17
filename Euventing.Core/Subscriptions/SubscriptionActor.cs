@@ -2,16 +2,19 @@
 using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Persistence;
 using Euventing.Core.Messages;
+using Euventing.Core.Notifications;
 
 namespace Euventing.Core.Subscriptions
 {
     public class SubscriptionActor : PersistentActor
     {
         private SubscriptionMessage subscriptionMessage;
+        private NotifierFactory notifierFactory;
 
         public SubscriptionActor()
         {
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
+            notifierFactory = new NotifierFactory();
         }
 
         //recovery stream
@@ -32,25 +35,25 @@ namespace Euventing.Core.Subscriptions
             }
             if (message is DomainEvent)
             {
-                Console.Write("************************* " + message.GetType().ToString());
-                string s = "";
+                var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
+                notifier.Notify(subscriptionMessage, (DomainEvent)message);
             }
             else if (message is SubscriptionQuery)
             {
                 if (subscriptionMessage == null)
                     Sender.Tell(new NullSubscription(), Context.Self);
                 else
-                    Sender.Tell(subscriptionMessage, Context.Self); 
+                    Sender.Tell(subscriptionMessage, Context.Self);
             }
             else if (message is SubscriptionMessage)
             {
-                this.subscriptionMessage = (SubscriptionMessage) message;
+                this.subscriptionMessage = (SubscriptionMessage)message;
                 var mediator = DistributedPubSub.Get(Context.System).Mediator;
                 mediator.Tell(new Subscribe("publishedEventsTopic", Self), Self);
             }
             else if (message is SubscribeAck)
             {
-                
+
             }
             else
             {

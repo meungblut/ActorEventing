@@ -5,18 +5,25 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Euventing.Core.Messages;
+using Euventing.Core.Notifications;
 
 namespace Euventing.Core.Test.LocalEventNotification
 {
-    public class EventNotifier
+    public class LocalEventNotifier : IEventNotifier
     {
         public static DomainEvent EventNotifiedWith { get; private set; }
+        public static SubscriptionMessage SubscriptionNotifiedWith { get; private set; }
 
         public static ManualResetEvent EventReceived { get; private set; }
 
-        public void Notify(DomainEvent @event)
+        static LocalEventNotifier()
         {
-            EventNotifiedWith = @event;
+            EventReceived = new ManualResetEvent(false);
+        }
+
+        public void Notify(SubscriptionMessage message, DomainEvent eventToNotify)
+        {
+            EventNotifiedWith = eventToNotify;
             EventReceived.Set();
         }
     }

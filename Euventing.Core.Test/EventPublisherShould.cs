@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
+using Euventing.Core.Test.LocalEventNotification;
 using NUnit.Framework;
 
 namespace Euventing.Core.Test
@@ -18,6 +19,7 @@ namespace Euventing.Core.Test
         [OneTimeSetUp]
         public static void SetupActorSystem()
         {
+            var settings = new LocalNotificationSettings();
             var actorSystemFactory = new ActorSystemFactory();
             var actorSystem = actorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
             _subscriptionManager = new SubscriptionManager(actorSystem);
@@ -29,7 +31,7 @@ namespace Euventing.Core.Test
         public async Task NotifyALocalCallbackWhenAnEventIsPublished()
         {
             var subscriptionMessage = new SubscriptionMessage(
-                new AtomNotificationChannel(),
+                new LocalEventNotificationChannel(), 
                 new UserId(Guid.NewGuid().ToString()),
                 new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
@@ -40,8 +42,10 @@ namespace Euventing.Core.Test
 
             _eventPublisher.PublishMessage(new DummyDomainEvent());
 
-            Thread.Sleep(TimeSpan.FromSeconds(2));
-
+            if (!LocalEventNotifier.EventReceived.WaitOne(TimeSpan.FromSeconds(2)))
+            {
+                Assert.Fail("Expected but did not receive event notification");
+            }
         }
     }
 }

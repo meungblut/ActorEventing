@@ -10,6 +10,11 @@ namespace Euventing.Core.Notifications
         public Dictionary<Type, IEventNotifier> GetNotifiers()
         {
             return notifiers;
-        } 
+        }
+
+        protected void AddNotifierType(Type notificationChannelType, IEventNotifier notifier)
+        {
+            notifiers.Add(notificationChannelType, notifier);
+        }
     }
 }

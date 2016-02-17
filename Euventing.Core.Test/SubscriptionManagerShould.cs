@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
+using Euventing.Core.Test.LocalEventNotification;
 using NUnit.Framework;
 
 namespace Euventing.Core.Test
@@ -33,7 +34,7 @@ namespace Euventing.Core.Test
         public async Task CreateANewAtomSubscriptionIfTheAtomSubscriptionDoesntExist()
         {
             var subscriptionMessage = new SubscriptionMessage(
-                new AtomNotificationChannel(),
+                new LocalEventNotificationChannel(), 
                 new UserId(Guid.NewGuid().ToString()),
                 new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
