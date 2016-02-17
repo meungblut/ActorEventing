@@ -57,7 +57,6 @@ namespace Euventing.Core.Subscriptions
             }
             else
             {
-
                 return false;
             }
             return true;

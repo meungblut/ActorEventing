@@ -40,12 +40,13 @@ namespace Euventing.Core.Test
 
             Thread.Sleep(TimeSpan.FromSeconds(2));
 
-            _eventPublisher.PublishMessage(new DummyDomainEvent());
+            var dummyEvent = new DummyDomainEvent();
+            _eventPublisher.PublishMessage(dummyEvent);
 
             if (!LocalEventNotifier.EventReceived.WaitOne(TimeSpan.FromSeconds(2)))
-            {
                 Assert.Fail("Expected but did not receive event notification");
-            }
+
+            Assert.AreEqual(dummyEvent, LocalEventNotifier.EventNotifiedWith);
         }
     }
 }

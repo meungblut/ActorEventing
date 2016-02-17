@@ -26,5 +26,9 @@ namespace Euventing.Core.Test.LocalEventNotification
             EventNotifiedWith = eventToNotify;
             EventReceived.Set();
         }
+
+        public void Create(SubscriptionMessage message)
+        {
+        }
     }
 }
