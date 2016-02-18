@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Akka.Cluster.Sharding;
+﻿using Akka.Cluster.Sharding;
 using Akka.Persistence;
 using Euventing.Atom.Document;
-using Euventing.Core.Messages;
 
-namespace Euventing.Atom.ShardSupport
+namespace Euventing.Atom.ShardSupport.Feed
 {
     public class AtomFeedShardDataMessageExtractor : IMessageExtractor
     {

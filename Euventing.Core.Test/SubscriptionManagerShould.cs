@@ -17,7 +17,7 @@ namespace Euventing.Core.Test
         [OneTimeSetUp]
         public static void SetupActorSystem()
         {
-            var actorSystemFactory = new ActorSystemFactory();
+            var actorSystemFactory = new ShardedActorSystemFactory();
             var actorSystem = actorSystemFactory.GetActorSystem(8964, "eventActorSystemForTesting", "127.0.0.1:8964");
             _subscriptionManager = new SubscriptionManager(actorSystem);
         }

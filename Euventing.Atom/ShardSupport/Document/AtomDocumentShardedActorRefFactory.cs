@@ -1,9 +1,9 @@
 ﻿using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Euventing.Atom.Document;
-using Euventing.Atom.ShardSupport;
+using Euventing.Atom.ShardSupport.Feed;
 
-namespace Euventing.Atom
+namespace Euventing.Atom.ShardSupport.Document
 {
     public class AtomFeedShardedActorRefFactory
     {

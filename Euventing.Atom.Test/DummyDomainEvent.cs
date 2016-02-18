@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Euventing.Core.Messages;
 
-namespace Euventing.Core.Test
+namespace Euventing.Atom.Test
 {
     public class DummyDomainEvent : DomainEvent
     {

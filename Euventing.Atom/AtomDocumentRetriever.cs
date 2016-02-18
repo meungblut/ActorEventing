@@ -3,6 +3,8 @@ using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Euventing.Atom.Document;
 using Euventing.Atom.ShardSupport;
+using Euventing.Atom.ShardSupport.Document;
+using Euventing.Atom.ShardSupport.Feed;
 using Euventing.Core.Messages;
 
 namespace Euventing.Atom
@@ -16,10 +18,16 @@ namespace Euventing.Atom
             this.factory = factory;
         }
 
-        public async Task<DocumentId> GetHeadDocument(SubscriptionId subscriptionId)
+        public async Task<DocumentId> GetHeadDocumentId(SubscriptionId subscriptionId)
         {
-            var feedId = await factory.GetActorRef().Ask<DocumentId>(new GetHeadDocumentForFeedRequest(subscriptionId));
-            return feedId;
+            var documentId = await factory.GetActorRef().Ask<DocumentId>(new GetHeadDocumentForFeedRequest(subscriptionId));
+            return documentId;
+        }
+
+        public async Task<AtomDocument> GetHeadDocument(SubscriptionId subscriptionId)
+        {
+            var document = await factory.GetActorRef().Ask<AtomDocument>(new GetHeadDocumentForFeedRequest(subscriptionId));
+            return document;
         }
     }
 }

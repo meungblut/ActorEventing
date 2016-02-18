@@ -60,7 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActorSystemFactory.cs" />
+    <Compile Include="ShardedActorSystemFactory.cs" />
     <Compile Include="DummyDomainEvent.cs" />
     <Compile Include="EventPublisherShould.cs" />
     <Compile Include="LocalEventNotification\LocalEventNotifier.cs" />

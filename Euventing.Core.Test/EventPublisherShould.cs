@@ -20,11 +20,11 @@ namespace Euventing.Core.Test
         public static void SetupActorSystem()
         {
             var settings = new LocalNotificationSettings();
-            var actorSystemFactory = new ActorSystemFactory();
+            var actorSystemFactory = new ShardedActorSystemFactory();
             var actorSystem = actorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
             _subscriptionManager = new SubscriptionManager(actorSystem);
             _eventPublisher = new EventPublisher(actorSystem);
-            Thread.Sleep(TimeSpan.FromSeconds(4));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace Euventing.Core.Test
 
             Thread.Sleep(TimeSpan.FromSeconds(2));
 
-            var dummyEvent = new DummyDomainEvent();
+            var dummyEvent = new DummyDomainEvent("some id");
             _eventPublisher.PublishMessage(dummyEvent);
 
             if (!LocalEventNotifier.EventReceived.WaitOne(TimeSpan.FromSeconds(2)))

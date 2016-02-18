@@ -8,7 +8,7 @@ using Akka.Configuration;
 
 namespace Euventing.Core.Test
 {
-    public class ActorSystemFactory
+    public class ShardedActorSystemFactory
     {
         public ActorSystem GetActorSystem(int portNumber, string akkaSystemName, params string[] seedNodes)
         {

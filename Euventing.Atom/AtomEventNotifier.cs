@@ -3,6 +3,8 @@ using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Euventing.Atom.Document;
 using Euventing.Atom.ShardSupport;
+using Euventing.Atom.ShardSupport.Document;
+using Euventing.Atom.ShardSupport.Feed;
 using Euventing.Core.Messages;
 using Euventing.Core.Notifications;
 using Euventing.Core.Subscriptions;

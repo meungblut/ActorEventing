@@ -8,6 +8,11 @@ namespace Euventing.Core.Messages
 {
     public abstract class DomainEvent
     {
-        public int Id { get; private set; }
+        public string Id { get; private set; }
+
+        protected DomainEvent(string id)
+        {
+            Id = id;
+        }
     }
 }
