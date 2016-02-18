@@ -18,7 +18,10 @@ namespace Euventing.Atom.ShardSupport
                 return ((SaveSnapshotSuccess)message).Metadata.PersistenceId;
 
             if (message is FeedId)
-                return ((FeedId) message).Id;
+                return ((FeedId)message).Id;
+
+            if (message is GetHeadDocumentForFeedRequest)
+                return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id;
 
             return null;
         }
@@ -28,6 +31,9 @@ namespace Euventing.Atom.ShardSupport
             if (message is FeedId)
                 return ((FeedId)message);
 
+            if (message is GetHeadDocumentForFeedRequest)
+                return ((GetHeadDocumentForFeedRequest) message);
+
             return null;
         }
 
@@ -35,6 +41,9 @@ namespace Euventing.Atom.ShardSupport
         {
             if (message is FeedId)
                 return ((FeedId)message).Id.GetHashCode().ToString();
+
+            if (message is GetHeadDocumentForFeedRequest)
+                return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id.GetHashCode().ToString();
 
             return null;
         }

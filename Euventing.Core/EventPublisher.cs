@@ -18,7 +18,6 @@ namespace Euventing.Core
 
         public void PublishMessage(DomainEvent thingToPublish)
         {
-            Console.WriteLine("*********Publishing domain event");
             mediator.Tell(new Publish("publishedEventsTopic", thingToPublish));
         }
     }

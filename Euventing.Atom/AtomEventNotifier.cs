@@ -11,20 +11,11 @@ namespace Euventing.Atom
 {
     public class AtomEventNotifier : IEventNotifier
     {
-        private ActorSystem actorSystem;
-        private readonly IActorRef atomFeedActor;
+        private readonly AtomFeedShardedActorRefFactory factory;
 
-        public AtomEventNotifier(ActorSystem actorSystem)
+        public AtomEventNotifier(AtomFeedShardedActorRefFactory factory)
         {
-            this.actorSystem = actorSystem;
-
-            var settings = ClusterShardingSettings.Create(actorSystem);
-
-            atomFeedActor = ClusterSharding.Get(actorSystem).Start(
-                typeName: "AtomFeedActor",
-                entityProps: Props.Create<AtomFeedActor>(),
-                settings: settings,
-                messageExtractor: new AtomFeedShardDataMessageExtractor());
+            this.factory = factory;
         }
 
         public void Notify(SubscriptionMessage message, DomainEvent eventToNotify)
@@ -33,7 +24,7 @@ namespace Euventing.Atom
 
         public void Create(SubscriptionMessage message)
         {
-            atomFeedActor.Tell(new FeedId(message.SubscriptionId.Id));
+            factory.GetActorRef().Tell(new FeedId(message.SubscriptionId.Id));
         }
     }
 }

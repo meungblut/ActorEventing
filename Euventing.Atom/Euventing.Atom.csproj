@@ -85,12 +85,14 @@
   <ItemGroup>
     <Compile Include="AtomDocumentRetriever.cs" />
     <Compile Include="AtomEventNotifier.cs" />
+    <Compile Include="AtomFeedShardedActorRefFactory.cs" />
     <Compile Include="AtomNotificationChannel.cs" />
     <Compile Include="Document\AtomDocument.cs" />
     <Compile Include="Document\AtomEntry.cs" />
     <Compile Include="Document\AtomFeedActor.cs" />
     <Compile Include="Document\DocumentId.cs" />
     <Compile Include="Document\FeedId.cs" />
+    <Compile Include="GetHeadDocumentForFeedRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShardSupport\AtomFeedShardDataMessageExtractor.cs" />
   </ItemGroup>

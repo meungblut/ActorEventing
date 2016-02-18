@@ -1,21 +1,25 @@
-﻿using Akka.Actor;
+﻿using System.Threading.Tasks;
+using Akka.Actor;
+using Akka.Cluster.Sharding;
 using Euventing.Atom.Document;
+using Euventing.Atom.ShardSupport;
 using Euventing.Core.Messages;
 
 namespace Euventing.Atom
 {
     public class AtomDocumentRetriever
     {
-        private ActorSystem actorSystem;
+        private readonly AtomFeedShardedActorRefFactory factory;
 
-        public AtomDocumentRetriever(ActorSystem actorSystem)
+        public AtomDocumentRetriever(AtomFeedShardedActorRefFactory factory)
         {
-            this.actorSystem = actorSystem;
+            this.factory = factory;
         }
 
-        public DocumentId GetHeadDocument(SubscriptionId subscriptionId)
+        public async Task<DocumentId> GetHeadDocument(SubscriptionId subscriptionId)
         {
-            return new DocumentId("");
+            var feedId = await factory.GetActorRef().Ask<DocumentId>(new GetHeadDocumentForFeedRequest(subscriptionId));
+            return feedId;
         }
     }
 }

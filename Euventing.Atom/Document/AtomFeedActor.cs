@@ -1,10 +1,12 @@
-﻿using Akka.Persistence;
+﻿using System;
+using Akka.Persistence;
 
 namespace Euventing.Atom.Document
 {
     public class AtomFeedActor : PersistentActor
     {
         private FeedId atomFeedId;
+        private DocumentId currentFeedHeadDocument;
 
         public AtomFeedActor()
         {
@@ -18,7 +20,12 @@ namespace Euventing.Atom.Document
         protected override bool ReceiveCommand(object message)
         {
             if (message is FeedId)
+            {
                 atomFeedId = ((FeedId) message);
+                currentFeedHeadDocument = new DocumentId(Guid.NewGuid().ToString());
+            }
+            else if (message is GetHeadDocumentForFeedRequest)
+                Sender.Tell(currentFeedHeadDocument, Self);
             else
                 return false;
 
