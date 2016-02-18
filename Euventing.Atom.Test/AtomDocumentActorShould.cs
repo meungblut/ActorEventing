@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
@@ -24,7 +22,8 @@ namespace Euventing.Atom.Test
         {
             shardedActorSystemFactory = new ShardedActorSystemFactory();
             system = shardedActorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
-            atomActorRef = system.ActorOf<AtomDocumentActor>(name: "123");
+            var props = Props.Create(() => new AtomDocumentActor(new DummyAtomDocumentSettings(2)));
+            atomActorRef = system.ActorOf(props, name: "123");
 
             documentId = new DocumentId(Guid.NewGuid().ToString());
 
@@ -46,7 +45,7 @@ namespace Euventing.Atom.Test
         }
 
         [Test]
-        public async Task AddEventToTheAtomDocument()
+        public async Task AddRaisedEventToTheAtomDocument()
         {
             var eventId = Guid.NewGuid().ToString();
             atomActorRef.Tell(new DummyDomainEvent(eventId));
@@ -55,7 +54,15 @@ namespace Euventing.Atom.Test
 
             var atomDocument = await atomActorRef.Ask<AtomDocument>(new GetAtomDocumentRequest(documentId)).WithTimeout(TimeSpan.FromSeconds(2));
 
-            Assert.IsTrue(atomDocument.Entries.First().Content.Contains(eventId));
+            Assert.IsTrue(atomDocument.Entries.Any(x => x.Content.Contains(eventId)));
+        }
+
+        [Test]
+        public void RaiseDocumentFullEventWhenNumberOfEventsMatchesMaximumNumberOfEventsPerDocument()
+        {
+            atomActorRef.Tell(new DummyDomainEvent(Guid.NewGuid().ToString()));
+            atomActorRef.Tell(new DummyDomainEvent(Guid.NewGuid().ToString()));
+
         }
     }
 

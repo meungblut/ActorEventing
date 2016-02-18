@@ -1,18 +1,14 @@
 ﻿using Akka.Persistence;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Euventing.Atom.Serialization;
-using Euventing.Atom.Serialization.Tesco.Eventing.ExternalPublishing.Protocol;
 using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Document
 {
     public class AtomDocumentActor : PersistentActor
     {
-        public AtomDocumentActor()
+        public AtomDocumentActor(IAtomDocumentSettings settings)
         {
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
         }
