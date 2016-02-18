@@ -16,54 +16,39 @@ namespace Euventing.Atom.Test
     {
        
         [Test]
-        public void ConfigureWithTheExpectedDocumentInformation()
+        public async Task ConfigureWithTheExpectedDocumentInformation()
         {
             var actorSystemFactory = new ShardedActorSystemFactory();
             var actorSystem = actorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
             var actorRef = actorSystem.ActorOf<AtomDocumentActor>(name: "123");
 
-            var atomDocumentCreationInformation = new AtomDocumentCreationInformation(
+            var documentId = new DocumentId(Guid.NewGuid().ToString());
+
+            var atomDocumentCreationInformation = new CreateAtomDocumentCommand(
                 "Matt's Events Feed",
-                "Matt Eungblut",
+                "Matt",
                 Guid.NewGuid().ToString(),
-                Guid.NewGuid().ToString(),
-                Guid.NewGuid().ToString(),
-                5);
+                documentId,
+                Guid.NewGuid().ToString());
 
             actorRef.Tell(atomDocumentCreationInformation, new StandardOutLogger());
 
             Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            var atomDocument = await actorRef.Ask<AtomDocument>(new GetAtomDocumentRequest(documentId)).WithTimeout(TimeSpan.FromSeconds(2));
+            Assert.AreEqual(atomDocument.DocumentId, atomDocumentCreationInformation.DocumentId);
         }
     }
 
-    public class AtomDocumentCreationInformation
+    public static class TaskExtensions
     {
-        public AtomDocumentCreationInformation(
-            string title, 
-            string author, 
-            string feedId, 
-            string documentId, 
-            string earlierEventsDocumentId, 
-            int numberOfEventsPerDocument)
+        public static async Task<TResult> WithTimeout<TResult>(this Task<TResult> task, TimeSpan timeout)
         {
-            Title = title;
-            Author = author;
-            FeedId = feedId;
-            DocumentId = documentId;
-            EarlierEventsDocumentId = earlierEventsDocumentId;
-            NumberOfEventsPerDocument = numberOfEventsPerDocument;
+            if (task == await Task.WhenAny(task, Task.Delay(timeout)))
+            {
+                return await task;
+            }
+            throw new TimeoutException();
         }
-
-        public string Title { get; }
-
-        public string Author { get; }
-
-        public string FeedId { get; }
-
-        public string DocumentId { get; }
-
-        public string EarlierEventsDocumentId { get; }
-
-        public int NumberOfEventsPerDocument { get; }
     }
 }

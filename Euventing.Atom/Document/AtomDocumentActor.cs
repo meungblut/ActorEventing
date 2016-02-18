@@ -13,32 +13,69 @@ namespace Euventing.Atom.Document
         {
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
         }
-        public string Title { get; }
 
-        public DateTime Updated { get; }
+        public string title;
 
-        public string Author { get; }
+        public DateTime updated;
 
-        public string FeedId { get; }
+        public string author;
 
-        public string DocumentId { get; }
+        public string feedId;
 
-        public string LaterEventsDocumentId { get; }
+        public DocumentId documentId;
 
-        public string EarlierEventsDocumentId { get; }
+        public string laterEventsDocumentId;
 
-        public List<AtomEntry> Entries { get; }
+        public string earlierEventsDocumentId;
+
+        public List<AtomEntry> entries;
+
+        private int eventsPerDocument;
 
         protected override bool ReceiveRecover(object message)
         {
+            Console.WriteLine("***********" + message.GetType().ToString());
+            ((dynamic)this).MutateInternalState((dynamic)message);
+
             return true;
         }
 
         protected override bool ReceiveCommand(object message)
         {
+            ((dynamic)this).Process((dynamic)message);
+
             return true;
         }
 
         public override string PersistenceId { get; }
+
+        private void Process(CreateAtomDocumentCommand creationRequest)
+        {
+            var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
+                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
+            MutateInternalState(atomDocumentCreatedEvent);
+            Persist(atomDocumentCreatedEvent, null);
+        }
+
+        private void Process(GetAtomDocumentRequest request)
+        {
+            Sender.Tell(new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId), Self);
+        }
+
+        private void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
+        {
+            this.author = documentCreated.Author;
+            this.documentId = documentCreated.DocumentId;
+            this.earlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
+            this.title = documentCreated.Title;
+            this.feedId = documentCreated.FeedId;
+
+            //TODO: config this or something
+            this.eventsPerDocument = 10;
+        }
+
+        private void MutateInternalState(RecoveryCompleted documentCreated)
+        {
+        }
     }
 }

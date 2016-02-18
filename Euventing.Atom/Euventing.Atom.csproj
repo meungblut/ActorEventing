@@ -85,6 +85,9 @@
   <ItemGroup>
     <Compile Include="AtomDocumentRetriever.cs" />
     <Compile Include="AtomEventNotifier.cs" />
+    <Compile Include="Document\AtomDocumentCreatedEvent.cs" />
+    <Compile Include="Document\CreateAtomDocumentCommand.cs" />
+    <Compile Include="Document\GetAtomDocumentRequest.cs" />
     <Compile Include="ShardSupport\Document\AtomDocumentShardedActorRefFactory.cs" />
     <Compile Include="ShardSupport\Feed\AtomFeedShardedActorRefFactory.cs" />
     <Compile Include="AtomNotificationChannel.cs" />
