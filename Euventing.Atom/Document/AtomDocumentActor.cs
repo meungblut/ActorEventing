@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Euventing.Atom.Serialization;
+using Euventing.Atom.Serialization.Tesco.Eventing.ExternalPublishing.Protocol;
+using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Document
 {
@@ -15,26 +18,19 @@ namespace Euventing.Atom.Document
         }
 
         public string title;
-
         public DateTime updated;
-
         public string author;
-
-        public string feedId;
-
+        public FeedId feedId;
         public DocumentId documentId;
-
-        public string laterEventsDocumentId;
-
-        public string earlierEventsDocumentId;
-
-        public List<AtomEntry> entries;
+        public DocumentId laterEventsDocumentId;
+        public DocumentId earlierEventsDocumentId;
+        public List<AtomEntry> entries = new List<AtomEntry>();
 
         private int eventsPerDocument;
+        private long sequenceNumber;
 
         protected override bool ReceiveRecover(object message)
         {
-            Console.WriteLine("***********" + message.GetType().ToString());
             ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
@@ -57,9 +53,23 @@ namespace Euventing.Atom.Document
             Persist(atomDocumentCreatedEvent, null);
         }
 
+        private void Process(DomainEvent eventToAdd)
+        {
+            var atomEntry = new AtomEntry();
+            var serializer = new JsonEventSerialisation();
+            var content = serializer.GetContentWithContentType(eventToAdd);
+            atomEntry.Content = content.Content;
+            atomEntry.Id = eventToAdd.Id;
+            atomEntry.Updated = eventToAdd.OccurredTime;
+            atomEntry.Title = content.ContentType;
+            atomEntry.SequenceNumber = sequenceNumber++;
+            MutateInternalState(atomEntry);
+            Persist(atomEntry, null);
+        }
+
         private void Process(GetAtomDocumentRequest request)
         {
-            Sender.Tell(new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId), Self);
+            Sender.Tell(new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId, entries), Self);
         }
 
         private void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
@@ -76,6 +86,12 @@ namespace Euventing.Atom.Document
 
         private void MutateInternalState(RecoveryCompleted documentCreated)
         {
+        }
+
+        private void MutateInternalState(AtomEntry atomEntry)
+        {
+            entries.Add(atomEntry);
+            sequenceNumber = atomEntry.SequenceNumber;
         }
     }
 }

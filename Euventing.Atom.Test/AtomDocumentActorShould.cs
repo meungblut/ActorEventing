@@ -14,29 +14,48 @@ namespace Euventing.Atom.Test
 {
     public class AtomDocumentActorShould
     {
-       
-        [Test]
-        public async Task ConfigureWithTheExpectedDocumentInformation()
-        {
-            var actorSystemFactory = new ShardedActorSystemFactory();
-            var actorSystem = actorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
-            var actorRef = actorSystem.ActorOf<AtomDocumentActor>(name: "123");
+        private ShardedActorSystemFactory shardedActorSystemFactory;
+        private ActorSystem system;
+        private IActorRef atomActorRef;
+        private DocumentId documentId;
 
-            var documentId = new DocumentId(Guid.NewGuid().ToString());
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            shardedActorSystemFactory = new ShardedActorSystemFactory();
+            system = shardedActorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
+            atomActorRef = system.ActorOf<AtomDocumentActor>(name: "123");
+
+            documentId = new DocumentId(Guid.NewGuid().ToString());
 
             var atomDocumentCreationInformation = new CreateAtomDocumentCommand(
                 "Matt's Events Feed",
                 "Matt",
-                Guid.NewGuid().ToString(),
+               new FeedId(Guid.NewGuid().ToString()),
                 documentId,
-                Guid.NewGuid().ToString());
+                new DocumentId(Guid.NewGuid().ToString()));
 
-            actorRef.Tell(atomDocumentCreationInformation, new StandardOutLogger());
+            atomActorRef.Tell(atomDocumentCreationInformation, new StandardOutLogger());
+        }
 
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+        [Test]
+        public async Task ConfigureWithTheExpectedDocumentInformation()
+        {
+            var atomDocument = await atomActorRef.Ask<AtomDocument>(new GetAtomDocumentRequest(documentId)).WithTimeout(TimeSpan.FromSeconds(2));
+            Assert.AreEqual(atomDocument.DocumentId, documentId);
+        }
 
-            var atomDocument = await actorRef.Ask<AtomDocument>(new GetAtomDocumentRequest(documentId)).WithTimeout(TimeSpan.FromSeconds(2));
-            Assert.AreEqual(atomDocument.DocumentId, atomDocumentCreationInformation.DocumentId);
+        [Test]
+        public async Task AddEventToTheAtomDocument()
+        {
+            var eventId = Guid.NewGuid().ToString();
+            atomActorRef.Tell(new DummyDomainEvent(eventId));
+
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+
+            var atomDocument = await atomActorRef.Ask<AtomDocument>(new GetAtomDocumentRequest(documentId)).WithTimeout(TimeSpan.FromSeconds(2));
+
+            Assert.IsTrue(atomDocument.Entries.First().Content.Contains(eventId));
         }
     }
 

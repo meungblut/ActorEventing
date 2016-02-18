@@ -88,6 +88,9 @@
     <Compile Include="Document\AtomDocumentCreatedEvent.cs" />
     <Compile Include="Document\CreateAtomDocumentCommand.cs" />
     <Compile Include="Document\GetAtomDocumentRequest.cs" />
+    <Compile Include="Serialization\JsonEventSerialisation.cs" />
+    <Compile Include="Serialization\SerializedWithContentType.cs" />
+    <Compile Include="Serialization\XmlEventSerialisation.cs" />
     <Compile Include="ShardSupport\Document\AtomDocumentShardedActorRefFactory.cs" />
     <Compile Include="ShardSupport\Feed\AtomFeedShardedActorRefFactory.cs" />
     <Compile Include="AtomNotificationChannel.cs" />

@@ -8,13 +8,14 @@ namespace Euventing.Atom.Document
 {
     public class AtomDocument
     {
-        public AtomDocument(string title, string author, string feedId, DocumentId documentId, string earlierEventsDocumentId)
+        public AtomDocument(string title, string author, FeedId feedId, DocumentId documentId, DocumentId earlierEventsDocumentId, List<AtomEntry> entries)
         {
             Title = title;
             Author = author;
             FeedId = feedId;
             DocumentId = documentId;
             EarlierEventsDocumentId = earlierEventsDocumentId;
+            Entries = entries;
         }
 
         public string Title { get; }
@@ -23,13 +24,13 @@ namespace Euventing.Atom.Document
 
         public string Author { get; }
 
-        public string FeedId { get; }
+        public FeedId FeedId { get; }
 
         public DocumentId DocumentId { get; }
 
-        public string LaterEventsDocumentId { get; }
+        public DocumentId LaterEventsDocumentId { get; }
 
-        public string EarlierEventsDocumentId { get; }
+        public DocumentId EarlierEventsDocumentId { get; }
 
         public List<AtomEntry> Entries { get; }
     }

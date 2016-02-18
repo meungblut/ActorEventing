@@ -5,9 +5,9 @@
         public AtomDocumentCreatedEvent(
             string title,
             string author,
-            string feedId,
+            FeedId feedId,
             DocumentId documentId,
-            string earlierEventsDocumentId)
+            DocumentId earlierEventsDocumentId)
         {
             Title = title;
             Author = author;
@@ -20,10 +20,10 @@
 
         public string Author { get; }
 
-        public string FeedId { get; }
+        public FeedId FeedId { get; }
 
         public DocumentId DocumentId { get; }
 
-        public string EarlierEventsDocumentId { get; }
+        public DocumentId EarlierEventsDocumentId { get; }
     }
 }

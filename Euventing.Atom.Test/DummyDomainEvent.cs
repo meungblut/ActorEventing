@@ -9,7 +9,11 @@ namespace Euventing.Atom.Test
 {
     public class DummyDomainEvent : DomainEvent
     {
-        public DummyDomainEvent(string id) : base(id)
+        public DummyDomainEvent()
+        {  
+        }
+
+        public DummyDomainEvent(string id) : base(id, DateTime.Now)
         {
         }
     }
