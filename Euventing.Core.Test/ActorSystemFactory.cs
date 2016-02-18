@@ -23,23 +23,23 @@ namespace Euventing.Core.Test
             var config = ConfigurationFactory.ParseString(@"
 
             akka {
-#loglevel = DEBUG
-akka.extensions = [""akka.contrib.pattern.DistributedPubSubExtension""]
+                loglevel = DEBUG
+                akka.extensions = [""akka.contrib.pattern.DistributedPubSubExtension""]
                 actor {
                   provider = ""Akka.Cluster.ClusterActorRefProvider, Akka.Cluster""
                   serializers {
                     akka-singleton = ""Akka.Cluster.Tools.Singleton.Serialization.ClusterSingletonMessageSerializer, Akka.Cluster.Tools""
                     wire = ""Akka.Serialization.WireSerializer, Akka.Serialization.Wire""                  
-}   
+                  }   
                   serialization-bindings {
                     ""Akka.Cluster.Tools.Singleton.ClusterSingletonMessage, Akka.Cluster.Tools"" = akka-singleton
                     ""System.Object"" = wire                 
-}
+                  }
                   serialization-identifiers {
                     ""Akka.Cluster.Tools.Singleton.Serialization.ClusterSingletonMessageSerializer, Akka.Cluster.Tools"" = 14
                   }
                 }
-            remote {
+                remote {
                   #log-remote-lifecycle-events = DEBUG
                   #log-received-messages = on
               
@@ -91,45 +91,31 @@ akka.extensions = [""akka.contrib.pattern.DistributedPubSubExtension""]
                             rebalance-threshold = 10
                             max-simultaneous-rebalance = 3
                           }
-                    }  
-                }
-                actor.deployment {
-                   /routerPool {
-                        router = consistent-hashing-pool
-                        routees.paths = [""/user/routerPool""]  
-                        nr-of-instances = 50
-                        virtual-nodes-factor = 10
-                            cluster {
-                                enabled = on
-                                max-nr-of-instances-per-node = 2
-                                allow-local-routees = on
-                                use-role = cluster
+                            }  
+                        }
+                        persistence {
+                            journal {
+                                # Path to the journal plugin to be used
+                                plugin = ""akka.persistence.journal.inmem""
+                                # In-memory journal plugin.
+                                    inmem {
+                                        # Class name of the plugin.
+                                        class = ""Euventing.InMemoryPersistence.InMemoryJournal, Euventing.InMemoryPersistence""
+                                        # Dispatcher for the plugin actor.
+                                        plugin-dispatcher = ""akka.actor.default-dispatcher""
+                                    }
+                            }
+                                snapshot-store {
+                                plugin = ""akka.persistence.snapshot-store.inmem""
+                                inmem {
+                                    class = ""Euventing.InMemoryPersistence.InMemorySnapshotStore, Euventing.InMemoryPersistence""
+                                    # Dispatcher for the plugin actor.
+                                    plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
+                                    # Dispatcher for streaming snapshot IO.
+                                    stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
+                                }
                             }
                         }
-                }
-    persistence {
-        journal {
-            # Path to the journal plugin to be used
-            plugin = ""akka.persistence.journal.inmem""
-            # In-memory journal plugin.
-                inmem {
-                    # Class name of the plugin.
-                    class = ""Euventing.InMemoryPersistence.InMemoryJournal, Euventing.InMemoryPersistence""
-                    # Dispatcher for the plugin actor.
-                    plugin-dispatcher = ""akka.actor.default-dispatcher""
-                }
-        }
-            snapshot-store {
-            plugin = ""akka.persistence.snapshot-store.inmem""
-            inmem {
-                class = ""Euventing.InMemoryPersistence.InMemorySnapshotStore, Euventing.InMemoryPersistence""
-                # Dispatcher for the plugin actor.
-                plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
-                # Dispatcher for streaming snapshot IO.
-                stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
-            }
-        }
-    }
             }
             ".Replace("{0}", portNumber.ToString()).Replace("{1}", seedNodeString));
             return ActorSystem.Create(akkaSystemName, config);
