@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Euventing.Atom.Serialization;
+using Euventing.Atom.Test;
 using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Document
@@ -10,6 +11,7 @@ namespace Euventing.Atom.Document
     {
         public AtomDocumentActor(IAtomDocumentSettings settings)
         {
+            atomDocumentSettings = settings;
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
         }
 
@@ -22,8 +24,8 @@ namespace Euventing.Atom.Document
         public DocumentId earlierEventsDocumentId;
         public List<AtomEntry> entries = new List<AtomEntry>();
 
-        private int eventsPerDocument;
         private long sequenceNumber;
+        private IAtomDocumentSettings atomDocumentSettings;
 
         protected override bool ReceiveRecover(object message)
         {
@@ -45,8 +47,20 @@ namespace Euventing.Atom.Document
         {
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
                 creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
+
             MutateInternalState(atomDocumentCreatedEvent);
             Persist(atomDocumentCreatedEvent, null);
+        }
+
+        private void Process(NewDocumentAddedEvent newDocumentEvent)
+        {
+            MutateInternalState(newDocumentEvent);
+            Persist(newDocumentEvent, null);
+        }
+
+        private void MutateInternalState(NewDocumentAddedEvent newDocumentEvent)
+        {
+            this.laterEventsDocumentId = newDocumentEvent.DocumentId;
         }
 
         private void Process(DomainEvent eventToAdd)
@@ -58,14 +72,21 @@ namespace Euventing.Atom.Document
             atomEntry.Id = eventToAdd.Id;
             atomEntry.Updated = eventToAdd.OccurredTime;
             atomEntry.Title = content.ContentType;
-            atomEntry.SequenceNumber = sequenceNumber++;
+            sequenceNumber = sequenceNumber + 1;
+            atomEntry.SequenceNumber = sequenceNumber;
+
+            if (sequenceNumber >= atomDocumentSettings.NumberOfEventsPerDocument)
+            {
+                Sender.Tell(new AtomDocumentFullEvent(documentId), Self);
+            }
+
             MutateInternalState(atomEntry);
             Persist(atomEntry, null);
         }
 
         private void Process(GetAtomDocumentRequest request)
         {
-            Sender.Tell(new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId, entries), Self);
+            Sender.Tell(new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId, laterEventsDocumentId, entries), Self);
         }
 
         private void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
@@ -75,9 +96,6 @@ namespace Euventing.Atom.Document
             this.earlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.title = documentCreated.Title;
             this.feedId = documentCreated.FeedId;
-
-            //TODO: config this or something
-            this.eventsPerDocument = 10;
         }
 
         private void MutateInternalState(RecoveryCompleted documentCreated)
@@ -88,6 +106,7 @@ namespace Euventing.Atom.Document
         {
             entries.Add(atomEntry);
             sequenceNumber = atomEntry.SequenceNumber;
+            updated = atomEntry.Updated;
         }
     }
 }

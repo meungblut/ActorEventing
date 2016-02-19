@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Euventing.Atom.Serialization;
-using Euventing.Atom.Serialization.Tesco.Eventing.ExternalPublishing.Protocol;
 using NUnit.Framework;
 
 namespace Euventing.Atom.Test

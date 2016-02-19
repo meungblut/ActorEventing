@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Euventing.Atom.Serialization
 {
     namespace Tesco.Eventing.ExternalPublishing.Protocol
     {
-        using System.IO;
-        using System.Xml;
-        using System.Xml.Serialization;
-
         public class XmlEventSerialisation
         {
             public SerialisedWithContentType GetContentWithContentType(object objectToSerialise)

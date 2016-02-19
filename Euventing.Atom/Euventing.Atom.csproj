@@ -86,10 +86,12 @@
     <Compile Include="AtomDocumentRetriever.cs" />
     <Compile Include="AtomEventNotifier.cs" />
     <Compile Include="Document\AtomDocumentCreatedEvent.cs" />
+    <Compile Include="Document\AtomDocumentFullEvent.cs" />
     <Compile Include="Document\AtomDocumentSettings.cs" />
     <Compile Include="Document\CreateAtomDocumentCommand.cs" />
     <Compile Include="Document\GetAtomDocumentRequest.cs" />
     <Compile Include="Document\IAtomDocumentSettings.cs" />
+    <Compile Include="Document\NewDocumentAddedEvent.cs" />
     <Compile Include="Serialization\JsonEventSerialisation.cs" />
     <Compile Include="Serialization\SerializedWithContentType.cs" />
     <Compile Include="Serialization\XmlEventSerialisation.cs" />
