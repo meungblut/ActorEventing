@@ -22,15 +22,16 @@ namespace Euventing.Atom.Test
         {
             var actorSystemFactory = new ShardedActorSystemFactory();
             var actorSystem = factory.GetActorSystem(3624, "atomActorSystem", "127.0.0.1:3624");
+
             AtomFeedShardedActorRefFactory actorFActory = new AtomFeedShardedActorRefFactory(actorSystem);
             _notifier = new AtomEventNotifier(actorFActory);
             _retriever = new AtomDocumentRetriever(actorFActory);
 
             subscriptionMessage = new SubscriptionMessage(
-    new AtomNotificationChannel(),
-    new UserId(Guid.NewGuid().ToString()),
-    new SubscriptionId(Guid.NewGuid().ToString()),
-    new AllEventMatcher());
+                new AtomNotificationChannel(),
+                new UserId(Guid.NewGuid().ToString()),
+                new SubscriptionId(Guid.NewGuid().ToString()),
+                new AllEventMatcher());
 
             _notifier.Create(subscriptionMessage);
         }

@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="AtomDocumentActorShould.cs" />
     <Compile Include="AtomEventNotifierShould.cs" />
+    <Compile Include="AtomFeedActorShould.cs" />
     <Compile Include="DummyAtomDocumentSettings.cs" />
     <Compile Include="DummyDomainEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

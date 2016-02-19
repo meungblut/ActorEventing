@@ -7,8 +7,6 @@ using Akka.Event;
 using Euventing.Atom.Document;
 using Euventing.Core.Test;
 using NUnit.Framework;
-using Akka.TestKit;
-using Akka.TestKit.NUnit;
 
 namespace Euventing.Atom.Test
 {
@@ -18,8 +16,7 @@ namespace Euventing.Atom.Test
         private ActorSystem system;
         private IActorRef atomActorRef;
         private DocumentId documentId;
-
-
+        
         [OneTimeSetUp]
         public void Setup()
         {
@@ -87,7 +84,7 @@ namespace Euventing.Atom.Test
 
             atomActorRef.Tell(new NewDocumentAddedEvent(newdocumentId));
 
-            Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            Thread.Sleep(TimeSpan.FromMilliseconds(500));
 
             var atomDocument = await atomActorRef.Ask<AtomDocument>(new GetAtomDocumentRequest(documentId)).WithTimeout(TimeSpan.FromSeconds(2));
 

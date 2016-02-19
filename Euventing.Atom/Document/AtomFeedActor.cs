@@ -1,17 +1,21 @@
 ﻿using System;
+using Akka.Actor;
 using Akka.Persistence;
 
 namespace Euventing.Atom.Document
 {
     public class AtomFeedActor : PersistentActor
     {
+        private readonly IAtomDocumentActorBuilder builder;
         private FeedId atomFeedId;
         private DocumentId currentFeedHeadDocument;
 
-        public AtomFeedActor()
+        public AtomFeedActor(IAtomDocumentActorBuilder builder)
         {
+            this.builder = builder;
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
         }
+
         protected override bool ReceiveRecover(object message)
         {
             return true;
@@ -33,5 +37,10 @@ namespace Euventing.Atom.Document
         }
 
         public override string PersistenceId { get; }
+    }
+
+    public interface IAtomDocumentActorBuilder
+    {
+        IActorRef GetActorRef();
     }
 }

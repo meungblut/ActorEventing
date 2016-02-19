@@ -13,10 +13,12 @@ namespace Euventing.Atom.ShardSupport.Document
         {
             this.actorSystem = actorSystem;
 
+            var props = Props.Create(() => new AtomFeedActor(new ShardedAtomDocumentFactory(actorSystem)));
+
             var settings = ClusterShardingSettings.Create(actorSystem);
             ClusterSharding.Get(actorSystem).Start(
                 typeName: "AtomFeedActor",
-                entityProps: Props.Create<AtomFeedActor>(),
+                entityProps: props,
                 settings: settings,
                 messageExtractor: new AtomFeedShardDataMessageExtractor());
         }
@@ -25,5 +27,5 @@ namespace Euventing.Atom.ShardSupport.Document
         {
             return ClusterSharding.Get(actorSystem).ShardRegion("AtomFeedActor");
         }
-}
+    }
 }
