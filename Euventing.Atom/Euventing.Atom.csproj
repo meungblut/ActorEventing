@@ -88,9 +88,11 @@
     <Compile Include="Document\AtomDocumentCreatedEvent.cs" />
     <Compile Include="Document\AtomDocumentFullEvent.cs" />
     <Compile Include="Document\AtomDocumentSettings.cs" />
+    <Compile Include="Document\AtomFeedCreationCommand.cs" />
     <Compile Include="Document\CreateAtomDocumentCommand.cs" />
     <Compile Include="Document\GetAtomDocumentRequest.cs" />
     <Compile Include="Document\HardCodedAtomDocumentSettings.cs" />
+    <Compile Include="Document\IAtomDocumentActorBuilder.cs" />
     <Compile Include="Document\IAtomDocumentSettings.cs" />
     <Compile Include="Document\NewDocumentAddedEvent.cs" />
     <Compile Include="Serialization\JsonEventSerialisation.cs" />

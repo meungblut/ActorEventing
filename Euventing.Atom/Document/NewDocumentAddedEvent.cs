@@ -1,6 +1,4 @@
-using Euventing.Atom.Document;
-
-namespace Euventing.Atom.Test
+namespace Euventing.Atom.Document
 {
     public class NewDocumentAddedEvent
     {

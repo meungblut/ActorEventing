@@ -1,22 +1,26 @@
 ﻿using System;
+using System.Threading;
 using Akka.Actor;
 using Akka.Event;
+using Akka.Util;
 using Euventing.Atom.Document;
 using Euventing.Core.Test;
 using NUnit.Framework;
 
 namespace Euventing.Atom.Test
 {
-   public  class AtomFeedActorShould
+    public class AtomFeedActorShould
     {
         private ShardedActorSystemFactory shardedActorSystemFactory;
         private ActorSystem system;
         private IActorRef atomActorRef;
-        private DocumentId documentId;
+        private DummyAtomDocumentActorCreator dummyAtomDocumentActorCreator;
+        private FeedId feddId;
 
         [OneTimeSetUp]
         public void Setup()
         {
+            dummyAtomDocumentActorCreator = new DummyAtomDocumentActorCreator();
             shardedActorSystemFactory = new ShardedActorSystemFactory();
             system = shardedActorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
             CreateAtomActor("123");
@@ -24,42 +28,109 @@ namespace Euventing.Atom.Test
 
         private void CreateAtomActor(string actorId)
         {
-            var dummyDocumentCreator = new DummyAtomDocumentActorCreator();
-            var props = Props.Create(() => new AtomFeedActor(new DummyAtomDocumentActorCreator()));
+            dummyAtomDocumentActorCreator = new DummyAtomDocumentActorCreator();
+            var props = Props.Create(() => new AtomFeedActor(dummyAtomDocumentActorCreator));
 
             atomActorRef = system.ActorOf(props, name: actorId);
         }
 
-       [Test]
-       public void CreateAHeadDocumentWithTheExpectedParametersWhenAFeedIsCreated()
-       {
-           
-       }
+        [Test]
+        public void CreateAHeadDocumentWithTheExpectedParametersWhenAFeedIsCreated()
+        {
+            CreateFeed();
 
-       [Test]
-       public void CreateANewDocumentWhenToldTheCurrentHeadDocumentIsFull()
-       {
-           
-       }
+            dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.WaitOne(TimeSpan.FromSeconds(1));
+            var documentCreated =
+                (CreateAtomDocumentCommand) dummyAtomDocumentActorCreator.ActorRefReturned.MessageTellCalledWith;
 
-       [Test]
-       public void UpdateTheHeadDocumentWhenTheNewDocumentIsREadyToAcceptEvents()
-       {
-           
-       }
+            Assert.AreEqual(feddId.Id, documentCreated.FeedId.Id);
+        }
 
-       [Test]
-       public void ReturnANullFeedIfTheFeedHasNotBeenInitialised()
-       {
-           //Passivate immediately?
-       }
+        private void CreateFeed()
+        {
+            feddId = new FeedId(Guid.NewGuid().ToString());
+            var atomFeedCreationCommand = new AtomFeedCreationCommand("title", "author", feddId,
+                new DocumentId(Guid.NewGuid().ToString()));
+            atomActorRef.Tell(atomFeedCreationCommand);
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+        }
+
+        [Test]
+        public void CreateANewDocumentWhenToldTheCurrentHeadDocumentIsFull()
+        {
+            CreateFeed();
+
+            dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.WaitOne(TimeSpan.FromSeconds(1));
+            var documentCreated =
+                (CreateAtomDocumentCommand)dummyAtomDocumentActorCreator.ActorRefReturned.MessageTellCalledWith;
+
+            atomActorRef.Tell(new AtomDocumentFullEvent(documentCreated.DocumentId));
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.Reset();
+            dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.WaitOne(TimeSpan.FromSeconds(1));
+            var secondDocumentCreated =
+                (CreateAtomDocumentCommand)dummyAtomDocumentActorCreator.ActorRefReturned.MessageTellCalledWith;
+
+            Assert.AreNotEqual(documentCreated.DocumentId.Id, secondDocumentCreated.DocumentId.Id);
+        }
+
+        [Test]
+        public void UpdateTheHeadDocumentWhenTheNewDocumentIsREadyToAcceptEvents()
+        {
+
+        }
+
+        [Test]
+        public void ReturnANullFeedIfTheFeedHasNotBeenInitialised()
+        {
+            //Passivate immediately?
+        }
     }
 
     internal class DummyAtomDocumentActorCreator : IAtomDocumentActorBuilder
     {
+        internal DummyActorRef ActorRefReturned { get; private set; }
         public IActorRef GetActorRef()
+        {
+            ActorRefReturned = new DummyActorRef();
+            return ActorRefReturned;
+        }
+    }
+
+    internal class DummyActorRef : IActorRef
+    {
+        internal object MessageTellCalledWith { get; private set; }
+
+        internal ManualResetEvent ActorTellCalled = new ManualResetEvent(false);
+
+        public void Tell(object message, IActorRef sender)
+        {
+            MessageTellCalledWith = message;
+            ActorTellCalled.Set();
+        }
+
+        public bool Equals(IActorRef other)
         {
             throw new NotImplementedException();
         }
+
+        public int CompareTo(IActorRef other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISurrogate ToSurrogate(ActorSystem system)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CompareTo(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ActorPath Path { get; }
     }
 }

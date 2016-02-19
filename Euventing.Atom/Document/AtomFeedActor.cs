@@ -1,5 +1,4 @@
 ﻿using System;
-using Akka.Actor;
 using Akka.Persistence;
 
 namespace Euventing.Atom.Document
@@ -9,6 +8,9 @@ namespace Euventing.Atom.Document
         private readonly IAtomDocumentActorBuilder builder;
         private FeedId atomFeedId;
         private DocumentId currentFeedHeadDocument;
+        private DocumentId nextHeadDocument;
+        private string feedTitle;
+        private string feedAuthor;
 
         public AtomFeedActor(IAtomDocumentActorBuilder builder)
         {
@@ -23,24 +25,42 @@ namespace Euventing.Atom.Document
 
         protected override bool ReceiveCommand(object message)
         {
-            if (message is FeedId)
-            {
-                atomFeedId = ((FeedId) message);
-                currentFeedHeadDocument = new DocumentId(Guid.NewGuid().ToString());
-            }
-            else if (message is GetHeadDocumentForFeedRequest)
-                Sender.Tell(currentFeedHeadDocument, Self);
-            else
-                return false;
+            ((dynamic)this).Process((dynamic)message);
 
             return true;
         }
 
         public override string PersistenceId { get; }
-    }
 
-    public interface IAtomDocumentActorBuilder
-    {
-        IActorRef GetActorRef();
+        private void Process(AtomDocumentFullEvent fullEvent)
+        {
+            var documentId = new DocumentId(Guid.NewGuid().ToString());
+            nextHeadDocument = documentId;
+            var atomDocument = builder.GetActorRef();
+            atomDocument.Tell(new CreateAtomDocumentCommand(
+                feedTitle, feedAuthor, atomFeedId, documentId, currentFeedHeadDocument), Self);
+        }
+
+        private void Process(AtomFeedCreationCommand creationCommand)
+        {
+            var documentId = new DocumentId(Guid.NewGuid().ToString());
+            currentFeedHeadDocument = documentId;
+            var atomDocument = builder.GetActorRef();
+            feedTitle = creationCommand.Title;
+            feedAuthor = creationCommand.Author;
+            atomDocument.Tell(new CreateAtomDocumentCommand(
+                creationCommand.Title, creationCommand.Author, creationCommand.FeedId, currentFeedHeadDocument, creationCommand.EarlierEventsDocumentId), Self);
+        }
+
+        private void Process(FeedId feedId)
+        {
+            atomFeedId = feedId;
+            currentFeedHeadDocument = new DocumentId(Guid.NewGuid().ToString());
+        }
+
+        private void Process(GetHeadDocumentForFeedRequest getHeadRequest)
+        {
+            Sender.Tell(currentFeedHeadDocument, Self);
+        }
     }
 }

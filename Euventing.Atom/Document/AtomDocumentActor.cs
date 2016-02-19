@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using Euventing.Atom.Serialization;
-using Euventing.Atom.Test;
 using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Document
