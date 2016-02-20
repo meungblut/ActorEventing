@@ -12,6 +12,8 @@ namespace Euventing.Atom.Document
         private string feedTitle;
         private string feedAuthor;
 
+        public override string PersistenceId { get; }
+
         public AtomFeedActor(IAtomDocumentActorBuilder builder)
         {
             this.builder = builder;
@@ -29,8 +31,6 @@ namespace Euventing.Atom.Document
 
             return true;
         }
-
-        public override string PersistenceId { get; }
 
         private void Process(AtomDocumentFullEvent fullEvent)
         {

@@ -11,13 +11,14 @@ namespace Euventing.Core.Subscriptions
         private SubscriptionMessage subscriptionMessage;
         private readonly NotifierFactory notifierFactory;
 
+        public override string PersistenceId { get; }
+
         public SubscriptionActor()
         {
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
             notifierFactory = new NotifierFactory();
         }
 
-        //recovery stream
         protected override bool ReceiveRecover(object message)
         {
             if (message is SubscriptionMessage)
@@ -26,42 +27,37 @@ namespace Euventing.Core.Subscriptions
             return true;
         }
 
-        //Inbound messages stream
         protected override bool ReceiveCommand(object message)
         {
-            if (message == null)
-            {
-                return false;
-            }
-            if (message is DomainEvent)
-            {
-                var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
-                notifier.Notify(subscriptionMessage, (DomainEvent)message);
-            }
-            else if (message is SubscriptionQuery)
-            {
-                if (subscriptionMessage == null)
-                    Sender.Tell(new NullSubscription(), Context.Self);
-                else
-                    Sender.Tell(subscriptionMessage, Context.Self);
-            }
-            else if (message is SubscriptionMessage)
-            {
-                this.subscriptionMessage = (SubscriptionMessage)message;
-                var mediator = DistributedPubSub.Get(Context.System).Mediator;
-                mediator.Tell(new Subscribe("publishedEventsTopic", Self), Self);
-            }
-            else if (message is SubscribeAck)
-            {
+            ((dynamic)this).Process((dynamic)message);
 
-            }
-            else
-            {
-                return false;
-            }
             return true;
         }
 
-        public override string PersistenceId { get; }
+        private void Process(SubscribeAck eventToProcess)
+        {
+
+        }
+
+        private void Process(SubscriptionMessage subscriptionMessage)
+        {
+            this.subscriptionMessage = subscriptionMessage;
+            var mediator = DistributedPubSub.Get(Context.System).Mediator;
+            mediator.Tell(new Subscribe("publishedEventsTopic", Self), Self);
+        }
+
+        private void Process(DomainEvent eventToProcess)
+        {
+            var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
+            notifier.Notify(subscriptionMessage, eventToProcess);
+        }
+
+        private void Process(SubscriptionQuery query)
+        {
+            if (subscriptionMessage == null)
+                Sender.Tell(new NullSubscription(), Context.Self);
+            else
+                Sender.Tell(subscriptionMessage, Context.Self);
+        }
     }
 }
