@@ -81,8 +81,6 @@ namespace Euventing.Atom.Test
                 new DummyDomainEvent(Guid.NewGuid().ToString()))).WithTimeout(TimeSpan.FromSeconds(2));
 
             Assert.AreEqual(documentId, documentFullEvent.DocumentId);
-
-            Thread.Sleep(TimeSpan.FromSeconds(2));
         }
 
         [Test]

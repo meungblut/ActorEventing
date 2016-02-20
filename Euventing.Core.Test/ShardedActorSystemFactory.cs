@@ -23,13 +23,13 @@ namespace Euventing.Core.Test
             var config = ConfigurationFactory.ParseString(@"
 
             akka {
-                #loglevel = DEBUG
+                loglevel = DEBUG
                 akka.extensions = [""akka.contrib.pattern.DistributedPubSubExtension""]
                 actor {
                   provider = ""Akka.Cluster.ClusterActorRefProvider, Akka.Cluster""
                   serializers {
                     akka-singleton = ""Akka.Cluster.Tools.Singleton.Serialization.ClusterSingletonMessageSerializer, Akka.Cluster.Tools""
-                    wire = ""Akka.Serialization.WireSerializer, Akka.Serialization.Wire""                  
+                    wire = ""Akka.Serialization.WireSerializer, Akka.Serialization.Wire""               
                   }   
                   serialization-bindings {
                     ""Akka.Cluster.Tools.Singleton.ClusterSingletonMessage, Akka.Cluster.Tools"" = akka-singleton
@@ -38,6 +38,12 @@ namespace Euventing.Core.Test
                   serialization-identifiers {
                     ""Akka.Cluster.Tools.Singleton.Serialization.ClusterSingletonMessageSerializer, Akka.Cluster.Tools"" = 14
                   }
+        debug {  
+              receive = on 
+              autoreceive = on
+              lifecycle = on
+              event-stream = on
+              unhandled = on   }
                 }
                 remote {
                   #log-remote-lifecycle-events = DEBUG

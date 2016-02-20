@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 using Euventing.Atom.Document;
 using Euventing.Atom.ShardSupport.Document;
 using Euventing.Core.Messages;
@@ -22,7 +23,7 @@ namespace Euventing.Atom
 
         public void Create(SubscriptionMessage message)
         {
-            factory.GetActorRef().Tell(new FeedId(message.SubscriptionId.Id));
+            factory.GetActorRef().Tell(new AtomFeedCreationCommand("Title", "author", new FeedId(message.SubscriptionId.Id), null));
         }
     }
 }

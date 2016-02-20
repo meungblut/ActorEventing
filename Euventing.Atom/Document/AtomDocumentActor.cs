@@ -42,6 +42,8 @@ namespace Euventing.Atom.Document
             if (message == null)
                 return true;
 
+            Console.WriteLine("AtomDocumentActor ReceiveCommand " + message.GetType());
+
             ((dynamic)this).Process((dynamic)message);
 
             return true;
@@ -51,18 +53,19 @@ namespace Euventing.Atom.Document
 
         private void Process(CreateAtomDocumentCommand creationRequest)
         {
+            Console.WriteLine("Creating document " + creationRequest.DocumentId);
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
                 creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
 
             MutateInternalState(atomDocumentCreatedEvent);
-            Persist(atomDocumentCreatedEvent, null);
+            Persist(atomDocumentCreatedEvent, MutateInternalState);
+            Sender.Tell(new DocumentReadyToReceiveEvents(this.documentId), Self);
         }
 
         private void Process(NewDocumentAddedEvent newDocumentEvent)
         {
             MutateInternalState(newDocumentEvent);
             Persist(newDocumentEvent, null);
-            Sender.Tell(new DocumentReadyToReceiveEvents(this.documentId), Self);
         }
 
         private void MutateInternalState(NewDocumentAddedEvent newDocumentEvent)
@@ -82,13 +85,19 @@ namespace Euventing.Atom.Document
             sequenceNumber = sequenceNumber + 1;
             atomEntry.SequenceNumber = sequenceNumber;
 
+            Console.WriteLine("saving event: " + sequenceNumber + " to doc " + documentId.Id);
+            Console.WriteLine("Greater than? " + atomDocumentSettings.NumberOfEventsPerDocument);
+
+            Persist(atomEntry, MutateInternalState);
+
             if (sequenceNumber >= atomDocumentSettings.NumberOfEventsPerDocument)
             {
+                Console.WriteLine("Document Full!");
+                Console.WriteLine("Telling actor" + Sender.Path);
+
                 Sender.Tell(new AtomDocumentFullEvent(documentId), Self);
             }
-
-            MutateInternalState(atomEntry);
-            Persist(atomEntry, null);
+            Sender.Tell("Ack", Self);
         }
 
         private void Process(GetAtomDocumentRequest request)

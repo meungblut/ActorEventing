@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Euventing.Atom.ShardSupport.Document;
-using Euventing.Atom.ShardSupport.Feed;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
 using Euventing.Core.Test;
@@ -46,20 +45,39 @@ namespace Euventing.Atom.Test
         [Test]
         public async Task AddAnEventToTheHeadDocumentIdWhenAnEventIsSubmitted()
         {
-            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
-            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
-            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
-            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
-            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
-            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
+            Notify(16);
 
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
             var document = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
 
-            Assert.AreEqual(6, document.Entries.Count);
+            Assert.AreEqual(16, document.Entries.Count);
         }
 
-   
+        [Test]
+        public async Task CreateANewDocumentIdWhen151EventsAreSubmitted()
+        {
+            //This line stops the atomdoc actor replying to the atomfeedactor. Why?
+            //var initialDocumentId = await _retriever.GetHeadDocumentId(subscriptionMessage.SubscriptionId);
+            Notify(161);
+
+            Thread.Sleep(TimeSpan.FromSeconds(3));
+
+            var secondDocumentId = await _retriever.GetHeadDocumentId(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
+            var document = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
+
+            Assert.Less(document.Entries.Count, 161);
+            //Assert.AreNotEqual(initialDocumentId, secondDocumentId);
+            Assert.Greater(document.Entries.Count, 0);
+        }
+
+        private void Notify(int numberOfNotifications)
+        {
+            for (int i = 0; i < numberOfNotifications; i++)
+            {
+                _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
+                Thread.Sleep(TimeSpan.FromMilliseconds(30));
+            }
+        }
     }
 }

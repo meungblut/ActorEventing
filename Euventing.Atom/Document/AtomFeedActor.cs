@@ -18,6 +18,7 @@ namespace Euventing.Atom.Document
 
         public AtomFeedActor(IAtomDocumentActorBuilder builder)
         {
+            Console.WriteLine("Feed actor path is " + Self.Path);
             this.builder = builder;
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
         }
@@ -30,7 +31,13 @@ namespace Euventing.Atom.Document
         protected override bool ReceiveCommand(object message)
         {
             if (message == null)
+            {
+                Console.WriteLine("Received null message");
                 return true;
+            }
+
+            Console.WriteLine("AtomFeedActor ReceiveCommand " + message.GetType());
+
 
             try
             {
@@ -44,11 +51,18 @@ namespace Euventing.Atom.Document
             return true;
         }
 
+        private void Process(string message)
+        {
+            Console.WriteLine(message);
+        }
+
         private void Process(AtomDocumentFullEvent fullEvent)
         {
+            Console.WriteLine("Feed received document full message");
             var documentId = new DocumentId(Guid.NewGuid().ToString());
             nextHeadDocument = documentId;
             var atomDocument = builder.GetActorRef();
+            Console.WriteLine("Creating document" + documentId.Id);
             atomDocument.Tell(new CreateAtomDocumentCommand(
                 feedTitle, feedAuthor, atomFeedId, documentId, currentFeedHeadDocument), Self);
         }
@@ -57,6 +71,7 @@ namespace Euventing.Atom.Document
         {
             var documentId = new DocumentId(Guid.NewGuid().ToString());
             currentFeedHeadDocument = documentId;
+            nextHeadDocument = documentId;
             var atomDocument = builder.GetActorRef();
             feedTitle = creationCommand.Title;
             feedAuthor = creationCommand.Author;
@@ -66,11 +81,13 @@ namespace Euventing.Atom.Document
 
         private void Process(DocumentReadyToReceiveEvents documentReadyToReceiveEvents)
         {
+            Console.WriteLine("Feed received ready to receive message from " + documentReadyToReceiveEvents.DocumentId.Id);
+
             var headUpdated = new AtomFeedDocumentHeadChanged(documentReadyToReceiveEvents.DocumentId);
+            MutateInternalState(headUpdated);
             Persist(headUpdated, MutateInternalState);
         }
-
-
+        
         private void Process(FeedId feedId)
         {
             atomFeedId = feedId;
@@ -100,7 +117,6 @@ namespace Euventing.Atom.Document
 
         private void MutateInternalState(AtomFeedDocumentHeadChanged headChanged)
         {
-            nextHeadDocument = null;
             currentFeedHeadDocument = headChanged.DocumentId;
         }
     }
