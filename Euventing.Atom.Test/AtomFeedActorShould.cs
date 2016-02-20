@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Util;
@@ -77,9 +78,27 @@ namespace Euventing.Atom.Test
         }
 
         [Test]
-        public void UpdateTheHeadDocumentWhenTheNewDocumentIsREadyToAcceptEvents()
+        public async Task UpdateTheHeadDocumentWhenTheNewDocumentIsReadyToAcceptEvents()
         {
+            CreateFeed();
 
+            dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.WaitOne(TimeSpan.FromSeconds(1));
+            var documentCreated =
+                (CreateAtomDocumentCommand)dummyAtomDocumentActorCreator.ActorRefReturned.MessageTellCalledWith;
+
+            atomActorRef.Tell(new AtomDocumentFullEvent(documentCreated.DocumentId));
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.Reset();
+            dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.WaitOne(TimeSpan.FromSeconds(1));
+            var secondDocumentCreated =
+                (CreateAtomDocumentCommand)dummyAtomDocumentActorCreator.ActorRefReturned.MessageTellCalledWith;
+
+            atomActorRef.Tell(new DocumentReadyToReceiveEvents(secondDocumentCreated.DocumentId));
+
+            var documentId = await atomActorRef.Ask<DocumentId>(new GetHeadDocumentForFeedRequest(null));
+            Assert.AreEqual(secondDocumentCreated.DocumentId, documentId);
         }
 
         [Test]

@@ -89,7 +89,9 @@
     <Compile Include="Document\AtomDocumentFullEvent.cs" />
     <Compile Include="Document\AtomDocumentSettings.cs" />
     <Compile Include="Document\AtomFeedCreationCommand.cs" />
+    <Compile Include="Document\AtomFeedDocumentHeadChanged.cs" />
     <Compile Include="Document\CreateAtomDocumentCommand.cs" />
+    <Compile Include="Document\DocumentReadyToReceiveEvents.cs" />
     <Compile Include="Document\GetAtomDocumentRequest.cs" />
     <Compile Include="Document\HardCodedAtomDocumentSettings.cs" />
     <Compile Include="Document\IAtomDocumentActorBuilder.cs" />

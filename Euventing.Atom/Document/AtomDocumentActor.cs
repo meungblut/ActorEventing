@@ -55,6 +55,7 @@ namespace Euventing.Atom.Document
         {
             MutateInternalState(newDocumentEvent);
             Persist(newDocumentEvent, null);
+            Sender.Tell(new DocumentReadyToReceiveEvents(this.documentId), Self);
         }
 
         private void MutateInternalState(NewDocumentAddedEvent newDocumentEvent)
