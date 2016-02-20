@@ -92,11 +92,14 @@
     <Compile Include="Document\AtomFeedDocumentHeadChanged.cs" />
     <Compile Include="Document\CreateAtomDocumentCommand.cs" />
     <Compile Include="Document\DocumentReadyToReceiveEvents.cs" />
+    <Compile Include="Document\EventWithDocumentIdNotificationMessage.cs" />
     <Compile Include="Document\GetAtomDocumentRequest.cs" />
     <Compile Include="Document\HardCodedAtomDocumentSettings.cs" />
     <Compile Include="Document\IAtomDocumentActorBuilder.cs" />
     <Compile Include="Document\IAtomDocumentSettings.cs" />
     <Compile Include="Document\NewDocumentAddedEvent.cs" />
+    <Compile Include="EventWithSubscriptionNotificationMessage.cs" />
+    <Compile Include="GetHeadDocumentForFeedRequest.cs" />
     <Compile Include="Serialization\JsonEventSerialisation.cs" />
     <Compile Include="Serialization\SerializedWithContentType.cs" />
     <Compile Include="Serialization\XmlEventSerialisation.cs" />
@@ -110,7 +113,7 @@
     <Compile Include="Document\AtomFeedActor.cs" />
     <Compile Include="Document\DocumentId.cs" />
     <Compile Include="Document\FeedId.cs" />
-    <Compile Include="GetHeadDocumentForFeedRequest.cs" />
+    <Compile Include="GetHeadDocumentIdForFeedRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShardSupport\Feed\AtomFeedShardDataMessageExtractor.cs" />
     <Compile Include="ShardSupport\Document\AtomDocumentShardDataMessageExtractor.cs" />

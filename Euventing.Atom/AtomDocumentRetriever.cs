@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Euventing.Atom.Document;
@@ -20,12 +21,13 @@ namespace Euventing.Atom
 
         public async Task<DocumentId> GetHeadDocumentId(SubscriptionId subscriptionId)
         {
-            var documentId = await factory.GetActorRef().Ask<DocumentId>(new GetHeadDocumentForFeedRequest(subscriptionId));
+            var documentId = await factory.GetActorRef().Ask<DocumentId>(new GetHeadDocumentIdForFeedRequest(subscriptionId));
             return documentId;
         }
 
         public async Task<AtomDocument> GetHeadDocument(SubscriptionId subscriptionId)
         {
+            Console.WriteLine("Getting document with subscription " + subscriptionId.Id);
             var document = await factory.GetActorRef().Ask<AtomDocument>(new GetHeadDocumentForFeedRequest(subscriptionId));
             return document;
         }

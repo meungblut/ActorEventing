@@ -46,7 +46,20 @@ namespace Euventing.Atom.Test
         [Test]
         public async Task AddAnEventToTheHeadDocumentIdWhenAnEventIsSubmitted()
         {
+            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
+            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
+            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
+            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
+            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
+            _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
 
+            Thread.Sleep(TimeSpan.FromSeconds(3));
+
+            var document = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
+
+            Assert.AreEqual(6, document.Entries.Count);
         }
+
+   
     }
 }

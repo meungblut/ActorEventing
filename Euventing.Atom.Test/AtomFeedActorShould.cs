@@ -97,7 +97,7 @@ namespace Euventing.Atom.Test
 
             atomActorRef.Tell(new DocumentReadyToReceiveEvents(secondDocumentCreated.DocumentId));
 
-            var documentId = await atomActorRef.Ask<DocumentId>(new GetHeadDocumentForFeedRequest(null));
+            var documentId = await atomActorRef.Ask<DocumentId>(new GetHeadDocumentIdForFeedRequest(null));
             Assert.AreEqual(secondDocumentCreated.DocumentId, documentId);
         }
 

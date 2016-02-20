@@ -17,6 +17,7 @@ namespace Euventing.Atom
 
         public void Notify(SubscriptionMessage message, DomainEvent eventToNotify)
         {
+            factory.GetActorRef().Tell(new EventWithSubscriptionNotificationMessage(message.SubscriptionId, eventToNotify));
         }
 
         public void Create(SubscriptionMessage message)

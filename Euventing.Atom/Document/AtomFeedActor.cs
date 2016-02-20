@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Akka.Actor;
 using Akka.Persistence;
 
 namespace Euventing.Atom.Document
@@ -27,7 +29,17 @@ namespace Euventing.Atom.Document
 
         protected override bool ReceiveCommand(object message)
         {
-            ((dynamic)this).Process((dynamic)message);
+            if (message == null)
+                return true;
+
+            try
+            {
+                ((dynamic)this).Process((dynamic)message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error processing " + message.GetType() + e.ToString());
+            }
 
             return true;
         }
@@ -65,9 +77,25 @@ namespace Euventing.Atom.Document
             currentFeedHeadDocument = new DocumentId(Guid.NewGuid().ToString());
         }
 
-        private void Process(GetHeadDocumentForFeedRequest getHeadRequest)
+        private void Process(EventWithSubscriptionNotificationMessage message)
+        {
+            var notificationMessage = new EventWithDocumentIdNotificationMessage(currentFeedHeadDocument, message.EventToNotify);
+            var atomDocument = builder.GetActorRef();
+            atomDocument.Tell(notificationMessage, Self);
+        }
+
+        private void Process(GetHeadDocumentIdForFeedRequest getHeadIdRequest)
         {
             Sender.Tell(currentFeedHeadDocument, Self);
+        }
+
+        private void Process(GetHeadDocumentForFeedRequest getHeadRequest)
+        {
+            Console.WriteLine("Getting document with id " + currentFeedHeadDocument.Id);
+
+            var atomDocument =
+                builder.GetActorRef().Ask<AtomDocument>(new GetAtomDocumentRequest(currentFeedHeadDocument)).Result;
+            Sender.Tell(atomDocument, Self);
         }
 
         private void MutateInternalState(AtomFeedDocumentHeadChanged headChanged)

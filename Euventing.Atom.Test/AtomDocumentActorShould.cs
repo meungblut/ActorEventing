@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
 using Euventing.Atom.Document;
+using Euventing.Core.Messages;
 using Euventing.Core.Test;
 using NUnit.Framework;
 
@@ -54,7 +55,8 @@ namespace Euventing.Atom.Test
         public async Task AddRaisedEventToTheAtomDocument()
         {
             var eventId = Guid.NewGuid().ToString();
-            atomActorRef.Tell(new DummyDomainEvent(eventId));
+            atomActorRef.Tell(new EventWithDocumentIdNotificationMessage(documentId, 
+                new DummyDomainEvent(eventId)));
 
             Thread.Sleep(TimeSpan.FromSeconds(2));
 
@@ -66,11 +68,17 @@ namespace Euventing.Atom.Test
         [Test]
         public async Task NotifySenderThatDocumentIsFullWhenNumberOfEventsMatchesMaximumNumberOfEventsPerDocument()
         {
-            atomActorRef.Tell(new DummyDomainEvent(Guid.NewGuid().ToString()));
+            CreateAtomActor("1");
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            atomActorRef.Tell(new EventWithDocumentIdNotificationMessage(documentId,
+                new DummyDomainEvent(Guid.NewGuid().ToString())));
 
             //Using the ask pattern here because the teskit has an old nunit reference and I got fed up
             //with assembly binding redirects - revisit
-            var documentFullEvent = await atomActorRef.Ask<AtomDocumentFullEvent>(new DummyDomainEvent(Guid.NewGuid().ToString())).WithTimeout(TimeSpan.FromSeconds(2));
+            var documentFullEvent = await atomActorRef.Ask<AtomDocumentFullEvent>(new EventWithDocumentIdNotificationMessage(documentId,
+                new DummyDomainEvent(Guid.NewGuid().ToString()))).WithTimeout(TimeSpan.FromSeconds(2));
 
             Assert.AreEqual(documentId, documentFullEvent.DocumentId);
 

@@ -28,6 +28,10 @@ namespace Euventing.Atom.Document
 
         protected override bool ReceiveRecover(object message)
         {
+            //ToDo: establish where the nulls are coming from
+            if (message == null)
+                return true;
+
             ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
@@ -35,6 +39,9 @@ namespace Euventing.Atom.Document
 
         protected override bool ReceiveCommand(object message)
         {
+            if (message == null)
+                return true;
+
             ((dynamic)this).Process((dynamic)message);
 
             return true;
@@ -63,14 +70,14 @@ namespace Euventing.Atom.Document
             this.laterEventsDocumentId = newDocumentEvent.DocumentId;
         }
 
-        private void Process(DomainEvent eventToAdd)
+        private void Process(EventWithDocumentIdNotificationMessage eventToAdd)
         {
             var atomEntry = new AtomEntry();
             var serializer = new JsonEventSerialisation();
-            var content = serializer.GetContentWithContentType(eventToAdd);
+            var content = serializer.GetContentWithContentType(eventToAdd.DomainEvent);
             atomEntry.Content = content.Content;
-            atomEntry.Id = eventToAdd.Id;
-            atomEntry.Updated = eventToAdd.OccurredTime;
+            atomEntry.Id = eventToAdd.DomainEvent.Id;
+            atomEntry.Updated = eventToAdd.DomainEvent.OccurredTime;
             atomEntry.Title = content.ContentType;
             sequenceNumber = sequenceNumber + 1;
             atomEntry.SequenceNumber = sequenceNumber;

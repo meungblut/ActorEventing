@@ -14,6 +14,12 @@ namespace Euventing.Atom.ShardSupport.Document
             if (message is DocumentId)
                 return ((DocumentId)message).Id;
 
+            if (message is GetAtomDocumentRequest)
+                return ((GetAtomDocumentRequest) message).DocumentId.Id;
+
+            if (message is EventWithDocumentIdNotificationMessage)
+                return ((EventWithDocumentIdNotificationMessage)message).AtomDocumentId.Id;
+
             return null;
         }
 
@@ -22,6 +28,12 @@ namespace Euventing.Atom.ShardSupport.Document
             if (message is DocumentId)
                 return ((DocumentId)message);
 
+            if (message is GetAtomDocumentRequest)
+                return ((GetAtomDocumentRequest)message);
+
+            if (message is EventWithDocumentIdNotificationMessage)
+                return ((EventWithDocumentIdNotificationMessage)message);
+
             return null;
         }
 
@@ -29,6 +41,12 @@ namespace Euventing.Atom.ShardSupport.Document
         {
             if (message is DocumentId)
                 return ((DocumentId)message).Id.GetHashCode().ToString();
+
+            if (message is GetAtomDocumentRequest)
+                return ((GetAtomDocumentRequest)message).DocumentId.Id.GetHashCode().ToString();
+
+            if (message is EventWithDocumentIdNotificationMessage)
+                return ((EventWithDocumentIdNotificationMessage)message).AtomDocumentId.Id.GetHashCode().ToString();
 
             return null;
         }

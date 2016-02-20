@@ -14,8 +14,14 @@ namespace Euventing.Atom.ShardSupport.Feed
             if (message is FeedId)
                 return ((FeedId)message).Id;
 
+            if (message is GetHeadDocumentIdForFeedRequest)
+                return ((GetHeadDocumentIdForFeedRequest)message).SubscriptionId.Id;
+
             if (message is GetHeadDocumentForFeedRequest)
                 return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id;
+
+            if (message is EventWithSubscriptionNotificationMessage)
+                return ((EventWithSubscriptionNotificationMessage) message).SubscriptionId.Id;
 
             return null;
         }
@@ -25,8 +31,14 @@ namespace Euventing.Atom.ShardSupport.Feed
             if (message is FeedId)
                 return ((FeedId)message);
 
+            if (message is GetHeadDocumentIdForFeedRequest)
+                return ((GetHeadDocumentIdForFeedRequest) message);
+
             if (message is GetHeadDocumentForFeedRequest)
-                return ((GetHeadDocumentForFeedRequest) message);
+                return ((GetHeadDocumentForFeedRequest)message);
+
+            if (message is EventWithSubscriptionNotificationMessage)
+                return ((EventWithSubscriptionNotificationMessage)message);
 
             return null;
         }
@@ -36,8 +48,14 @@ namespace Euventing.Atom.ShardSupport.Feed
             if (message is FeedId)
                 return ((FeedId)message).Id.GetHashCode().ToString();
 
+            if (message is GetHeadDocumentIdForFeedRequest)
+                return ((GetHeadDocumentIdForFeedRequest)message).SubscriptionId.Id.GetHashCode().ToString();
+
             if (message is GetHeadDocumentForFeedRequest)
                 return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id.GetHashCode().ToString();
+
+            if (message is EventWithSubscriptionNotificationMessage)
+                return ((EventWithSubscriptionNotificationMessage)message).SubscriptionId.Id.GetHashCode().ToString();
 
             return null;
         }
