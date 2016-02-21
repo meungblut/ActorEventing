@@ -1,4 +1,5 @@
-﻿using Akka.Cluster.Sharding;
+﻿using System;
+using Akka.Cluster.Sharding;
 using Akka.Persistence;
 using Euventing.Atom.Document;
 
@@ -20,8 +21,15 @@ namespace Euventing.Atom.ShardSupport.Document
             if (message is EventWithDocumentIdNotificationMessage)
                 return ((EventWithDocumentIdNotificationMessage)message).AtomDocumentId.Id;
 
-            if (message is CreateAtomDocumentCommand)
-                return ((CreateAtomDocumentCommand) message).DocumentId.Id;
+            try
+            {
+                if (message is CreateAtomDocumentCommand)
+                    return ((CreateAtomDocumentCommand) message).DocumentId.Id;
+            }
+            catch (Exception e)
+            {
+                string p = e.ToString();
+            }
 
             return null;
         }
@@ -45,6 +53,7 @@ namespace Euventing.Atom.ShardSupport.Document
 
         public string ShardId(object message)
         {
+            return "1";
             if (message is DocumentId)
                 return ((DocumentId)message).Id.GetHashCode().ToString();
 

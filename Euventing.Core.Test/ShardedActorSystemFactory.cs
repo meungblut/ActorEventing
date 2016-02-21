@@ -14,9 +14,9 @@ namespace Euventing.Core.Test
         {
             string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
             var config = ConfigurationFactory.ParseString(MainConfig.
-                Replace("{0}", portNumber.ToString()).
-                Replace("{1}", seedNodeString).
-                Replace("{2}", InMemoryPersistenceConfig));
+                Replace("{portNumber}", portNumber.ToString()).
+                Replace("{seedNodes}", seedNodeString).
+                Replace("{persistenceSection}", InMemoryPersistenceConfig));
             return ActorSystem.Create(akkaSystemName, config);
         }
 
@@ -24,9 +24,9 @@ namespace Euventing.Core.Test
         {
             string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
             var config = ConfigurationFactory.ParseString(MainConfig.
-                Replace("{0}", portNumber.ToString()).
-                Replace("{1}", seedNodeString).
-                Replace("{2}", SqlitePersistenceConfig));
+                Replace("{portNumber}", portNumber.ToString()).
+                Replace("{seedNodes}", seedNodeString).
+                Replace("{persistenceSection}", SqlitePersistenceConfig));
             return ActorSystem.Create(akkaSystemName, config);
         }
 
@@ -64,11 +64,11 @@ namespace Euventing.Core.Test
               autoreceive = on
               lifecycle = on
               event-stream = on
-              unhandled = on   }
+              unhandled = on   }    
                 }
                 remote {
-                  #log-remote-lifecycle-events = DEBUG
-                  #log-received-messages = on
+                  log-remote-lifecycle-events = DEBUG
+                  log-received-messages = on
               
                   helios.tcp {
                     transport-class = ""Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote""
@@ -77,11 +77,11 @@ namespace Euventing.Core.Test
                     #will be populated with a dynamic host-name at runtime if left uncommented
                     #public-hostname = ""POPULATE STATIC IP HERE""
                     hostname = ""127.0.0.1""
-                    port = {0}
+                    port = {portNumber}
                   }
                 }
                 cluster {
-                    seed-nodes = [{1}]
+                    seed-nodes = [{seedNodes}]
 				    roles = [cluster]
                     coordinator-singleton = ""singleton""
                     singleton {
@@ -93,7 +93,7 @@ namespace Euventing.Core.Test
                     singleton-proxy {
                       # The actor name of the singleton actor that is started by the ClusterSingletonManager
                       singleton-name = ""singleton""
-                      role = ""cluster""
+                      role = """"
                       singleton-identification-interval = 1s
                       buffer-size = 1000 
                     }
@@ -118,50 +118,32 @@ namespace Euventing.Core.Test
                             rebalance-threshold = 10
                             max-simultaneous-rebalance = 3
                           }
-                            }  
-                        }
-                        persistence {
-                            journal {
-                                # Path to the journal plugin to be used
-                                plugin = ""akka.persistence.journal.inmem""
-                                # In-memory journal plugin.
-                                    inmem {
-                                        # Class name of the plugin.
-                                        class = ""Euventing.InMemoryPersistence.InMemoryJournal, Euventing.InMemoryPersistence""
-                                        # Dispatcher for the plugin actor.
-                                        plugin-dispatcher = ""akka.actor.default-dispatcher""
-                                    }
-                            }
-                                snapshot-store {
-                                plugin = ""akka.persistence.snapshot-store.inmem""
-                                inmem {
-                                    class = ""Euventing.InMemoryPersistence.InMemorySnapshotStore, Euventing.InMemoryPersistence""
-                                    # Dispatcher for the plugin actor.
-                                    plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
-                                    # Dispatcher for streaming snapshot IO.
-                                    stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
-                                }
-                            }
-                        }
-                        {2}
+                        }  
+                     }
+                 {persistenceSection}
             }
             ";
 
         private string SqlitePersistenceConfig = @"persistence {
-          journal {
-            plugin = ""akka.persistence.journal.sqlite""
-            sqlite {
-              connection-string = ""Data Source=.\\store.db;Version=3;""
-              auto-initialize = true
-            }
-}
-snapshot-store {
-            plugin = ""akka.persistence.snapshot-store.sqlite""
-            sqlite {
-              connection-string = ""Data Source=.\\store.db;Version=3;""
-              auto-initialize = true
-            }
-          }
+                    journal {
+                        journal.plugin = ""akka.persistence.journal.sqlite""
+                        sqlite {
+                            class = ""Akka.Persistence.Sqlite.Journal.SqliteJournal, Akka.Persistence.Sqlite""
+                            plugin-dispatcher = ""akka.actor.default-dispatcher""
+                            table-name = event_journal
+                            auto-initialize = on
+                            connection-string = ""Data Source=.\\store.db;Version=3;""
+                        }
+                        snapshot-store.plugin {
+                        plugin = ""akka.persistence.snapshot-store.sqlite""
+                        sqlite {
+                            class = ""Akka.Persistence.Sqlite.Snapshot.SqliteSnapshotStore, Akka.Persistence.Sqlite""
+                            plugin-dispatcher = ""akka.actor.default-dispatcher""
+                            table-name = snapshot_store
+                            auto-initialize = on
+                            connection-string = ""Data Source=.\\store.db;Version=3;""
+                        }
+                    }
         }";
 
         private string InMemoryPersistenceConfig = @"persistence {

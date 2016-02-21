@@ -1,6 +1,7 @@
 ﻿using Akka.Persistence;
 using System;
 using System.Collections.Generic;
+using Akka.Cluster;
 using Euventing.Atom.Serialization;
 using Euventing.Core.Messages;
 
@@ -53,7 +54,7 @@ namespace Euventing.Atom.Document
 
         private void Process(CreateAtomDocumentCommand creationRequest)
         {
-            Console.WriteLine("Creating document " + creationRequest.DocumentId);
+            Console.WriteLine("Creating document " + creationRequest.DocumentId + " on node " + Cluster.Get(Context.System).SelfAddress);
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
                 creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
 

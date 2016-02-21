@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Akka.Actor;
 using Euventing.Atom.ShardSupport.Document;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
@@ -9,11 +10,13 @@ using NUnit.Framework;
 
 namespace Euventing.Atom.Test
 {
-    public class AtomEventNotifierShould
+    public class AtomEventNotifierInMultiNodeClusterShould
     {
         private static ShardedActorSystemFactory factory = new ShardedActorSystemFactory();
         private static AtomEventNotifier _notifier;
+        private static AtomEventNotifier _notifier1;
         private static AtomDocumentRetriever _retriever;
+        private static AtomDocumentRetriever _retriever1;
         private static SubscriptionMessage subscriptionMessage;
 
         private int totalNotifications;
@@ -21,12 +24,24 @@ namespace Euventing.Atom.Test
         [OneTimeSetUp]
         public static void SetupActorSystem()
         {
-            var actorSystem = factory.GetActorSystemWithSqlitePersistence(3624, "atomActorSystem", "127.0.0.1:3624");
+            var actorSystem = factory.GetActorSystemWithSqlitePersistence(3626, "atomActorSystem", "127.0.0.1:3626");
+            var actorSystem1 = factory.GetActorSystemWithSqlitePersistence(3627, "atomActorSystem", "127.0.0.1:3626");
+            actorSystem1.ActorOf(Props.Create<SimpleClusterListener>());
+            actorSystem.ActorOf(Props.Create<SimpleClusterListener>());
 
-            ShardedAtomFeedFactory actorFActory = new ShardedAtomFeedFactory(actorSystem);
-            ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
-            _notifier = new AtomEventNotifier(actorFActory);
-            _retriever = new AtomDocumentRetriever(actorFActory, atomDocumentFactory);
+            var actorFactory = new ShardedAtomFeedFactory(actorSystem);
+            var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
+
+            var actorFactory1 = new ShardedAtomFeedFactory(actorSystem1);
+            var atomDocumentFactory1 = new ShardedAtomDocumentFactory(actorSystem1);
+
+            _notifier = new AtomEventNotifier(actorFactory);
+            _retriever = new AtomDocumentRetriever(actorFactory, atomDocumentFactory);
+
+            _notifier1 = new AtomEventNotifier(actorFactory1);
+            _retriever1 = new AtomDocumentRetriever(actorFactory1, atomDocumentFactory1);
+
+            Thread.Sleep(TimeSpan.FromSeconds(5));
 
             subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
@@ -75,7 +90,11 @@ namespace Euventing.Atom.Test
             for (int i = 0; i < numberOfNotifications; i++)
             {
                 totalNotifications++;
-                _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
+                if (i % 2 == 0)
+                    _notifier1.Notify(subscriptionMessage, new DummyDomainEvent(i.ToString()));
+                else
+                    _notifier.Notify(subscriptionMessage, new DummyDomainEvent(i.ToString()));
+
                 Thread.Sleep(TimeSpan.FromMilliseconds(20));
             }
         }

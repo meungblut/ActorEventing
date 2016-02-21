@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Persistence;
+using Akka.Cluster;
 
 namespace Euventing.Atom.Document
 {
@@ -79,7 +80,7 @@ namespace Euventing.Atom.Document
             var eventAdded = new EventAddedToDocument(currentEvents);
             Persist(eventAdded, MutateInternalState);
 
-            Console.WriteLine("Adding event {0} to doc {1}", numberOfEventsInCurrentHeadDocument, currentFeedHeadDocument.Id);
+            Console.WriteLine("Adding event {0} with id {3} to doc {1} on node {2}", numberOfEventsInCurrentHeadDocument, currentFeedHeadDocument.Id, Cluster.Get(Context.System).SelfAddress, message.EventToNotify.Id);
 
             if (currentEvents >= 150)
             {
