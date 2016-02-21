@@ -9,9 +9,9 @@ namespace Euventing.Atom
 {
     public class AtomEventNotifier : IEventNotifier
     {
-        private readonly AtomFeedShardedActorRefFactory factory;
+        private readonly ShardedAtomFeedFactory factory;
 
-        public AtomEventNotifier(AtomFeedShardedActorRefFactory factory)
+        public AtomEventNotifier(ShardedAtomFeedFactory factory)
         {
             this.factory = factory;
         }

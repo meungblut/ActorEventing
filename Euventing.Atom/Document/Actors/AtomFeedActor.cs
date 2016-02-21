@@ -78,15 +78,6 @@ namespace Euventing.Atom.Document
             atomDocument.Tell(new CreateAtomDocumentCommand(
                 creationCommand.Title, creationCommand.Author, creationCommand.FeedId, currentFeedHeadDocument, creationCommand.EarlierEventsDocumentId), Self);
         }
-
-        private void Process(DocumentReadyToReceiveEvents documentReadyToReceiveEvents)
-        {
-            Console.WriteLine("Feed received ready to receive message from " + documentReadyToReceiveEvents.DocumentId.Id);
-
-            var headUpdated = new AtomFeedDocumentHeadChanged(documentReadyToReceiveEvents.DocumentId);
-            MutateInternalState(headUpdated);
-            Persist(headUpdated, MutateInternalState);
-        }
         
         private void Process(FeedId feedId)
         {
@@ -117,7 +108,8 @@ namespace Euventing.Atom.Document
 
         private void MutateInternalState(AtomFeedDocumentHeadChanged headChanged)
         {
-            currentFeedHeadDocument = headChanged.DocumentId;
+            currentFeedHeadDocument = headChanged.CurrentHeadDocumentId;
+            
         }
     }
 }

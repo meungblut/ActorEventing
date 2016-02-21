@@ -2,11 +2,13 @@
 {
     public class AtomFeedDocumentHeadChanged
     {
-        public DocumentId DocumentId { get; set; }
+        public DocumentId CurrentHeadDocumentId { get; }
+        public DocumentId EarlierDocumentId { get; }
 
-        public AtomFeedDocumentHeadChanged(DocumentId documentId)
+        public AtomFeedDocumentHeadChanged(DocumentId headDocument, DocumentId earlierDocumentId)
         {
-            this.DocumentId = documentId;
+            this.CurrentHeadDocumentId = headDocument;
+            this.EarlierDocumentId = earlierDocumentId;
         }
     }
 }

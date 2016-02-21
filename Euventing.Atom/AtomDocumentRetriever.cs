@@ -9,10 +9,10 @@ namespace Euventing.Atom
 {
     public class AtomDocumentRetriever
     {
-        private readonly AtomFeedShardedActorRefFactory factory;
+        private readonly ShardedAtomFeedFactory factory;
         private readonly ShardedAtomDocumentFactory shardedAtomDocumentFactory;
 
-        public AtomDocumentRetriever(AtomFeedShardedActorRefFactory factory, ShardedAtomDocumentFactory builder)
+        public AtomDocumentRetriever(ShardedAtomFeedFactory factory, ShardedAtomDocumentFactory builder)
         {
             shardedAtomDocumentFactory = builder;
             this.factory = factory;

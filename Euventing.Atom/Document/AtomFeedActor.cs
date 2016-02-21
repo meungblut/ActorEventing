@@ -60,8 +60,7 @@ namespace Euventing.Atom.Document
         private void Process(AtomFeedCreationCommand creationCommand)
         {
             var documentId = new DocumentId(Guid.NewGuid().ToString());
-
-            var atomFeedCreated = new AtomFeedCreated(documentId, feedTitle, feedAuthor);
+            var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author, creationCommand.FeedId);
 
             Persist(atomFeedCreated, MutateInternalState);
 
@@ -76,22 +75,22 @@ namespace Euventing.Atom.Document
             var atomDocument = builder.GetActorRef();
             atomDocument.Tell(notificationMessage, Self);
 
-            numberOfEventsInCurrentHeadDocument = numberOfEventsInCurrentHeadDocument + 1;
-            
+            var currentEvents = numberOfEventsInCurrentHeadDocument + 1;
+            var eventAdded = new EventAddedToDocument(currentEvents);
+            Persist(eventAdded, MutateInternalState);
+
             Console.WriteLine("Adding event {0} to doc {1}", numberOfEventsInCurrentHeadDocument, currentFeedHeadDocument.Id);
 
-            if (numberOfEventsInCurrentHeadDocument >= 150)
+            if (currentEvents >= 150)
             {
                 var newDocumentId = new DocumentId(Guid.NewGuid().ToString());
+
+                Persist(new AtomFeedDocumentHeadChanged(newDocumentId, currentFeedHeadDocument), MutateInternalState);
                 
                 atomDocument.Tell(new CreateAtomDocumentCommand(
                     feedTitle, feedAuthor, atomFeedId, newDocumentId, currentFeedHeadDocument), Self);
-                lastHeadDocument = currentFeedHeadDocument;
-                currentFeedHeadDocument = newDocumentId;
 
                 atomDocument.Tell(new NewDocumentAddedEvent(newDocumentId));
-
-                numberOfEventsInCurrentHeadDocument = 0;
             }
         }
 
@@ -111,11 +110,19 @@ namespace Euventing.Atom.Document
 
         private void MutateInternalState(AtomFeedDocumentHeadChanged headChanged)
         {
-            currentFeedHeadDocument = headChanged.DocumentId;
+            currentFeedHeadDocument = headChanged.CurrentHeadDocumentId;
+            lastHeadDocument = headChanged.EarlierDocumentId;
+            numberOfEventsInCurrentHeadDocument = 0;
+        }
+
+        private void MutateInternalState(EventAddedToDocument eventAdded)
+        {
+            numberOfEventsInCurrentHeadDocument = eventAdded.CurrentEvents;
         }
 
         private void MutateInternalState(AtomFeedCreated atomFeedCreated)
         {
+            atomFeedId = atomFeedCreated.FeedId;
             currentFeedHeadDocument = atomFeedCreated.DocumentId;
             feedTitle = atomFeedCreated.FeedTitle;
             feedAuthor = atomFeedCreated.FeedAuthor;
