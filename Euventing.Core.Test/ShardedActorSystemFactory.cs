@@ -12,6 +12,26 @@ namespace Euventing.Core.Test
     {
         public ActorSystem GetActorSystem(int portNumber, string akkaSystemName, params string[] seedNodes)
         {
+            string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
+            var config = ConfigurationFactory.ParseString(MainConfig.
+                Replace("{0}", portNumber.ToString()).
+                Replace("{1}", seedNodeString).
+                Replace("{2}", InMemoryPersistenceConfig));
+            return ActorSystem.Create(akkaSystemName, config);
+        }
+
+        public ActorSystem GetActorSystemWithSqlitePersistence(int portNumber, string akkaSystemName, params string[] seedNodes)
+        {
+            string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
+            var config = ConfigurationFactory.ParseString(MainConfig.
+                Replace("{0}", portNumber.ToString()).
+                Replace("{1}", seedNodeString).
+                Replace("{2}", SqlitePersistenceConfig));
+            return ActorSystem.Create(akkaSystemName, config);
+        }
+
+        private string GetSeedNodeList(string akkaSystemName, params string[] seedNodes)
+        {
             List<string> fullSeedNodes = new List<string>();
 
             foreach (var seedNode in seedNodes)
@@ -19,9 +39,10 @@ namespace Euventing.Core.Test
                 fullSeedNodes.Add("\"akka.tcp://" + akkaSystemName + "@" + seedNode + "\"");
             }
 
-            string seedNodeString = string.Join(",", fullSeedNodes);
-            var config = ConfigurationFactory.ParseString(@"
+            return string.Join(",", fullSeedNodes);
+        }
 
+        private string MainConfig = @"
             akka {
                 #loglevel = DEBUG
                 akka.extensions = [""akka.contrib.pattern.DistributedPubSubExtension""]
@@ -122,9 +143,49 @@ namespace Euventing.Core.Test
                                 }
                             }
                         }
+                        {2}
             }
-            ".Replace("{0}", portNumber.ToString()).Replace("{1}", seedNodeString));
-            return ActorSystem.Create(akkaSystemName, config);
-        }
+            ";
+
+        private string SqlitePersistenceConfig = @"persistence {
+          journal {
+            plugin = ""akka.persistence.journal.sqlite""
+            sqlite {
+              connection-string = ""Data Source=.\\store.db;Version=3;""
+              auto-initialize = true
+            }
+}
+snapshot-store {
+            plugin = ""akka.persistence.snapshot-store.sqlite""
+            sqlite {
+              connection-string = ""Data Source=.\\store.db;Version=3;""
+              auto-initialize = true
+            }
+          }
+        }";
+
+        private string InMemoryPersistenceConfig = @"persistence {
+                            journal {
+                                # Path to the journal plugin to be used
+                                plugin = ""akka.persistence.journal.inmem""
+                                # In-memory journal plugin.
+                                    inmem {
+                                        # Class name of the plugin.
+                                        class = ""Euventing.InMemoryPersistence.InMemoryJournal, Euventing.InMemoryPersistence""
+                                        # Dispatcher for the plugin actor.
+                                        plugin-dispatcher = ""akka.actor.default-dispatcher""
+                                    }
+                            }
+                                snapshot-store {
+                                plugin = ""akka.persistence.snapshot-store.inmem""
+                                inmem {
+                                    class = ""Euventing.InMemoryPersistence.InMemorySnapshotStore, Euventing.InMemoryPersistence""
+                                    # Dispatcher for the plugin actor.
+                                    plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
+                                    # Dispatcher for streaming snapshot IO.
+                                    stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
+                                }
+                            }
+                        }";
     }
 }
