@@ -14,19 +14,32 @@ namespace Euventing.Atom.ShardSupport.Document
     {
         private readonly ActorSystem actorSystem;
 
+        private static bool initialised;
+        private static object initialisationLock = new object();
+
         public ShardedAtomDocumentFactory(ActorSystem actorSystem)
         {
             this.actorSystem = actorSystem;
 
-            var props = Props.Create(() => new AtomDocumentActor(new HardCodedAtomDocumentSettings()));
+            lock (initialisationLock)
+            {
+                if (initialised)
+                    return;
 
-            var settings = ClusterShardingSettings.Create(actorSystem);
-            ClusterSharding.Get(actorSystem).Start(
-                typeName: "AtomDocumentActor",
-                entityProps: props,
-                settings: settings,
-                messageExtractor: new AtomDocumentShardDataMessageExtractor());
+                var props = Props.Create(() => new AtomDocumentActor(new HardCodedAtomDocumentSettings()));
+
+                var settings = ClusterShardingSettings.Create(actorSystem);
+                ClusterSharding.Get(actorSystem).Start(
+                    typeName: "AtomDocumentActor",
+                    entityProps: props,
+                    settings: settings,
+                    messageExtractor: new AtomDocumentShardDataMessageExtractor());
+
+                initialised = true;
+            }
+
         }
+
         public IActorRef GetActorRef()
         {
             return ClusterSharding.Get(actorSystem).ShardRegion("AtomDocumentActor");

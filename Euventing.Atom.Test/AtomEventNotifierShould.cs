@@ -23,8 +23,9 @@ namespace Euventing.Atom.Test
             var actorSystem = factory.GetActorSystem(3624, "atomActorSystem", "127.0.0.1:3624");
 
             AtomFeedShardedActorRefFactory actorFActory = new AtomFeedShardedActorRefFactory(actorSystem);
+            ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
             _notifier = new AtomEventNotifier(actorFActory);
-            _retriever = new AtomDocumentRetriever(actorFActory);
+            _retriever = new AtomDocumentRetriever(actorFActory, atomDocumentFactory);
 
             subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
@@ -58,16 +59,24 @@ namespace Euventing.Atom.Test
         public async Task CreateANewDocumentIdWhen151EventsAreSubmitted()
         {
             //This line stops the atomdoc actor replying to the atomfeedactor. Why?
-            //var initialDocumentId = await _retriever.GetHeadDocumentId(subscriptionMessage.SubscriptionId);
-            Notify(161);
+            //var initialDocumentId = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
+            Notify(80);
+            var initialId = await _retriever.GetHeadDocumentId(subscriptionMessage.SubscriptionId);
+            //var documentOne = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
+
+            Notify(81);
+
+            Thread.Sleep(TimeSpan.FromSeconds(3));
+
+            Notify(10);
 
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
             var secondDocumentId = await _retriever.GetHeadDocumentId(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
             var document = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
 
+            Assert.AreNotEqual(initialId, secondDocumentId);
             Assert.Less(document.Entries.Count, 161);
-            //Assert.AreNotEqual(initialDocumentId, secondDocumentId);
             Assert.Greater(document.Entries.Count, 0);
         }
 
@@ -76,7 +85,7 @@ namespace Euventing.Atom.Test
             for (int i = 0; i < numberOfNotifications; i++)
             {
                 _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
-                Thread.Sleep(TimeSpan.FromMilliseconds(30));
+                Thread.Sleep(TimeSpan.FromMilliseconds(20));
             }
         }
     }

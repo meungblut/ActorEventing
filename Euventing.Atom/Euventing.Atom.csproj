@@ -92,6 +92,7 @@
     <Compile Include="Document\AtomFeedDocumentHeadChanged.cs" />
     <Compile Include="Document\CreateAtomDocumentCommand.cs" />
     <Compile Include="Document\DocumentReadyToReceiveEvents.cs" />
+    <Compile Include="Document\EventSentToDocumentEvent.cs" />
     <Compile Include="Document\EventWithDocumentIdNotificationMessage.cs" />
     <Compile Include="Document\GetAtomDocumentRequest.cs" />
     <Compile Include="Document\HardCodedAtomDocumentSettings.cs" />
