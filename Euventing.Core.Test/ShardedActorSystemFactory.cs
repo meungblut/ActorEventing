@@ -23,7 +23,7 @@ namespace Euventing.Core.Test
             var config = ConfigurationFactory.ParseString(@"
 
             akka {
-                loglevel = DEBUG
+                #loglevel = DEBUG
                 akka.extensions = [""akka.contrib.pattern.DistributedPubSubExtension""]
                 actor {
                   provider = ""Akka.Cluster.ClusterActorRefProvider, Akka.Cluster""

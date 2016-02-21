@@ -5,19 +5,18 @@ using Akka.Persistence;
 
 namespace Euventing.Atom.Document
 {
-    public class AtomFeedActor : PersistentActor
+    public class AtomFeedActorNew : PersistentActor
     {
         private readonly IAtomDocumentActorBuilder builder;
         private FeedId atomFeedId;
         private DocumentId currentFeedHeadDocument;
-        private DocumentId lastHeadDocument;
+        private DocumentId nextHeadDocument;
         private string feedTitle;
         private string feedAuthor;
-        private int numberOfEventsInCurrentHeadDocument;
 
         public override string PersistenceId { get; }
 
-        public AtomFeedActor(IAtomDocumentActorBuilder builder)
+        public AtomFeedActorNew(IAtomDocumentActorBuilder builder)
         {
             Console.WriteLine("Feed actor path is " + Self.Path);
             this.builder = builder;
@@ -57,17 +56,42 @@ namespace Euventing.Atom.Document
             Console.WriteLine(message);
         }
 
+        private void Process(AtomDocumentFullEvent fullEvent)
+        {
+            Console.WriteLine("Feed received document full message");
+            var documentId = new DocumentId(Guid.NewGuid().ToString());
+            nextHeadDocument = documentId;
+            var atomDocument = builder.GetActorRef();
+            Console.WriteLine("Creating document" + documentId.Id);
+            atomDocument.Tell(new CreateAtomDocumentCommand(
+                feedTitle, feedAuthor, atomFeedId, documentId, currentFeedHeadDocument), Self);
+        }
+
         private void Process(AtomFeedCreationCommand creationCommand)
         {
             var documentId = new DocumentId(Guid.NewGuid().ToString());
-
-            var atomFeedCreated = new AtomFeedCreated(documentId, feedTitle, feedAuthor);
-
-            Persist(atomFeedCreated, MutateInternalState);
-
+            currentFeedHeadDocument = documentId;
+            nextHeadDocument = documentId;
             var atomDocument = builder.GetActorRef();
+            feedTitle = creationCommand.Title;
+            feedAuthor = creationCommand.Author;
             atomDocument.Tell(new CreateAtomDocumentCommand(
                 creationCommand.Title, creationCommand.Author, creationCommand.FeedId, currentFeedHeadDocument, creationCommand.EarlierEventsDocumentId), Self);
+        }
+
+        private void Process(DocumentReadyToReceiveEvents documentReadyToReceiveEvents)
+        {
+            Console.WriteLine("Feed received ready to receive message from " + documentReadyToReceiveEvents.DocumentId.Id);
+
+            var headUpdated = new AtomFeedDocumentHeadChanged(documentReadyToReceiveEvents.DocumentId);
+            MutateInternalState(headUpdated);
+            Persist(headUpdated, MutateInternalState);
+        }
+        
+        private void Process(FeedId feedId)
+        {
+            atomFeedId = feedId;
+            currentFeedHeadDocument = new DocumentId(Guid.NewGuid().ToString());
         }
 
         private void Process(EventWithSubscriptionNotificationMessage message)
@@ -75,24 +99,6 @@ namespace Euventing.Atom.Document
             var notificationMessage = new EventWithDocumentIdNotificationMessage(currentFeedHeadDocument, message.EventToNotify);
             var atomDocument = builder.GetActorRef();
             atomDocument.Tell(notificationMessage, Self);
-
-            numberOfEventsInCurrentHeadDocument = numberOfEventsInCurrentHeadDocument + 1;
-            
-            Console.WriteLine("Adding event {0} to doc {1}", numberOfEventsInCurrentHeadDocument, currentFeedHeadDocument.Id);
-
-            if (numberOfEventsInCurrentHeadDocument >= 150)
-            {
-                var newDocumentId = new DocumentId(Guid.NewGuid().ToString());
-                
-                atomDocument.Tell(new CreateAtomDocumentCommand(
-                    feedTitle, feedAuthor, atomFeedId, newDocumentId, currentFeedHeadDocument), Self);
-                lastHeadDocument = currentFeedHeadDocument;
-                currentFeedHeadDocument = newDocumentId;
-
-                atomDocument.Tell(new NewDocumentAddedEvent(newDocumentId));
-
-                numberOfEventsInCurrentHeadDocument = 0;
-            }
         }
 
         private void Process(GetHeadDocumentIdForFeedRequest getHeadIdRequest)
@@ -112,13 +118,6 @@ namespace Euventing.Atom.Document
         private void MutateInternalState(AtomFeedDocumentHeadChanged headChanged)
         {
             currentFeedHeadDocument = headChanged.DocumentId;
-        }
-
-        private void MutateInternalState(AtomFeedCreated atomFeedCreated)
-        {
-            currentFeedHeadDocument = atomFeedCreated.DocumentId;
-            feedTitle = atomFeedCreated.FeedTitle;
-            feedAuthor = atomFeedCreated.FeedAuthor;
         }
     }
 }

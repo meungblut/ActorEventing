@@ -16,6 +16,8 @@ namespace Euventing.Atom.Test
         private static AtomDocumentRetriever _retriever;
         private static SubscriptionMessage subscriptionMessage;
 
+        private int totalNotifications;
+
         [OneTimeSetUp]
         public static void SetupActorSystem()
         {
@@ -58,32 +60,22 @@ namespace Euventing.Atom.Test
         [Test]
         public async Task CreateANewDocumentIdWhen151EventsAreSubmitted()
         {
-            //This line stops the atomdoc actor replying to the atomfeedactor. Why?
-            //var initialDocumentId = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
-            Notify(80);
-            var initialId = await _retriever.GetHeadDocumentId(subscriptionMessage.SubscriptionId);
-            //var documentOne = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
-
-            Notify(81);
+            Notify(171);
 
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
-            Notify(10);
+            var headDocument = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
+            Assert.IsNotNull(headDocument.EarlierEventsDocumentId);
+            var earlierDocument = await _retriever.GetDocument(headDocument.EarlierEventsDocumentId);
 
-            Thread.Sleep(TimeSpan.FromSeconds(3));
-
-            var secondDocumentId = await _retriever.GetHeadDocumentId(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
-            var document = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
-
-            Assert.AreNotEqual(initialId, secondDocumentId);
-            Assert.Less(document.Entries.Count, 161);
-            Assert.Greater(document.Entries.Count, 0);
+            Assert.AreEqual(totalNotifications, headDocument.Entries.Count + earlierDocument.Entries.Count);
         }
 
         private void Notify(int numberOfNotifications)
         {
             for (int i = 0; i < numberOfNotifications; i++)
             {
+                totalNotifications++;
                 _notifier.Notify(subscriptionMessage, new DummyDomainEvent(Guid.NewGuid().ToString()));
                 Thread.Sleep(TimeSpan.FromMilliseconds(20));
             }

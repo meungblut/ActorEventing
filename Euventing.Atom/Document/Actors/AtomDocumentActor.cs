@@ -1,14 +1,15 @@
 ﻿using Akka.Persistence;
 using System;
 using System.Collections.Generic;
+using Akka.Actor;
 using Euventing.Atom.Serialization;
 using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Document
 {
-    public class AtomDocumentActor : PersistentActor
+    public class AtomDocumentActorNew : PersistentActor, IWithUnboundedStash
     {
-        public AtomDocumentActor(IAtomDocumentSettings settings)
+        public AtomDocumentActorNew(IAtomDocumentSettings settings)
         {
             atomDocumentSettings = settings;
             PersistenceId = "AtomDocumentActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
@@ -59,6 +60,7 @@ namespace Euventing.Atom.Document
 
             MutateInternalState(atomDocumentCreatedEvent);
             Persist(atomDocumentCreatedEvent, MutateInternalState);
+            Sender.Tell(new DocumentReadyToReceiveEvents(this.documentId), Self);
         }
 
         private void Process(NewDocumentAddedEvent newDocumentEvent)
@@ -84,8 +86,18 @@ namespace Euventing.Atom.Document
             sequenceNumber = sequenceNumber + 1;
             atomEntry.SequenceNumber = sequenceNumber;
 
+            Console.WriteLine("saving event: " + sequenceNumber + " to doc " + documentId.Id);
+            Console.WriteLine("Greater than? " + atomDocumentSettings.NumberOfEventsPerDocument);
+
             Persist(atomEntry, MutateInternalState);
 
+            if (sequenceNumber >= atomDocumentSettings.NumberOfEventsPerDocument)
+            {
+                Console.WriteLine("Document Full!");
+                Console.WriteLine("Telling actor" + Sender.Path);
+
+                Sender.Tell(new AtomDocumentFullEvent(documentId), Self);
+            }
             Sender.Tell("Ack", Self);
         }
 

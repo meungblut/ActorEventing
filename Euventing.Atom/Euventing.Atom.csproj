@@ -85,9 +85,12 @@
   <ItemGroup>
     <Compile Include="AtomDocumentRetriever.cs" />
     <Compile Include="AtomEventNotifier.cs" />
+    <Compile Include="Document\Actors\AtomDocumentActor.cs" />
+    <Compile Include="Document\Actors\AtomFeedActor.cs" />
     <Compile Include="Document\AtomDocumentCreatedEvent.cs" />
     <Compile Include="Document\AtomDocumentFullEvent.cs" />
     <Compile Include="Document\AtomDocumentSettings.cs" />
+    <Compile Include="Document\AtomFeedCreated.cs" />
     <Compile Include="Document\AtomFeedCreationCommand.cs" />
     <Compile Include="Document\AtomFeedDocumentHeadChanged.cs" />
     <Compile Include="Document\CreateAtomDocumentCommand.cs" />
@@ -104,7 +107,7 @@
     <Compile Include="Serialization\JsonEventSerialisation.cs" />
     <Compile Include="Serialization\SerializedWithContentType.cs" />
     <Compile Include="Serialization\XmlEventSerialisation.cs" />
-    <Compile Include="ShardSupport\Document\AtomDocumentShardedActorRefFactory.cs" />
+    <Compile Include="ShardSupport\Document\ShardedAtomFeedFactory.cs" />
     <Compile Include="ShardSupport\Document\ShardedAtomDocumentFactory.cs" />
     <Compile Include="ShardSupport\Feed\AtomFeedShardedActorRefFactory.cs" />
     <Compile Include="AtomNotificationChannel.cs" />

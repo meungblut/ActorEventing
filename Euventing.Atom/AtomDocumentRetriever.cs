@@ -10,7 +10,7 @@ namespace Euventing.Atom
     public class AtomDocumentRetriever
     {
         private readonly AtomFeedShardedActorRefFactory factory;
-        private ShardedAtomDocumentFactory shardedAtomDocumentFactory;
+        private readonly ShardedAtomDocumentFactory shardedAtomDocumentFactory;
 
         public AtomDocumentRetriever(AtomFeedShardedActorRefFactory factory, ShardedAtomDocumentFactory builder)
         {
@@ -31,7 +31,13 @@ namespace Euventing.Atom
             var atomDocument = await shardedAtomDocumentFactory.GetActorRef().Ask<AtomDocument>(new GetAtomDocumentRequest(documentId));
             return atomDocument;
         }
-        
+
+        public async Task<AtomDocument> GetDocument(DocumentId documentId)
+        {
+            var atomDocument = await shardedAtomDocumentFactory.GetActorRef().Ask<AtomDocument>(new GetAtomDocumentRequest(documentId));
+            return atomDocument;
+        }
+
         public void TestIfItIsTheMessageThatsScrewingMeUp(SubscriptionId subscriptionId)
         {
             factory.GetActorRef().Tell(new GetHeadDocumentForFeedRequest(subscriptionId));

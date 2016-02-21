@@ -66,24 +66,6 @@ namespace Euventing.Atom.Test
         }
 
         [Test]
-        public async Task NotifySenderThatDocumentIsFullWhenNumberOfEventsMatchesMaximumNumberOfEventsPerDocument()
-        {
-            CreateAtomActor("1");
-
-            Thread.Sleep(TimeSpan.FromSeconds(1));
-
-            atomActorRef.Tell(new EventWithDocumentIdNotificationMessage(documentId,
-                new DummyDomainEvent(Guid.NewGuid().ToString())));
-
-            //Using the ask pattern here because the teskit has an old nunit reference and I got fed up
-            //with assembly binding redirects - revisit
-            var documentFullEvent = await atomActorRef.Ask<AtomDocumentFullEvent>(new EventWithDocumentIdNotificationMessage(documentId,
-                new DummyDomainEvent(Guid.NewGuid().ToString()))).WithTimeout(TimeSpan.FromSeconds(2));
-
-            Assert.AreEqual(documentId, documentFullEvent.DocumentId);
-        }
-
-        [Test]
         public async Task SetLaterEventDocumentIdWhenSentANewDocumentAddedEvent()
         {
             var newdocumentId = new DocumentId(Guid.NewGuid().ToString());

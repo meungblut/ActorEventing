@@ -5,11 +5,11 @@ using Euventing.Atom.ShardSupport.Feed;
 
 namespace Euventing.Atom.ShardSupport.Document
 {
-    public class AtomFeedShardedActorRefFactory
+    public class ShardedAtomFeedFactory
     {
         private readonly ActorSystem actorSystem;
 
-        public AtomFeedShardedActorRefFactory(ActorSystem actorSystem)
+        public ShardedAtomFeedFactory(ActorSystem actorSystem)
         {
             this.actorSystem = actorSystem;
 
