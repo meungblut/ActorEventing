@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Euventing.Atom.ShardSupport.Document;
+using Euventing.Core;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
 using Euventing.Core.Test;

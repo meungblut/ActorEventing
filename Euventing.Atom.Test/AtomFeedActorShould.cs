@@ -5,6 +5,7 @@ using Akka.Actor;
 using Akka.Event;
 using Akka.Util;
 using Euventing.Atom.Document;
+using Euventing.Core;
 using Euventing.Core.Test;
 using NUnit.Framework;
 

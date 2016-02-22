@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Persistence.Sqlite.Snapshot;
 using Euventing.Atom.ShardSupport.Document;
+using Euventing.Core;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
 using Euventing.Core.Test;
@@ -40,7 +41,7 @@ namespace Euventing.Atom.Test
             subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
                 new UserId(Guid.NewGuid().ToString()),
-                new SubscriptionId(Guid.NewGuid().ToString()),
+                new SubscriptionId("1"),
                 new AllEventMatcher());
 
             atomNotifiers[0].Create(subscriptionMessage);

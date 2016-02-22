@@ -16,20 +16,13 @@ namespace Euventing.Atom.ShardSupport.Document
                 return ((DocumentId)message).Id;
 
             if (message is GetAtomDocumentRequest)
-                return ((GetAtomDocumentRequest) message).DocumentId.Id;
+                return ((GetAtomDocumentRequest)message).DocumentId.Id;
 
             if (message is EventWithDocumentIdNotificationMessage)
                 return ((EventWithDocumentIdNotificationMessage)message).AtomDocumentId.Id;
 
-            try
-            {
-                if (message is CreateAtomDocumentCommand)
-                    return ((CreateAtomDocumentCommand) message).DocumentId.Id;
-            }
-            catch (Exception e)
-            {
-                string p = e.ToString();
-            }
+            if (message is CreateAtomDocumentCommand)
+                return ((CreateAtomDocumentCommand)message).DocumentId.Id;
 
             return null;
         }

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Akka.Actor;
 using Akka.Configuration;
-using Akka.Persistence.Sqlite;
-using Akka.Persistence;
 
-namespace Euventing.Core.Test
+namespace Euventing.Core
 {
     public class ShardedActorSystemFactory
     {
@@ -18,7 +12,9 @@ namespace Euventing.Core.Test
             var config = ConfigurationFactory.ParseString(MainConfig.
                 Replace("{portNumber}", portNumber.ToString()).
                 Replace("{seedNodes}", seedNodeString));
-            return ActorSystem.Create(akkaSystemName, config);
+            var system = ActorSystem.Create(akkaSystemName, config);
+
+            return system;
         }
 
         private string GetSeedNodeList(string akkaSystemName, params string[] seedNodes)
@@ -35,7 +31,7 @@ namespace Euventing.Core.Test
 
         private string MainConfig = @"
             akka {
-                loglevel = DEBUG
+                #loglevel = DEBUG
                 akka.extensions = [""akka.contrib.pattern.DistributedPubSubExtension""]
                 actor {
                   provider = ""Akka.Cluster.ClusterActorRefProvider, Akka.Cluster""

@@ -67,7 +67,7 @@ namespace Euventing.Atom.Document
 
             var atomDocument = builder.GetActorRef();
             atomDocument.Tell(new CreateAtomDocumentCommand(
-                creationCommand.Title, creationCommand.Author, creationCommand.FeedId, currentFeedHeadDocument, creationCommand.EarlierEventsDocumentId), Self);
+                creationCommand.Title, creationCommand.Author, creationCommand.FeedId, documentId, creationCommand.EarlierEventsDocumentId), Self);
         }
 
         private void Process(EventWithSubscriptionNotificationMessage message)

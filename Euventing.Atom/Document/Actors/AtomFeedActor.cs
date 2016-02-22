@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Persistence;
 
-namespace Euventing.Atom.Document
+namespace Euventing.Atom.Document.Actors
 {
     public class AtomFeedActorNew : PersistentActor
     {
