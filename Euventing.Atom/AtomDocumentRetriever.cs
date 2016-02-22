@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Akka.Actor;
 using Euventing.Atom.Document;
+using Euventing.Atom.Serialization;
 using Euventing.Atom.ShardSupport.Document;
 using Euventing.Core.Messages;
 
@@ -38,9 +39,11 @@ namespace Euventing.Atom
             return atomDocument;
         }
 
-        public void TestIfItIsTheMessageThatsScrewingMeUp(SubscriptionId subscriptionId)
+        public async Task<string> GetSerialisedDocument(DocumentId documentId)
         {
-            factory.GetActorRef().Tell(new GetHeadDocumentForFeedRequest(subscriptionId));
+            var atomDocument = await shardedAtomDocumentFactory.GetActorRef().Ask<AtomDocument>(new GetAtomDocumentRequest(documentId));
+            var serialiser = new AtomDocumentSerialiser();
+            return serialiser.Serialise(atomDocument, "http://matt.com");
         }
     }
 }

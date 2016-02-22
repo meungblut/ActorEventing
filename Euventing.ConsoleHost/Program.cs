@@ -11,6 +11,10 @@ namespace Euventing.ConsoleHost
 {
     class Program
     {
+        private static SubscriptionMessage _subscriptionMessage;
+        private static AtomEventNotifier _notifier;
+        private static AtomDocumentRetriever _retriever;
+
         static void Main(string[] args)
         {
             var actorSystemFactory = new ShardedActorSystemFactory();
@@ -20,8 +24,8 @@ namespace Euventing.ConsoleHost
             var actorFactory = new ShardedAtomFeedFactory(actorSystem);
             var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
 
-            var notifier = new AtomEventNotifier(actorFactory);
-            var retriever = new AtomDocumentRetriever(actorFactory, atomDocumentFactory);
+            _notifier = new AtomEventNotifier(actorFactory);
+            _retriever = new AtomDocumentRetriever(actorFactory, atomDocumentFactory);
 
             Console.WriteLine("Setup with {0}, {1}, {2}", args[0], args[1], args[2]);
 
@@ -29,20 +33,34 @@ namespace Euventing.ConsoleHost
 
             Thread.Sleep(TimeSpan.FromSeconds(10));
              
-            var subscriptionMessage = new SubscriptionMessage(
+            _subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
                 new UserId(Guid.NewGuid().ToString()),
                 new SubscriptionId("2"),
                 new AllEventMatcher());
 
-            notifier.Create(subscriptionMessage);
+            _notifier.Create(_subscriptionMessage);
 
+            if (args[3] == "notify")
+            {
+                Notify(args[0]);
+            }
+
+        }
+
+        private static void Notify(string port)
+        {
             for (int i = 0; i < 1000; i++)
             {
-                notifier.Notify(subscriptionMessage, new DummyDomainEvent(args[0] + ":" + i.ToString()));
+                _notifier.Notify(_subscriptionMessage, new DummyDomainEvent(port + ":" + i.ToString()));
 
                 Thread.Sleep(TimeSpan.FromMilliseconds(2000));
             }
+        }
+
+        private static void Get()
+        {
+            
         }
     }
 
