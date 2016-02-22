@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Euventing.Atom;
 using Euventing.Atom.ShardSupport.Document;
@@ -27,7 +23,9 @@ namespace Euventing.ConsoleHost
             var notifier = new AtomEventNotifier(actorFactory);
             var retriever = new AtomDocumentRetriever(actorFactory, atomDocumentFactory);
 
-            Console.WriteLine("Setup with  {0}, {1}, {2}", args[0], args[1], args[2]);
+            Console.WriteLine("Setup with {0}, {1}, {2}", args[0], args[1], args[2]);
+
+            Console.Title = args[0];
 
             Thread.Sleep(TimeSpan.FromSeconds(10));
              

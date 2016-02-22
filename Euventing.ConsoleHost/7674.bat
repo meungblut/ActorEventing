@@ -1,1 +1,0 @@
-.\bin\debug\Euventing.ConsoleHost.exe 7674 akkaSystem 127.0.0.1:7674
