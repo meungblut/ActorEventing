@@ -29,7 +29,7 @@ namespace Euventing.Atom.Test
             atomDocumentRetrievers = new List<AtomDocumentRetriever>();
 
             Create(3626, "atomActorSystem", "127.0.0.1:3626");
-            Create(3627, "atomActorSystem", "127.0.0.1:3626");
+            //Create(3627, "atomActorSystem", "127.0.0.1:3626");
             //Create(3628, "atomActorSystem", "127.0.0.1:3626");
             //Create(3629, "atomActorSystem", "127.0.0.1:3626");
             //Create(3630, "atomActorSystem", "127.0.0.1:3626");
@@ -40,7 +40,7 @@ namespace Euventing.Atom.Test
             subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
                 new UserId(Guid.NewGuid().ToString()),
-                new SubscriptionId("1"),
+                new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
 
             atomNotifiers[0].Create(subscriptionMessage);
@@ -51,7 +51,7 @@ namespace Euventing.Atom.Test
         private void Create(int port, string actorSystemName, string seedNode)
         {
             var factory = new ShardedActorSystemFactory();
-            var actorSystem = factory.GetActorSystemWithSqlitePersistence(port, actorSystemName, seedNode);
+            var actorSystem = factory.GetActorSystem(port, actorSystemName, seedNode);
             actorSystem.ActorOf(Props.Create<SimpleClusterListener>());
             var actorFactory = new ShardedAtomFeedFactory(actorSystem);
             var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);

@@ -21,7 +21,7 @@ namespace Euventing.Atom.Test
         [OneTimeSetUp]
         public static void SetupActorSystem()
         {
-            var actorSystem = factory.GetActorSystemWithSqlitePersistence(3624, "atomActorSystem", "127.0.0.1:3624");
+            var actorSystem = factory.GetActorSystem(3624, "atomActorSystem", "127.0.0.1:3624");
 
             ShardedAtomFeedFactory actorFActory = new ShardedAtomFeedFactory(actorSystem);
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);

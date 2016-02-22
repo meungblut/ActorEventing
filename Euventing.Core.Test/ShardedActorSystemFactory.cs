@@ -17,23 +17,8 @@ namespace Euventing.Core.Test
             string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
             var config = ConfigurationFactory.ParseString(MainConfig.
                 Replace("{portNumber}", portNumber.ToString()).
-                Replace("{seedNodes}", seedNodeString).
-                Replace("{persistenceSection}", InMemoryPersistenceConfig));
+                Replace("{seedNodes}", seedNodeString));
             return ActorSystem.Create(akkaSystemName, config);
-        }
-
-        public ActorSystem GetActorSystemWithSqlitePersistence(int portNumber, string akkaSystemName, params string[] seedNodes)
-        {
-            string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
-            var config = ConfigurationFactory.ParseString(MainConfig.
-                Replace("{portNumber}", portNumber.ToString()).
-                Replace("{seedNodes}", seedNodeString).
-                Replace("{persistenceSection}", SqlitePersistenceConfig));
-            var system = ActorSystem.Create(akkaSystemName, config);
-            Persistence.Instance.Apply(system);
-            SqlitePersistence.Get(system);
-
-            return system;
         }
 
         private string GetSeedNodeList(string akkaSystemName, params string[] seedNodes)
@@ -126,10 +111,6 @@ namespace Euventing.Core.Test
                           }
                         }  
                      }
-                 {persistenceSection}
-            }";
-
-        private string SqlitePersistenceConfig = @"
                     persistence {
                         journal {
                             plugin = ""akka.persistence.journal.sqlite""
@@ -138,7 +119,13 @@ namespace Euventing.Core.Test
                                 plugin-dispatcher = ""akka.actor.default-dispatcher""
                                 table-name = event_journal
                                 auto-initialize = on
-                                connection-string = ""Data Source=c:\\data\\store.db;Version=3;""
+                                connection-string = ""Data Source=c:\\data\\store1.db;Version=3;""
+                            }
+                            inmem {
+                                # Class name of the plugin.
+                                class = ""Euventing.InMemoryPersistence.InMemoryJournal, Euventing.InMemoryPersistence""
+                                # Dispatcher for the plugin actor.
+                                plugin-dispatcher = ""akka.actor.default-dispatcher""
                             }
                         }
                         snapshot-store {
@@ -148,33 +135,17 @@ namespace Euventing.Core.Test
                                 plugin-dispatcher = ""akka.actor.default-dispatcher""
                                 table-name = snapshot_store
                                 auto-initialize = on
-                                connection-string = ""Data Source=c:\\data\\store.db;Version=3;""
+                                connection-string = ""Data Source=c:\\data\\store1.db;Version=3;""
+                            }
+                            inmem {
+                                class = ""Euventing.InMemoryPersistence.InMemorySnapshotStore, Euventing.InMemoryPersistence""
+                                # Dispatcher for the plugin actor.
+                                plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
+                                # Dispatcher for streaming snapshot IO.
+                                stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
                             }
                         }
-                    }";
-
-        private string InMemoryPersistenceConfig = @"persistence {
-                            journal {
-                                # Path to the journal plugin to be used
-                                plugin = ""akka.persistence.journal.inmem""
-                                # In-memory journal plugin.
-                                    inmem {
-                                        # Class name of the plugin.
-                                        class = ""Euventing.InMemoryPersistence.InMemoryJournal, Euventing.InMemoryPersistence""
-                                        # Dispatcher for the plugin actor.
-                                        plugin-dispatcher = ""akka.actor.default-dispatcher""
-                                    }
-                            }
-                                snapshot-store {
-                                plugin = ""akka.persistence.snapshot-store.inmem""
-                                inmem {
-                                    class = ""Euventing.InMemoryPersistence.InMemorySnapshotStore, Euventing.InMemoryPersistence""
-                                    # Dispatcher for the plugin actor.
-                                    plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
-                                    # Dispatcher for streaming snapshot IO.
-                                    stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
-                                }
-                            }
-                        }";
+                    }
+            }";
     }
 }
