@@ -47,7 +47,7 @@ namespace Euventing.Atom.Document
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error processing " + message.GetType() + e.ToString());
+                Console.WriteLine("Error processing " + message.GetType() + " " + e.ToString());
             }
 
             return true;

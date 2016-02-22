@@ -10,13 +10,18 @@ namespace Euventing.InMemoryPersistence
 {
     public class InMemoryJournal : AsyncWriteJournal
     {
-        private readonly IPersistableEntityRepository repository;
+        private static IPersistableEntityRepository repository;
 
-        public InMemoryJournal()
+        static InMemoryJournal()
         {
-            //repository = new LoggingPersistableEntityRepositoryDecorator(new InMemoryPersistableEntityRepository());
             repository = new InMemoryPersistableEntityRepository();
         }
+
+        //public InMemoryJournal()
+        //{
+        //    //repository = new LoggingPersistableEntityRepositoryDecorator(new InMemoryPersistableEntityRepository());
+        //    repository = new InMemoryPersistableEntityRepository();
+        //}
 
         public override Task ReplayMessagesAsync(string persistenceId, long fromSequenceNr, long toSequenceNr, long max, Action<IPersistentRepresentation> replayCallback)
         {

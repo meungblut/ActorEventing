@@ -34,7 +34,7 @@ namespace Euventing.Atom
             if (up != null)
             {
                 var mem = up;
-                Log.Info("Member is Up: {0}", mem.Member);
+                Log.Info("************************************************************************Member is Up: {0}", mem.Member);
             }
             else if (message is ClusterEvent.UnreachableMember)
             {

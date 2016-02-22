@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Persistence.Sqlite.Snapshot;
 using Euventing.Atom.ShardSupport.Document;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
@@ -12,50 +14,56 @@ namespace Euventing.Atom.Test
 {
     public class AtomEventNotifierInMultiNodeClusterShould
     {
-        private static ShardedActorSystemFactory factory = new ShardedActorSystemFactory();
-        private static AtomEventNotifier _notifier;
-        private static AtomEventNotifier _notifier1;
-        private static AtomDocumentRetriever _retriever;
-        private static AtomDocumentRetriever _retriever1;
         private static SubscriptionMessage subscriptionMessage;
 
         private int totalNotifications;
+        private int numberOfNodes;
+
+        private List<AtomEventNotifier> atomNotifiers;
+        private List<AtomDocumentRetriever> atomDocumentRetrievers;
 
         [OneTimeSetUp]
-        public static void SetupActorSystem()
+        public void SetupActorSystem()
         {
-            var actorSystem = factory.GetActorSystemWithSqlitePersistence(3626, "atomActorSystem", "127.0.0.1:3626");
-            var actorSystem1 = factory.GetActorSystemWithSqlitePersistence(3627, "atomActorSystem", "127.0.0.1:3626");
-            actorSystem1.ActorOf(Props.Create<SimpleClusterListener>());
-            actorSystem.ActorOf(Props.Create<SimpleClusterListener>());
+            atomNotifiers = new List<AtomEventNotifier>();
+            atomDocumentRetrievers = new List<AtomDocumentRetriever>();
 
-            var actorFactory = new ShardedAtomFeedFactory(actorSystem);
-            var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
+            Create(3626, "atomActorSystem", "127.0.0.1:3626");
+            //Create(3627, "atomActorSystem", "127.0.0.1:3626");
+            //Create(3628, "atomActorSystem", "127.0.0.1:3626");
+            //Create(3629, "atomActorSystem", "127.0.0.1:3626");
+            //Create(3630, "atomActorSystem", "127.0.0.1:3626");
 
-            var actorFactory1 = new ShardedAtomFeedFactory(actorSystem1);
-            var atomDocumentFactory1 = new ShardedAtomDocumentFactory(actorSystem1);
 
-            _notifier = new AtomEventNotifier(actorFactory);
-            _retriever = new AtomDocumentRetriever(actorFactory, atomDocumentFactory);
-
-            _notifier1 = new AtomEventNotifier(actorFactory1);
-            _retriever1 = new AtomDocumentRetriever(actorFactory1, atomDocumentFactory1);
-
-            Thread.Sleep(TimeSpan.FromSeconds(5));
+            Thread.Sleep(TimeSpan.FromSeconds(10));
 
             subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
                 new UserId(Guid.NewGuid().ToString()),
-                new SubscriptionId(Guid.NewGuid().ToString()),
+                new SubscriptionId("1"),
                 new AllEventMatcher());
 
-            _notifier.Create(subscriptionMessage);
+            atomNotifiers[0].Create(subscriptionMessage);
+
+            Thread.Sleep(TimeSpan.FromSeconds(4));
+        }
+
+        private void Create(int port, string actorSystemName, string seedNode)
+        {
+            var factory = new ShardedActorSystemFactory();
+            var actorSystem = factory.GetActorSystemWithSqlitePersistence(port, actorSystemName, seedNode);
+            actorSystem.ActorOf(Props.Create<SimpleClusterListener>());
+            var actorFactory = new ShardedAtomFeedFactory(actorSystem);
+            var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
+            atomNotifiers.Add(new AtomEventNotifier(actorFactory));
+            atomDocumentRetrievers.Add(new AtomDocumentRetriever(actorFactory, atomDocumentFactory));
+            numberOfNodes++;
         }
 
         [Test]
         public async Task CreateANewAtomFeedWithAHeadDocument()
         {
-            var document = await _retriever.GetHeadDocumentId(subscriptionMessage.SubscriptionId);
+            var document = await atomDocumentRetrievers[0].GetHeadDocumentId(subscriptionMessage.SubscriptionId);
             Assert.IsNotNull(document.Id);
         }
 
@@ -66,7 +74,7 @@ namespace Euventing.Atom.Test
 
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
-            var document = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
+            var document = await atomDocumentRetrievers[0].GetHeadDocument(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
 
             Assert.AreEqual(16, document.Entries.Count);
         }
@@ -78,9 +86,9 @@ namespace Euventing.Atom.Test
 
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
-            var headDocument = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId);
+            var headDocument = await atomDocumentRetrievers[0].GetHeadDocument(subscriptionMessage.SubscriptionId);
             Assert.IsNotNull(headDocument.EarlierEventsDocumentId);
-            var earlierDocument = await _retriever.GetDocument(headDocument.EarlierEventsDocumentId);
+            var earlierDocument = await atomDocumentRetrievers[0].GetDocument(headDocument.EarlierEventsDocumentId);
 
             Assert.AreEqual(totalNotifications, headDocument.Entries.Count + earlierDocument.Entries.Count);
         }
@@ -90,11 +98,9 @@ namespace Euventing.Atom.Test
             for (int i = 0; i < numberOfNotifications; i++)
             {
                 totalNotifications++;
-                if (i % 2 == 0)
-                    _notifier1.Notify(subscriptionMessage, new DummyDomainEvent(i.ToString()));
-                else
-                    _notifier.Notify(subscriptionMessage, new DummyDomainEvent(i.ToString()));
 
+                atomNotifiers[i % numberOfNodes].Notify(subscriptionMessage, new DummyDomainEvent(i.ToString()));
+                
                 Thread.Sleep(TimeSpan.FromMilliseconds(20));
             }
         }

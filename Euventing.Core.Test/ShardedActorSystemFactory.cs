@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Configuration;
+using Akka.Persistence.Sqlite;
+using Akka.Persistence;
 
 namespace Euventing.Core.Test
 {
@@ -27,7 +29,11 @@ namespace Euventing.Core.Test
                 Replace("{portNumber}", portNumber.ToString()).
                 Replace("{seedNodes}", seedNodeString).
                 Replace("{persistenceSection}", SqlitePersistenceConfig));
-            return ActorSystem.Create(akkaSystemName, config);
+            var system = ActorSystem.Create(akkaSystemName, config);
+            Persistence.Instance.Apply(system);
+            SqlitePersistence.Get(system);
+
+            return system;
         }
 
         private string GetSeedNodeList(string akkaSystemName, params string[] seedNodes)
@@ -44,7 +50,7 @@ namespace Euventing.Core.Test
 
         private string MainConfig = @"
             akka {
-                #loglevel = DEBUG
+                loglevel = DEBUG
                 akka.extensions = [""akka.contrib.pattern.DistributedPubSubExtension""]
                 actor {
                   provider = ""Akka.Cluster.ClusterActorRefProvider, Akka.Cluster""
@@ -59,7 +65,7 @@ namespace Euventing.Core.Test
                   serialization-identifiers {
                     ""Akka.Cluster.Tools.Singleton.Serialization.ClusterSingletonMessageSerializer, Akka.Cluster.Tools"" = 14
                   }
-        debug {  
+            debug {  
               receive = on 
               autoreceive = on
               lifecycle = on
@@ -110,8 +116,8 @@ namespace Euventing.Core.Test
                         shard-failure-backoff = 10s
                         entity-restart-backoff = 10s
                         rebalance-interval = 10s
-                        journal-plugin-id = """"
-                        snapshot-plugin-id = """"
+                        journal-plugin-id = ""akka.persistence.journal.sqlite""
+                        snapshot-plugin-id = ""akka.persistence.snapshot-store.sqlite""
                         state-store-mode = ""persistence""
                         snapshot-after = 1000
                           least-shard-allocation-strategy {
@@ -121,30 +127,32 @@ namespace Euventing.Core.Test
                         }  
                      }
                  {persistenceSection}
-            }
-            ";
+            }";
 
-        private string SqlitePersistenceConfig = @"persistence {
-                    journal {
-                        journal.plugin = ""akka.persistence.journal.sqlite""
-                        sqlite {
-                            class = ""Akka.Persistence.Sqlite.Journal.SqliteJournal, Akka.Persistence.Sqlite""
-                            plugin-dispatcher = ""akka.actor.default-dispatcher""
-                            table-name = event_journal
-                            auto-initialize = on
-                            connection-string = ""Data Source=.\\store.db;Version=3;""
+        private string SqlitePersistenceConfig = @"
+                    persistence {
+                            #snapshot-store.plugin = ""akka.persistence.snapshot-store.sqlite""
+                            #journal.plugin = ""akka.persistence.journal.sqlite""
+                        journal {
+                            plugin = ""akka.persistence.journal.sqlite""
+                            sqlite {
+                                class = ""Akka.Persistence.Sqlite.Journal.SqliteJournal, Akka.Persistence.Sqlite""
+                                plugin-dispatcher = ""akka.actor.default-dispatcher""
+                                table-name = event_journal
+                                auto-initialize = on
+                                connection-string = ""Data Source=c:\\data\\store.db;Version=3;""
+                            }
+                        snapshot-store {
+plugin = ""akka.persistence.snapshot-store.sqlite""
+                            sqlite {
+                                class = ""Akka.Persistence.Sqlite.Snapshot.SqliteSnapshotStore, Akka.Persistence.Sqlite""
+                                plugin-dispatcher = ""akka.actor.default-dispatcher""
+                                table-name = snapshot_store
+                                auto-initialize = on
+                                connection-string = ""Data Source=c:\\data\\store.db;Version=3;""
+                            }
                         }
-                        snapshot-store.plugin {
-                        plugin = ""akka.persistence.snapshot-store.sqlite""
-                        sqlite {
-                            class = ""Akka.Persistence.Sqlite.Snapshot.SqliteSnapshotStore, Akka.Persistence.Sqlite""
-                            plugin-dispatcher = ""akka.actor.default-dispatcher""
-                            table-name = snapshot_store
-                            auto-initialize = on
-                            connection-string = ""Data Source=.\\store.db;Version=3;""
-                        }
-                    }
-        }";
+                    }";
 
         private string InMemoryPersistenceConfig = @"persistence {
                             journal {

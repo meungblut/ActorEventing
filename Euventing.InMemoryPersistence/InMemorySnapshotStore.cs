@@ -6,13 +6,17 @@ namespace Euventing.InMemoryPersistence
 {
     public class InMemorySnapshotStore : SnapshotStore
     {
-        private readonly IPersistableEntityRepository repository;
+        private static readonly IPersistableEntityRepository repository;
 
-        public InMemorySnapshotStore()
+        static InMemorySnapshotStore()
         {
-            //repository = new LoggingPersistableEntityRepositoryDecorator(new InMemoryPersistableEntityRepository());
             repository = new InMemoryPersistableEntityRepository();
         }
+        //public InMemorySnapshotStore()
+        //{
+        //    //repository = new LoggingPersistableEntityRepositoryDecorator(new InMemoryPersistableEntityRepository());
+        //    repository = new InMemoryPersistableEntityRepository();
+        //}
 
         protected override async Task<SelectedSnapshot> LoadAsync(string persistenceId, SnapshotSelectionCriteria criteria)
         {

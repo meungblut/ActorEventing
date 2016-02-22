@@ -85,7 +85,7 @@
   <ItemGroup>
     <Compile Include="AtomDocumentRetriever.cs" />
     <Compile Include="AtomEventNotifier.cs" />
-    <Compile Include="ClusterListener.cs" />
+    <Compile Include="SimpleClusterListener.cs" />
     <Compile Include="Document\Actors\AtomDocumentActor.cs" />
     <Compile Include="Document\Actors\AtomFeedActor.cs" />
     <Compile Include="Document\AtomDocumentCreatedEvent.cs" />
