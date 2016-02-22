@@ -131,8 +131,6 @@ namespace Euventing.Core.Test
 
         private string SqlitePersistenceConfig = @"
                     persistence {
-                            #snapshot-store.plugin = ""akka.persistence.snapshot-store.sqlite""
-                            #journal.plugin = ""akka.persistence.journal.sqlite""
                         journal {
                             plugin = ""akka.persistence.journal.sqlite""
                             sqlite {
@@ -142,8 +140,9 @@ namespace Euventing.Core.Test
                                 auto-initialize = on
                                 connection-string = ""Data Source=c:\\data\\store.db;Version=3;""
                             }
+                        }
                         snapshot-store {
-plugin = ""akka.persistence.snapshot-store.sqlite""
+                            plugin = ""akka.persistence.snapshot-store.sqlite""
                             sqlite {
                                 class = ""Akka.Persistence.Sqlite.Snapshot.SqliteSnapshotStore, Akka.Persistence.Sqlite""
                                 plugin-dispatcher = ""akka.actor.default-dispatcher""

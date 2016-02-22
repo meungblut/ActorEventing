@@ -29,7 +29,7 @@ namespace Euventing.Atom.Test
             atomDocumentRetrievers = new List<AtomDocumentRetriever>();
 
             Create(3626, "atomActorSystem", "127.0.0.1:3626");
-            //Create(3627, "atomActorSystem", "127.0.0.1:3626");
+            Create(3627, "atomActorSystem", "127.0.0.1:3626");
             //Create(3628, "atomActorSystem", "127.0.0.1:3626");
             //Create(3629, "atomActorSystem", "127.0.0.1:3626");
             //Create(3630, "atomActorSystem", "127.0.0.1:3626");
