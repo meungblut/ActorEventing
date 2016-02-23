@@ -6,6 +6,7 @@ using Euventing.Atom.ShardSupport.Document;
 using Euventing.Core;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
+using System.Threading.Tasks;
 
 namespace Euventing.ConsoleHost
 {
@@ -21,18 +22,18 @@ namespace Euventing.ConsoleHost
             var actorSystem = actorSystemFactory.GetActorSystem(int.Parse(args[0]), args[1], args[2]);
 
             actorSystem.ActorOf(Props.Create<SimpleClusterListener>());
-            var actorFactory = new ShardedAtomFeedFactory(actorSystem);
+            var actorFeedFactory = new ShardedAtomFeedFactory(actorSystem);
             var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
 
-            _notifier = new AtomEventNotifier(actorFactory);
-            _retriever = new AtomDocumentRetriever(actorFactory, atomDocumentFactory);
+            _notifier = new AtomEventNotifier(actorFeedFactory);
+            _retriever = new AtomDocumentRetriever(actorFeedFactory, atomDocumentFactory);
 
             Console.WriteLine("Setup with {0}, {1}, {2}", args[0], args[1], args[2]);
 
             Console.Title = args[0];
 
             Thread.Sleep(TimeSpan.FromSeconds(10));
-             
+
             _subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
                 new UserId(Guid.NewGuid().ToString()),
@@ -41,7 +42,12 @@ namespace Euventing.ConsoleHost
 
             _notifier.Create(_subscriptionMessage);
 
-            if (args[3] == "notify")
+            if (args.Length > 3 && args[3] == "pollHead")
+            {
+                Console.WriteLine("DOCUMENT POLLER");
+                Get();
+            }
+            else
             {
                 Notify(args[0]);
             }
@@ -58,9 +64,14 @@ namespace Euventing.ConsoleHost
             }
         }
 
-        private static void Get()
+        private async static Task Get()
         {
-            
+            for (int i = 0; i < 1000; i++)
+            {
+                Console.WriteLine(await _retriever.GetSerialisedHeadDocument(_subscriptionMessage.SubscriptionId));
+
+                Thread.Sleep(TimeSpan.FromMilliseconds(2000));
+            }
         }
     }
 
