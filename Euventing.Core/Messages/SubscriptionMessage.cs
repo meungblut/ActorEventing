@@ -14,7 +14,6 @@ namespace Euventing.Core.Messages
         public SubscriptionId SubscriptionId { get; private set; }
         public IEventMatcher AllEventMatcher { get; private set; }
 
-
         public SubscriptionMessage(INotificationChannel notificationChannel, UserId userId, SubscriptionId subscriptionId, IEventMatcher allEventMatcher)
         {
             NotificationChannel = notificationChannel;

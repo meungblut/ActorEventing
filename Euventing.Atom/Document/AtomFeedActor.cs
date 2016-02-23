@@ -27,6 +27,23 @@ namespace Euventing.Atom.Document
 
         protected override bool ReceiveRecover(object message)
         {
+            if (message == null)
+            {
+                Console.WriteLine("Received null message");
+                return true;
+            }
+
+            Console.WriteLine("AtomFeedActor ReceiveCommand " + message.GetType());
+
+            try
+            {
+                ((dynamic) this).MutateInternalState((dynamic) message);
+            }
+            catch (Exception e)
+            {
+                throw new CouldNotProcessPersistenceMessage("Could not process " + message.GetType(), e);
+            }
+
             return true;
         }
 
@@ -37,9 +54,6 @@ namespace Euventing.Atom.Document
                 Console.WriteLine("Received null message");
                 return true;
             }
-
-            Console.WriteLine("AtomFeedActor ReceiveCommand " + message.GetType());
-
 
             try
             {
@@ -102,8 +116,6 @@ namespace Euventing.Atom.Document
 
         private void Process(GetHeadDocumentForFeedRequest getHeadRequest)
         {
-            Console.WriteLine("Getting document with id " + currentFeedHeadDocument.Id);
-
             var atomDocument =
                 builder.GetActorRef().Ask<AtomDocument>(new GetAtomDocumentRequest(currentFeedHeadDocument)).Result;
             Sender.Tell(atomDocument, Self);
@@ -127,6 +139,11 @@ namespace Euventing.Atom.Document
             currentFeedHeadDocument = atomFeedCreated.DocumentId;
             feedTitle = atomFeedCreated.FeedTitle;
             feedAuthor = atomFeedCreated.FeedAuthor;
+        }
+
+        private void MutateInternalState(object unknownRecoveryCommand)
+        {
+            Console.WriteLine("Received Unknown recovery command: " + unknownRecoveryCommand.GetType().ToString());
         }
     }
 }

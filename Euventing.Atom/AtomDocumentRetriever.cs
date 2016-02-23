@@ -48,8 +48,15 @@ namespace Euventing.Atom
 
         public async Task<string> GetSerialisedHeadDocument(SubscriptionId documentId)
         {
-            var atomDocument = await GetHeadDocument(documentId);
-            return atomDocumentSerialiser.Serialise(atomDocument, "http://matt.com");
+            try
+            {
+                var atomDocument = await GetHeadDocument(documentId);
+                return atomDocumentSerialiser.Serialise(atomDocument, "http://matt.com");
+            }
+            catch (Exception ex)
+            {
+               return ex.ToString();
+            }
         }
     }
 }

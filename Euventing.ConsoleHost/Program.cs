@@ -60,7 +60,9 @@ namespace Euventing.ConsoleHost
             {
                 _notifier.Notify(_subscriptionMessage, new DummyDomainEvent(port + ":" + i.ToString()));
 
-                Thread.Sleep(TimeSpan.FromMilliseconds(2000));
+                Thread.Sleep(TimeSpan.FromMilliseconds(200));
+
+                //Console.WriteLine(_retriever.GetSerialisedHeadDocument(_subscriptionMessage.SubscriptionId).Result);
             }
         }
 
@@ -70,7 +72,7 @@ namespace Euventing.ConsoleHost
             {
                 Console.WriteLine(await _retriever.GetSerialisedHeadDocument(_subscriptionMessage.SubscriptionId));
 
-                Thread.Sleep(TimeSpan.FromMilliseconds(2000));
+                Thread.Sleep(TimeSpan.FromMilliseconds(200));
             }
         }
     }
