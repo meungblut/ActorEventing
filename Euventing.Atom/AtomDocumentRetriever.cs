@@ -12,7 +12,7 @@ namespace Euventing.Atom
     {
         private readonly ShardedAtomFeedFactory factory;
         private readonly ShardedAtomDocumentFactory shardedAtomDocumentFactory;
-        private AtomDocumentSerialiser atomDocumentSerialiser;
+        private readonly AtomDocumentSerialiser atomDocumentSerialiser;
 
         public AtomDocumentRetriever(ShardedAtomFeedFactory factory, ShardedAtomDocumentFactory builder)
         {

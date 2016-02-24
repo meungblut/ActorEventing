@@ -32,6 +32,9 @@ namespace Euventing.Core
         private string MainConfig = @"
             akka {
                 #loglevel = DEBUG
+                #log-config-on-start = on 
+                actor.debug.unhandled = on
+                loggers = [""Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog""]
                 akka.extensions = [""akka.contrib.pattern.DistributedPubSubExtension""]
                 actor {
                   provider = ""Akka.Cluster.ClusterActorRefProvider, Akka.Cluster""
