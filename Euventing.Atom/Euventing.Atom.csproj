@@ -88,8 +88,6 @@
     <Compile Include="Document\CouldNotProcessPersistenceMessage.cs" />
     <Compile Include="Serialization\AtomDocumentSerialiser.cs" />
     <Compile Include="SimpleClusterListener.cs" />
-    <Compile Include="Document\Actors\AtomDocumentActor.cs" />
-    <Compile Include="Document\Actors\AtomFeedActor.cs" />
     <Compile Include="Document\AtomDocumentCreatedEvent.cs" />
     <Compile Include="Document\AtomDocumentFullEvent.cs" />
     <Compile Include="Document\AtomDocumentSettings.cs" />
