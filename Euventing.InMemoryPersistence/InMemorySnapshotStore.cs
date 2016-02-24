@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Akka.Persistence;
 using Akka.Persistence.Snapshot;
 
@@ -8,15 +9,12 @@ namespace Euventing.InMemoryPersistence
     {
         private static readonly IPersistableEntityRepository repository;
 
+        public static IPersistableEntityRepository RepositorySavedWIth { get { return repository; } }
+
         static InMemorySnapshotStore()
         {
             repository = new InMemoryPersistableEntityRepository();
         }
-        //public InMemorySnapshotStore()
-        //{
-        //    //repository = new LoggingPersistableEntityRepositoryDecorator(new InMemoryPersistableEntityRepository());
-        //    repository = new InMemoryPersistableEntityRepository();
-        //}
 
         protected override async Task<SelectedSnapshot> LoadAsync(string persistenceId, SnapshotSelectionCriteria criteria)
         {
@@ -29,11 +27,14 @@ namespace Euventing.InMemoryPersistence
 
         protected override async Task SaveAsync(SnapshotMetadata metadata, object snapshot)
         {
+            Console.WriteLine("Saving snapshot");
             await repository.Save(new SnapshotEntry(metadata.PersistenceId, metadata.SequenceNr, metadata.Timestamp, snapshot));
         }
 
         protected override void Saved(SnapshotMetadata metadata)
         {
+            Console.WriteLine("Saving snapshot");
+            repository.Save(new SnapshotEntry(metadata.PersistenceId, metadata.SequenceNr, metadata.Timestamp, null));
         }
 
         protected override async Task DeleteAsync(SnapshotMetadata metadata)

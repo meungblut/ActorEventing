@@ -4,13 +4,15 @@ using Akka.Actor;
 using Akka.Persistence;
 using Akka.Cluster;
 using Akka.Event;
+using Euventing.Atom.Document.Actors;
 
 namespace Euventing.Atom.Document
 {
     public class AtomFeedActor : PersistentActor
     {
-        private ILoggingAdapter loggingAdapter;
+        private readonly ILoggingAdapter loggingAdapter;
         private readonly IAtomDocumentActorBuilder builder;
+        private readonly IAtomDocumentSettings settings;
         private FeedId atomFeedId;
         private DocumentId currentFeedHeadDocument;
         private DocumentId lastHeadDocument;
@@ -20,23 +22,18 @@ namespace Euventing.Atom.Document
 
         public override string PersistenceId { get; }
 
-        public AtomFeedActor(IAtomDocumentActorBuilder builder)
+        public AtomFeedActor(IAtomDocumentActorBuilder builder, IAtomDocumentSettings settings)
         {
             loggingAdapter = Context.GetLogger();
             loggingAdapter.Info("Feed actor path is " + Self.Path);
             this.builder = builder;
+            this.settings = settings;
             PersistenceId = "AtomFeedActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
         }
 
         protected override bool ReceiveRecover(object message)
         {
-            if (message == null)
-            {
-                loggingAdapter.Info("Received null message");
-                return true;
-            }
-
-            loggingAdapter.Info("AtomFeedActor ReceiveCommand " + message.GetType());
+            loggingAdapter.Info("AtomFeedActor ReceiveRecover " + message.GetType());
 
             try
             {
@@ -56,7 +53,7 @@ namespace Euventing.Atom.Document
             if (message == null)
             {
                 loggingAdapter.Info("Received null message");
-                return true;
+                return false;
             }
 
             try
@@ -89,6 +86,17 @@ namespace Euventing.Atom.Document
                 creationCommand.Title, creationCommand.Author, creationCommand.FeedId, documentId, creationCommand.EarlierEventsDocumentId), Self);
         }
 
+        private void Process(SaveSnapshotFailure failure)
+        {
+            loggingAdapter.Error(failure.Metadata.PersistenceId + ":" + failure.Metadata.SequenceNr +
+                "Snapshot save failure " + failure.Cause.ToString());
+        }
+
+        private void Process(SaveSnapshotSuccess success)
+        {
+            loggingAdapter.Debug("Snapshot save succeeded " + success.Metadata.PersistenceId);
+        }
+
         private void Process(EventWithSubscriptionNotificationMessage message)
         {
             var notificationMessage = new EventWithDocumentIdNotificationMessage(currentFeedHeadDocument, message.EventToNotify);
@@ -101,7 +109,7 @@ namespace Euventing.Atom.Document
 
             loggingAdapter.Info("Adding event {0} with id {3} to doc {1} on node {2}", numberOfEventsInCurrentHeadDocument, currentFeedHeadDocument.Id, Cluster.Get(Context.System).SelfAddress, message.EventToNotify.Id);
 
-            if (currentEvents >= 150)
+            if (currentEvents >= settings.NumberOfEventsPerDocument)
             {
                 var newDocumentId = new DocumentId(Guid.NewGuid().ToString());
 
@@ -111,12 +119,37 @@ namespace Euventing.Atom.Document
                     feedTitle, feedAuthor, atomFeedId, newDocumentId, currentFeedHeadDocument), Self);
 
                 atomDocument.Tell(new NewDocumentAddedEvent(newDocumentId));
+
+                CreateSnapshot();
             }
+        }
+
+        private void CreateSnapshot()
+        {
+            var state = new AtomFeedState(this.atomFeedId, this.currentFeedHeadDocument, this.lastHeadDocument,
+                this.feedTitle, this.feedAuthor, this.numberOfEventsInCurrentHeadDocument);
+            SaveSnapshot(state);
         }
 
         private void Process(GetHeadDocumentIdForFeedRequest getHeadIdRequest)
         {
             Sender.Tell(currentFeedHeadDocument, Self);
+        }
+
+        private void MutateInternalState(SnapshotOffer snapshotOffer)
+        {
+            AtomFeedState savedState;
+            if (!(snapshotOffer.Snapshot is AtomFeedState))
+                return;
+
+            savedState = (AtomFeedState) snapshotOffer.Snapshot;
+
+            this.currentFeedHeadDocument = savedState.CurrentFeedHeadDocument;
+            this.atomFeedId = savedState.AtomFeedId;
+            this.feedAuthor = savedState.FeedAuthor;
+            this.feedTitle = savedState.FeedTitle;
+            this.lastHeadDocument = savedState.LastHeadDocument;
+            this.numberOfEventsInCurrentHeadDocument = savedState.NumberOfEventsInCurrentHeadDocument;
         }
 
         private void Process(GetHeadDocumentForFeedRequest getHeadRequest)

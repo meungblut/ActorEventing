@@ -55,9 +55,10 @@ namespace Euventing.ConsoleHost
 
         private static void Notify(string port)
         {
-            for (int i = 0; i < 1000; i++)
+            var i = 0;
+            while (true)
             {
-                _notifier.Notify(_subscriptionMessage, new DummyDomainEvent(port + ":" + i.ToString()));
+                _notifier.Notify(_subscriptionMessage, new DummyDomainEvent(port + ":" + (++i).ToString()));
 
                 Thread.Sleep(TimeSpan.FromMilliseconds(200));
             }
@@ -65,7 +66,7 @@ namespace Euventing.ConsoleHost
 
         private async static Task Get()
         {
-            for (int i = 0; i < 1000; i++)
+            while (true)
             {
                 Console.WriteLine(await _retriever.GetSerialisedHeadDocument(_subscriptionMessage.SubscriptionId));
 

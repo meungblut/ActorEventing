@@ -128,5 +128,10 @@ namespace Euventing.InMemoryPersistence
             Console.WriteLine(DateTime.Now.ToString("yy-mm-dd hh:M:ss fff ") + contents + " " + JsonConvert.SerializeObject(data, jsonSerializerSettings));
             Console.WriteLine();
         }
+
+        public List<T> GetData<T>() where T : IPersistableEntity
+        {
+            return persistableEntityRepository.GetData<T>();
+        }
     }
 }

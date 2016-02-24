@@ -54,7 +54,6 @@ namespace Euventing.Atom.ShardSupport.Feed
 
         public string ShardId(object message)
         {
-            return "1";
             if (message is FeedId)
                 return ((FeedId)message).Id.GetHashCode().ToString();
 

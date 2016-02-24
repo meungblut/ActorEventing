@@ -85,6 +85,7 @@
   <ItemGroup>
     <Compile Include="AtomDocumentRetriever.cs" />
     <Compile Include="AtomEventNotifier.cs" />
+    <Compile Include="Document\Actors\AtomFeedState.cs" />
     <Compile Include="Document\CouldNotProcessPersistenceMessage.cs" />
     <Compile Include="Serialization\AtomDocumentSerialiser.cs" />
     <Compile Include="SimpleClusterListener.cs" />
@@ -114,9 +115,9 @@
     <Compile Include="ShardSupport\Feed\AtomFeedShardedActorRefFactory.cs" />
     <Compile Include="AtomNotificationChannel.cs" />
     <Compile Include="Document\AtomDocument.cs" />
-    <Compile Include="Document\AtomDocumentActor.cs" />
+    <Compile Include="Document\Actors\AtomDocumentActor.cs" />
     <Compile Include="Document\AtomEntry.cs" />
-    <Compile Include="Document\AtomFeedActor.cs" />
+    <Compile Include="Document\Actors\AtomFeedActor.cs" />
     <Compile Include="Document\DocumentId.cs" />
     <Compile Include="Document\FeedId.cs" />
     <Compile Include="GetHeadDocumentIdForFeedRequest.cs" />

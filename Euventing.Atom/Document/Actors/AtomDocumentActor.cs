@@ -14,29 +14,23 @@ namespace Euventing.Atom.Document
         public AtomDocumentActor(IAtomDocumentSettings settings)
         {
             loggingAdapter = Context.GetLogger();
-            atomDocumentSettings = settings;
             PersistenceId = "AtomDocumentActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
         }
 
-        public string title;
-        public DateTime updated;
-        public string author;
-        public FeedId feedId;
-        public DocumentId documentId;
-        public DocumentId laterEventsDocumentId;
-        public DocumentId earlierEventsDocumentId;
-        public List<AtomEntry> entries = new List<AtomEntry>();
+        private string title;
+        private DateTime updated;
+        private string author;
+        private FeedId feedId;
+        private DocumentId documentId;
+        private DocumentId laterEventsDocumentId;
+        private DocumentId earlierEventsDocumentId;
+        private readonly List<AtomEntry> entries = new List<AtomEntry>();
 
         private long sequenceNumber;
-        private IAtomDocumentSettings atomDocumentSettings;
-        private ILoggingAdapter loggingAdapter;
+        private readonly ILoggingAdapter loggingAdapter;
 
         protected override bool ReceiveRecover(object message)
         {
-            //ToDo: establish where the nulls are coming from
-            if (message == null)
-                return true;
-
             ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
@@ -45,7 +39,7 @@ namespace Euventing.Atom.Document
         protected override bool ReceiveCommand(object message)
         {
             if (message == null)
-                return true;
+                return false;
 
             loggingAdapter.Info("AtomDocumentActor ReceiveCommand " + message.GetType());
 

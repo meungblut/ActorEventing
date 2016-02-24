@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Akka.Actor;
-using Akka.Event;
 using Akka.Util;
 using Euventing.Atom.Document;
 using Euventing.Core;
-using Euventing.Core.Test;
+using Euventing.Core.Messages;
+using Euventing.InMemoryPersistence;
 using NUnit.Framework;
 
 namespace Euventing.Atom.Test
@@ -17,7 +17,8 @@ namespace Euventing.Atom.Test
         private ActorSystem system;
         private IActorRef atomActorRef;
         private DummyAtomDocumentActorCreator dummyAtomDocumentActorCreator;
-        private FeedId feddId;
+        private FeedId feedId;
+
 
         [OneTimeSetUp]
         public void Setup()
@@ -25,13 +26,13 @@ namespace Euventing.Atom.Test
             dummyAtomDocumentActorCreator = new DummyAtomDocumentActorCreator();
             shardedActorSystemFactory = new ShardedActorSystemFactory();
             system = shardedActorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
-            CreateAtomActor("123");
+            CreateAtomFeedActor("123");
         }
 
-        private void CreateAtomActor(string actorId)
+        private void CreateAtomFeedActor(string actorId)
         {
             dummyAtomDocumentActorCreator = new DummyAtomDocumentActorCreator();
-            var props = Props.Create(() => new AtomFeedActor(dummyAtomDocumentActorCreator));
+            var props = Props.Create(() => new AtomFeedActor(dummyAtomDocumentActorCreator, new DummyAtomDocumentSettings(2)));
 
             atomActorRef = system.ActorOf(props, name: actorId);
         }
@@ -43,15 +44,37 @@ namespace Euventing.Atom.Test
 
             dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.WaitOne(TimeSpan.FromSeconds(1));
             var documentCreated =
-                (CreateAtomDocumentCommand) dummyAtomDocumentActorCreator.ActorRefReturned.MessageTellCalledWith;
+                (CreateAtomDocumentCommand)dummyAtomDocumentActorCreator.ActorRefReturned.MessageTellCalledWith;
 
-            Assert.AreEqual(feddId.Id, documentCreated.FeedId.Id);
+            Assert.AreEqual(feedId.Id, documentCreated.FeedId.Id);
+        }
+
+        [Test]
+        public void SaveASnapshotWhenTheDocumentIsRotated()
+        {
+            CreateFeed();
+
+            var eventId = Guid.NewGuid().ToString();
+            atomActorRef.Tell(new EventWithSubscriptionNotificationMessage(new SubscriptionId(this.feedId.Id),
+                new DummyDomainEvent(eventId)));
+
+            atomActorRef.Tell(new EventWithSubscriptionNotificationMessage(new SubscriptionId(this.feedId.Id),
+                new DummyDomainEvent(eventId)));
+
+            atomActorRef.Tell(new EventWithSubscriptionNotificationMessage(new SubscriptionId(this.feedId.Id),
+    new DummyDomainEvent(eventId)));
+
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
+            var snapshot = InMemorySnapshotStore.RepositorySavedWIth.GetData<SnapshotEntry>();
+
+            Assert.IsNotNull(snapshot.First().Snapshot);
         }
 
         private void CreateFeed()
         {
-            feddId = new FeedId(Guid.NewGuid().ToString());
-            var atomFeedCreationCommand = new AtomFeedCreationCommand("title", "author", feddId,
+            feedId = new FeedId(Guid.NewGuid().ToString());
+            var atomFeedCreationCommand = new AtomFeedCreationCommand("title", "author", feedId,
                 new DocumentId(Guid.NewGuid().ToString()));
             atomActorRef.Tell(atomFeedCreationCommand);
             Thread.Sleep(TimeSpan.FromSeconds(1));

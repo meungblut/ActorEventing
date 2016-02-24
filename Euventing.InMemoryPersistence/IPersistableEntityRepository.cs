@@ -9,6 +9,7 @@ namespace Euventing.InMemoryPersistence
         Task Save(IPersistableEntity dataToSave);
         Task<bool> Save(IEnumerable<IPersistableEntity> dataToSave);
         List<T> GetData<T>(string entityId) where T : IPersistableEntity;
+        List<T> GetData<T>() where T : IPersistableEntity;
         long GetMaxSequenceNumber(string entityId);
         List<T> GetData<T>(string entityId, long fromSequenceNumber, long toSequenceNumber, long maximumRowsToReturn) where T : IPersistableEntity;
         T GetData<T>(string entityId, long maximumSequenceNumber, DateTime maximumTimestamp) where T : IPersistableEntity;

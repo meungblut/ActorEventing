@@ -7,7 +7,7 @@ namespace Euventing.InMemoryPersistence
 {
     public class InMemoryPersistableEntityRepository : IPersistableEntityRepository
     {
-        private static Dictionary<string, List<IPersistableEntity>> _dataToStore = new Dictionary<string, List<IPersistableEntity>>();
+        private Dictionary<string, List<IPersistableEntity>> _dataToStore = new Dictionary<string, List<IPersistableEntity>>();
 
         public Task Save(IPersistableEntity dataToSave)
         {
@@ -34,6 +34,11 @@ namespace Euventing.InMemoryPersistence
         public List<T> GetData<T>(string entityId) where T : IPersistableEntity
         {
             return _dataToStore[entityId].ConvertAll(new Converter<IPersistableEntity, T>(x => (T)x));
+        }
+
+        public List<T> GetData<T>() where T : IPersistableEntity
+        {
+            return _dataToStore.First().Value.ConvertAll(new Converter<IPersistableEntity, T>(x => (T)x));
         }
 
         public long GetMaxSequenceNumber(string entityId)
