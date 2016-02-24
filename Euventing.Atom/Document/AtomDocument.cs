@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Euventing.Atom.Document
 {
     public class AtomDocument
     {
-
         public AtomDocument(string title, string author, FeedId feedId, DocumentId documentId, DocumentId earlierEventsDocumentId, DocumentId laterEventsDocumentId, List<AtomEntry> entries)
         {
             LaterEventsDocumentId = laterEventsDocumentId;

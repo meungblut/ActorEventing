@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Persistence;
 using Akka.Cluster;
+using Akka.Event;
 
 namespace Euventing.Atom.Document
 {
     public class AtomFeedActor : PersistentActor
     {
+        private ILoggingAdapter loggingAdapter;
         private readonly IAtomDocumentActorBuilder builder;
         private FeedId atomFeedId;
         private DocumentId currentFeedHeadDocument;
@@ -20,7 +22,8 @@ namespace Euventing.Atom.Document
 
         public AtomFeedActor(IAtomDocumentActorBuilder builder)
         {
-            Console.WriteLine("Feed actor path is " + Self.Path);
+            loggingAdapter = Context.GetLogger();
+            loggingAdapter.Info("Feed actor path is " + Self.Path);
             this.builder = builder;
             PersistenceId = "AtomFeedActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
         }
@@ -29,11 +32,11 @@ namespace Euventing.Atom.Document
         {
             if (message == null)
             {
-                Console.WriteLine("Received null message");
+                loggingAdapter.Info("Received null message");
                 return true;
             }
 
-            Console.WriteLine("AtomFeedActor ReceiveCommand " + message.GetType());
+            loggingAdapter.Info("AtomFeedActor ReceiveCommand " + message.GetType());
 
             try
             {
@@ -41,6 +44,7 @@ namespace Euventing.Atom.Document
             }
             catch (Exception e)
             {
+                loggingAdapter.Error(e.ToString());
                 throw new CouldNotProcessPersistenceMessage("Could not process " + message.GetType(), e);
             }
 
@@ -51,7 +55,7 @@ namespace Euventing.Atom.Document
         {
             if (message == null)
             {
-                Console.WriteLine("Received null message");
+                loggingAdapter.Info("Received null message");
                 return true;
             }
 
@@ -61,7 +65,8 @@ namespace Euventing.Atom.Document
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error processing " + message.GetType() + " " + e.ToString());
+                loggingAdapter.Error(e.ToString());
+                throw new CouldNotProcessPersistenceMessage("Could not process " + message.GetType(), e);
             }
 
             return true;
@@ -94,7 +99,7 @@ namespace Euventing.Atom.Document
             var eventAdded = new EventAddedToDocument(currentEvents);
             Persist(eventAdded, MutateInternalState);
 
-            Console.WriteLine("Adding event {0} with id {3} to doc {1} on node {2}", numberOfEventsInCurrentHeadDocument, currentFeedHeadDocument.Id, Cluster.Get(Context.System).SelfAddress, message.EventToNotify.Id);
+            loggingAdapter.Info("Adding event {0} with id {3} to doc {1} on node {2}", numberOfEventsInCurrentHeadDocument, currentFeedHeadDocument.Id, Cluster.Get(Context.System).SelfAddress, message.EventToNotify.Id);
 
             if (currentEvents >= 150)
             {
@@ -143,7 +148,7 @@ namespace Euventing.Atom.Document
 
         private void MutateInternalState(object unknownRecoveryCommand)
         {
-            Console.WriteLine("Received Unknown recovery command: " + unknownRecoveryCommand.GetType().ToString());
+            loggingAdapter.Info("Received Unknown recovery command: " + unknownRecoveryCommand.GetType().ToString());
         }
     }
 }

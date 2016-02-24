@@ -30,7 +30,7 @@ namespace Euventing.ConsoleHost
 
             Console.WriteLine("Setup with {0}, {1}, {2}", args[0], args[1], args[2]);
 
-            Console.Title = args[0];
+            Console.Title = string.Join(" ", args);
 
             Thread.Sleep(TimeSpan.FromSeconds(10));
 
@@ -44,7 +44,6 @@ namespace Euventing.ConsoleHost
 
             if (args.Length > 3 && args[3] == "pollHead")
             {
-                Console.WriteLine("DOCUMENT POLLER");
                 Get();
             }
             else
@@ -61,8 +60,6 @@ namespace Euventing.ConsoleHost
                 _notifier.Notify(_subscriptionMessage, new DummyDomainEvent(port + ":" + i.ToString()));
 
                 Thread.Sleep(TimeSpan.FromMilliseconds(200));
-
-                //Console.WriteLine(_retriever.GetSerialisedHeadDocument(_subscriptionMessage.SubscriptionId).Result);
             }
         }
 

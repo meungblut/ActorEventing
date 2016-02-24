@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Akka.Cluster;
+using Akka.Event;
 using Euventing.Atom.Serialization;
 using Euventing.Core.Messages;
 
@@ -9,8 +10,10 @@ namespace Euventing.Atom.Document
 {
     public class AtomDocumentActor : PersistentActor
     {
+
         public AtomDocumentActor(IAtomDocumentSettings settings)
         {
+            loggingAdapter = Context.GetLogger();
             atomDocumentSettings = settings;
             PersistenceId = "AtomDocumentActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
         }
@@ -26,6 +29,7 @@ namespace Euventing.Atom.Document
 
         private long sequenceNumber;
         private IAtomDocumentSettings atomDocumentSettings;
+        private ILoggingAdapter loggingAdapter;
 
         protected override bool ReceiveRecover(object message)
         {
@@ -43,7 +47,7 @@ namespace Euventing.Atom.Document
             if (message == null)
                 return true;
 
-            Console.WriteLine("AtomDocumentActor ReceiveCommand " + message.GetType());
+            loggingAdapter.Info("AtomDocumentActor ReceiveCommand " + message.GetType());
 
             ((dynamic)this).Process((dynamic)message);
 
@@ -54,7 +58,7 @@ namespace Euventing.Atom.Document
 
         private void Process(CreateAtomDocumentCommand creationRequest)
         {
-            Console.WriteLine("Creating document " + creationRequest.DocumentId + " on node " + Cluster.Get(Context.System).SelfAddress);
+            loggingAdapter.Info("Creating document " + creationRequest.DocumentId + " on node " + Cluster.Get(Context.System).SelfAddress);
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
                 creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
 
