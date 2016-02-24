@@ -103,6 +103,7 @@
     <Compile Include="EventMatching\AllEventMatcher.cs" />
     <Compile Include="EventMatching\IEventMatcher.cs" />
     <Compile Include="EventPublisher.cs" />
+    <Compile Include="EventWithSubscriptionNotificationMessage.cs" />
     <Compile Include="Messages\DomainEvent.cs" />
     <Compile Include="Messages\NotificationChannel.cs" />
     <Compile Include="Messages\NullSubscription.cs" />

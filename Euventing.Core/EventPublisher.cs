@@ -8,7 +8,7 @@ namespace Euventing.Core
     public class EventPublisher
     {
         private readonly ActorSystem actorSystem;
-        private IActorRef mediator;
+        private readonly IActorRef mediator;
 
         public EventPublisher(ActorSystem actorSystem)
         {

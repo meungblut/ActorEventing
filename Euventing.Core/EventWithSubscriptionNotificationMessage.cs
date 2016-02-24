@@ -1,6 +1,6 @@
 ﻿using Euventing.Core.Messages;
 
-namespace Euventing.Atom
+namespace Euventing.Core
 {
     public class EventWithSubscriptionNotificationMessage
     {

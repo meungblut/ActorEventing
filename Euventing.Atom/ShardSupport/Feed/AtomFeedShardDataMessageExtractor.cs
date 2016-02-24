@@ -1,6 +1,7 @@
 ﻿using Akka.Cluster.Sharding;
 using Akka.Persistence;
 using Euventing.Atom.Document;
+using Euventing.Core;
 
 namespace Euventing.Atom.ShardSupport.Feed
 {

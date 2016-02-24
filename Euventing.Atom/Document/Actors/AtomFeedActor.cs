@@ -3,6 +3,7 @@ using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
 using Akka.Persistence;
+using Euventing.Core;
 
 namespace Euventing.Atom.Document.Actors
 {
@@ -18,6 +19,8 @@ namespace Euventing.Atom.Document.Actors
         private string feedAuthor;
         private int numberOfEventsInCurrentHeadDocument;
 
+        private int recoveryMessages = 0;
+
         public override string PersistenceId { get; }
 
         public AtomFeedActor(IAtomDocumentActorBuilder builder, IAtomDocumentSettings settings)
@@ -31,7 +34,7 @@ namespace Euventing.Atom.Document.Actors
 
         protected override bool ReceiveRecover(object message)
         {
-            loggingAdapter.Info("AtomFeedActor ReceiveRecover " + message.GetType());
+            loggingAdapter.Info("AtomFeedActor ReceiveRecover " + message.GetType() + recoveryMessages++);
 
             try
             {

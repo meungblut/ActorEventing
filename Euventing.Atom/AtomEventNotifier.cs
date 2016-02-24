@@ -2,6 +2,7 @@
 using Akka.Actor;
 using Euventing.Atom.Document;
 using Euventing.Atom.ShardSupport.Document;
+using Euventing.Core;
 using Euventing.Core.Messages;
 using Euventing.Core.Notifications;
 
