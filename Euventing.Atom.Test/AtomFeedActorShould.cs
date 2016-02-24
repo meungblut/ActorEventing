@@ -4,6 +4,7 @@ using System.Threading;
 using Akka.Actor;
 using Akka.Util;
 using Euventing.Atom.Document;
+using Euventing.Atom.Document.Actors;
 using Euventing.Core;
 using Euventing.Core.Messages;
 using Euventing.InMemoryPersistence;

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
 using Euventing.Atom.Document;
+using Euventing.Atom.Document.Actors;
 using Euventing.Core;
 using Euventing.Core.Messages;
 using Euventing.Core.Test;

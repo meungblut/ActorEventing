@@ -1,12 +1,11 @@
-﻿using Akka.Persistence;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Akka.Cluster;
 using Akka.Event;
+using Akka.Persistence;
 using Euventing.Atom.Serialization;
-using Euventing.Core.Messages;
 
-namespace Euventing.Atom.Document
+namespace Euventing.Atom.Document.Actors
 {
     public class AtomDocumentActor : PersistentActor
     {

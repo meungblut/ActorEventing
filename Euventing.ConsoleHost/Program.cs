@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using Akka.Actor;
 using Euventing.Atom;
@@ -19,7 +20,11 @@ namespace Euventing.ConsoleHost
         static void Main(string[] args)
         {
             var actorSystemFactory = new ShardedActorSystemFactory();
-            var actorSystem = actorSystemFactory.GetActorSystemWithSqlitePersistence(int.Parse(args[0]), args[1], args[2]);
+
+            var actorSystem = actorSystemFactory.GetActorSystemWithSqlitePersistence(
+                GetPortFromCommandLine(args), 
+                GetValueFromCommandLine("akkaSystemName", args),
+                GetValueFromCommandLine("seedNodes", args));
 
             actorSystem.ActorOf(Props.Create<SimpleClusterListener>());
             var actorFeedFactory = new ShardedAtomFeedFactory(actorSystem);
@@ -28,16 +33,16 @@ namespace Euventing.ConsoleHost
             _notifier = new AtomEventNotifier(actorFeedFactory);
             _retriever = new AtomDocumentRetriever(actorFeedFactory, atomDocumentFactory);
 
-            Console.WriteLine("Setup with {0}, {1}, {2}", args[0], args[1], args[2]);
-
             Console.Title = string.Join(" ", args);
 
             Thread.Sleep(TimeSpan.FromSeconds(10));
 
+            var subscriptionId = GetValueFromCommandLine("subscriptionId", args);
+
             _subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
                 new UserId(Guid.NewGuid().ToString()),
-                new SubscriptionId("2"),
+                new SubscriptionId(subscriptionId),
                 new AllEventMatcher());
 
             _notifier.Create(_subscriptionMessage);
@@ -62,6 +67,16 @@ namespace Euventing.ConsoleHost
 
                 Thread.Sleep(TimeSpan.FromMilliseconds(200));
             }
+        }
+
+        private static int GetPortFromCommandLine(string[] args)
+        {
+            return int.Parse(GetValueFromCommandLine("portNumber", args));
+        }
+
+        private static string GetValueFromCommandLine(string switchPrefix, string[] args)
+        {
+            return args.First(x => x.StartsWith(switchPrefix)).Split(new[] { '/' })[1];
         }
 
         private async static Task Get()

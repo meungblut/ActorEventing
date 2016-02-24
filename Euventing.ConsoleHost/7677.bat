@@ -1,1 +1,1 @@
-.\bin\run\Euventing.ConsoleHost.exe 7677 akkaSystem 127.0.0.1:7674
+.\bin\run\Euventing.ConsoleHost.exe portNumber/7677 akkaSystemName/akkaSystem seedNodes/127.0.0.1:7674 subscriptionId/4

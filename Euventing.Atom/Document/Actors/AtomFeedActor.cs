@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Akka.Actor;
-using Akka.Persistence;
 using Akka.Cluster;
 using Akka.Event;
-using Euventing.Atom.Document.Actors;
+using Akka.Persistence;
 
-namespace Euventing.Atom.Document
+namespace Euventing.Atom.Document.Actors
 {
     public class AtomFeedActor : PersistentActor
     {
@@ -107,7 +105,10 @@ namespace Euventing.Atom.Document
             var eventAdded = new EventAddedToDocument(currentEvents);
             Persist(eventAdded, MutateInternalState);
 
-            loggingAdapter.Info("Adding event {0} with id {3} to doc {1} on node {2}", numberOfEventsInCurrentHeadDocument, currentFeedHeadDocument.Id, Cluster.Get(Context.System).SelfAddress, message.EventToNotify.Id);
+            loggingAdapter.Info("Adding event {0} with id {3} to doc {1} in feed {4} on node {2}", 
+                numberOfEventsInCurrentHeadDocument, 
+                currentFeedHeadDocument.Id, Cluster.Get(Context.System).SelfAddress, message.EventToNotify.Id,
+                this.atomFeedId.Id);
 
             if (currentEvents >= settings.NumberOfEventsPerDocument)
             {
