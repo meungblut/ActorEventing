@@ -20,8 +20,8 @@ namespace Euventing.Core.Test
         public static void SetupActorSystem()
         {
             var settings = new LocalNotificationSettings();
-            var actorSystemFactory = new ShardedActorSystemFactory();
-            var actorSystem = actorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
+            var actorSystemFactory = new ShardedActorSystemFactory(8965, "eventActorSystemForTesting", "inmem", "127.0.0.1:8965");
+            var actorSystem = actorSystemFactory.GetActorSystem();
             _subscriptionManager = new SubscriptionManager(actorSystem);
             _eventPublisher = new EventPublisher(actorSystem);
             Thread.Sleep(TimeSpan.FromSeconds(1));

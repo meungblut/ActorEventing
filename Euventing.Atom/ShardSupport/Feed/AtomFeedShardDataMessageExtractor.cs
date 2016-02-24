@@ -27,9 +27,6 @@ namespace Euventing.Atom.ShardSupport.Feed
             if (message is AtomFeedCreationCommand)
                 return ((AtomFeedCreationCommand) message).FeedId.Id;
 
-            if (message is AtomDocumentFullEvent)
-                return ((AtomDocumentFullEvent) message).DocumentId.Id;
-
             return null;
         }
 
@@ -69,9 +66,6 @@ namespace Euventing.Atom.ShardSupport.Feed
 
             if (message is AtomFeedCreationCommand)
                 return ((AtomFeedCreationCommand)message).FeedId.Id.GetHashCode().ToString();
-
-            if (message is AtomDocumentFullEvent)
-                return ((AtomDocumentFullEvent)message).DocumentId.Id.GetHashCode().ToString();
 
             return null;
         }

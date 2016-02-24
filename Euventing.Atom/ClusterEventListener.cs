@@ -4,7 +4,7 @@ using Akka.Event;
 
 namespace Euventing.Atom
 {
-    public class SimpleClusterListener : UntypedActor
+    public class ClusterEventListener : UntypedActor
     {
         protected ILoggingAdapter Log = Context.GetLogger();
         protected Akka.Cluster.Cluster Cluster;
@@ -34,7 +34,7 @@ namespace Euventing.Atom
             if (up != null)
             {
                 var mem = up;
-                Log.Info("************************************************************************Member is Up: {0}", mem.Member);
+                Log.Info("**************************************Member is Up: {0}", mem.Member);
             }
             else if (message is ClusterEvent.UnreachableMember)
             {

@@ -25,8 +25,8 @@ namespace Euventing.Atom.Test
         public void Setup()
         {
             dummyAtomDocumentActorCreator = new DummyAtomDocumentActorCreator();
-            shardedActorSystemFactory = new ShardedActorSystemFactory();
-            system = shardedActorSystemFactory.GetActorSystem(8965, "eventActorSystemForTesting", "127.0.0.1:8965");
+            shardedActorSystemFactory = new ShardedActorSystemFactory(8965, "eventActorSystemForTesting", "inmem", "127.0.0.1:8965");
+            system = shardedActorSystemFactory.GetActorSystem();
             CreateAtomFeedActor("123");
         }
 

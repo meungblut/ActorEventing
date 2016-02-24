@@ -4,26 +4,27 @@ using Akka.Configuration;
 
 namespace Euventing.Core
 {
-    public class ShardedActorSystemFactory
+    public class ShardedActorSystemFactory : IActorSystemFactory
     {
-        public ActorSystem GetActorSystemWithSqlitePersistence(int portNumber, string akkaSystemName, params string[] seedNodes)
-        {
-            string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
-            var config = ConfigurationFactory.ParseString(MainConfig.
-                Replace("{portNumber}", portNumber.ToString()).
-                Replace("{persistencePlugin}", "sqlite").
-                Replace("{seedNodes}", seedNodeString));
-            var system = ActorSystem.Create(akkaSystemName, config);
+        private readonly int portNumber;
+        private readonly string akkaSystemName;
+        private readonly string shardRepo;
+        private readonly string[] seedNodes;
 
-            return system;
+        public ShardedActorSystemFactory(int portNumber, string akkaSystemName, string shardRepo, params string[] seedNodes)
+        {
+            this.portNumber = portNumber;
+            this.akkaSystemName = akkaSystemName;
+            this.shardRepo = shardRepo;
+            this.seedNodes = seedNodes;
         }
 
-        public ActorSystem GetActorSystem(int portNumber, string akkaSystemName, params string[] seedNodes)
+        public ActorSystem GetActorSystem()
         {
             string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
             var config = ConfigurationFactory.ParseString(MainConfig.
                 Replace("{portNumber}", portNumber.ToString()).
-                Replace("{persistencePlugin}", "inmem").
+                Replace("{persistencePlugin}", shardRepo).
                 Replace("{seedNodes}", seedNodeString));
             var system = ActorSystem.Create(akkaSystemName, config);
 

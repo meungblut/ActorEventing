@@ -12,7 +12,7 @@ namespace Euventing.Atom.Test
 {
     public class AtomEventNotifierShould
     {
-        private static ShardedActorSystemFactory factory = new ShardedActorSystemFactory();
+        private static ShardedActorSystemFactory factory = new ShardedActorSystemFactory(3624, "atomActorSystem", "inmem", "127.0.0.1:3624");
         private static AtomEventNotifier _notifier;
         private static AtomDocumentRetriever _retriever;
         private static SubscriptionMessage subscriptionMessage;
@@ -22,7 +22,7 @@ namespace Euventing.Atom.Test
         [OneTimeSetUp]
         public static void SetupActorSystem()
         {
-            var actorSystem = factory.GetActorSystem(3624, "atomActorSystem", "127.0.0.1:3624");
+            var actorSystem = factory.GetActorSystem();
 
             ShardedAtomFeedFactory actorFActory = new ShardedAtomFeedFactory(actorSystem);
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
-using Akka.Util.Internal;
 using Euventing.Core.Messages;
 using Euventing.Core.Subscriptions;
 

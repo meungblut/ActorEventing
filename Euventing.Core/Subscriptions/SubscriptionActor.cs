@@ -42,6 +42,11 @@ namespace Euventing.Core.Subscriptions
         private void Process(SubscriptionMessage subscriptionMessage)
         {
             this.subscriptionMessage = subscriptionMessage;
+            SubscribeToClusterWideBroadcastDomainEvent();
+        }
+
+        private void SubscribeToClusterWideBroadcastDomainEvent()
+        {
             var mediator = DistributedPubSub.Get(Context.System).Mediator;
             mediator.Tell(new Subscribe("publishedEventsTopic", Self), Self);
         }
