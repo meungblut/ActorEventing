@@ -6,11 +6,24 @@ namespace Euventing.Core
 {
     public class ShardedActorSystemFactory
     {
+        public ActorSystem GetActorSystemWithSqlitePersistence(int portNumber, string akkaSystemName, params string[] seedNodes)
+        {
+            string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
+            var config = ConfigurationFactory.ParseString(MainConfig.
+                Replace("{portNumber}", portNumber.ToString()).
+                Replace("{persistencePlugin}", "sqlite").
+                Replace("{seedNodes}", seedNodeString));
+            var system = ActorSystem.Create(akkaSystemName, config);
+
+            return system;
+        }
+
         public ActorSystem GetActorSystem(int portNumber, string akkaSystemName, params string[] seedNodes)
         {
             string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
             var config = ConfigurationFactory.ParseString(MainConfig.
                 Replace("{portNumber}", portNumber.ToString()).
+                Replace("{persistencePlugin}", "inmem").
                 Replace("{seedNodes}", seedNodeString));
             var system = ActorSystem.Create(akkaSystemName, config);
 
@@ -100,8 +113,8 @@ namespace Euventing.Core
                         shard-failure-backoff = 10s
                         entity-restart-backoff = 10s
                         rebalance-interval = 10s
-                        journal-plugin-id = ""akka.persistence.journal.sqlite""
-                        snapshot-plugin-id = ""akka.persistence.snapshot-store.sqlite""
+                        journal-plugin-id = ""akka.persistence.journal.{persistencePlugin}""
+                        snapshot-plugin-id = ""akka.persistence.snapshot-store.{persistencePlugin}""
                         state-store-mode = ""persistence""
                         snapshot-after = 1000
                           least-shard-allocation-strategy {
@@ -118,7 +131,7 @@ namespace Euventing.Core
                                 plugin-dispatcher = ""akka.actor.default-dispatcher""
                                 table-name = event_journal
                                 auto-initialize = on
-                                connection-string = ""Data Source=c:\\data\\store1.db;Version=3;""
+                                connection-string = ""Data Source=c:\\data\\store.db;Version=3;""
                             }
                             inmem {
                                 # Class name of the plugin.

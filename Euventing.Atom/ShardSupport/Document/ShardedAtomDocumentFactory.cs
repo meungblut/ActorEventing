@@ -14,16 +14,16 @@ namespace Euventing.Atom.ShardSupport.Document
     {
         private readonly ActorSystem actorSystem;
 
-        private static bool initialised;
-        private static object initialisationLock = new object();
+        private static bool _initialised;
+        private static readonly object InitialisationLock = new object();
 
         public ShardedAtomDocumentFactory(ActorSystem actorSystem)
         {
             this.actorSystem = actorSystem;
 
-            lock (initialisationLock)
+            lock (InitialisationLock)
             {
-                if (initialised)
+                if (_initialised)
                     return;
 
                 var props = Props.Create(() => new AtomDocumentActor(new HardCodedAtomDocumentSettings()));
@@ -35,7 +35,7 @@ namespace Euventing.Atom.ShardSupport.Document
                     settings: settings,
                     messageExtractor: new AtomDocumentShardDataMessageExtractor());
 
-                initialised = true;
+                _initialised = true;
             }
 
         }

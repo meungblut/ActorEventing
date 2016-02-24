@@ -19,7 +19,7 @@ namespace Euventing.ConsoleHost
         static void Main(string[] args)
         {
             var actorSystemFactory = new ShardedActorSystemFactory();
-            var actorSystem = actorSystemFactory.GetActorSystem(int.Parse(args[0]), args[1], args[2]);
+            var actorSystem = actorSystemFactory.GetActorSystemWithSqlitePersistence(int.Parse(args[0]), args[1], args[2]);
 
             actorSystem.ActorOf(Props.Create<SimpleClusterListener>());
             var actorFeedFactory = new ShardedAtomFeedFactory(actorSystem);
