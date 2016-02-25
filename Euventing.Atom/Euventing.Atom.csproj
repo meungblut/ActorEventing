@@ -85,8 +85,9 @@
   <ItemGroup>
     <Compile Include="AtomDocumentRetriever.cs" />
     <Compile Include="AtomEventNotifier.cs" />
+    <Compile Include="AtomNotificationSettings.cs" />
+    <Compile Include="AtomSubsystemConfiguration.cs" />
     <Compile Include="Document\Actors\AtomFeedState.cs" />
-    <Compile Include="Document\CouldNotProcessPersistenceMessage.cs" />
     <Compile Include="Serialization\AtomDocumentSerialiser.cs" />
     <Compile Include="ClusterEventListener.cs" />
     <Compile Include="Document\AtomDocumentCreatedEvent.cs" />

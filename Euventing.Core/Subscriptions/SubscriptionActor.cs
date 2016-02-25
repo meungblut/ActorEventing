@@ -1,5 +1,6 @@
 ﻿using System;
 using Akka.Cluster.Tools.PublishSubscribe;
+using Akka.Event;
 using Akka.Persistence;
 using Euventing.Core.Messages;
 using Euventing.Core.Notifications;
@@ -10,11 +11,13 @@ namespace Euventing.Core.Subscriptions
     {
         private SubscriptionMessage subscriptionMessage;
         private readonly NotifierFactory notifierFactory;
+        private ILoggingAdapter loggingAdapter;
 
         public override string PersistenceId { get; }
 
         public SubscriptionActor()
         {
+            loggingAdapter = Context.GetLogger();
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
             notifierFactory = new NotifierFactory();
         }
@@ -29,7 +32,18 @@ namespace Euventing.Core.Subscriptions
 
         protected override bool ReceiveCommand(object message)
         {
-            ((dynamic)this).Process((dynamic)message);
+            if (message == null)
+                return false;
+
+            try
+            {
+                ((dynamic)this).Process((dynamic)message);
+            }
+            catch (Exception e)
+            {
+                loggingAdapter.Error(e.ToString());
+                throw new CouldNotProcessPersistenceMessage("Could not process " + message.GetType(), e);
+            }
 
             return true;
         }
@@ -53,6 +67,7 @@ namespace Euventing.Core.Subscriptions
 
         private void Process(DomainEvent eventToProcess)
         {
+            Console.WriteLine("Publishing message in subscripiton actor");
             var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
             notifier.Notify(subscriptionMessage, eventToProcess);
         }

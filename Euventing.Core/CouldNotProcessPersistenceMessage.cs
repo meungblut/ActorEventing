@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Euventing.Core
 {
     [Serializable]
-    internal class CouldNotProcessPersistenceMessage : Exception
+    public class CouldNotProcessPersistenceMessage : Exception
     {
         public CouldNotProcessPersistenceMessage()
         {

@@ -5,16 +5,16 @@ namespace Euventing.Core.Notifications
 {
     public class NotificationSettings
     {
-        private static Dictionary<Type, IEventNotifier> notifiers = new Dictionary<Type, IEventNotifier>();
+        private static readonly Dictionary<Type, IEventNotifier> Notifiers = new Dictionary<Type, IEventNotifier>();
 
         public Dictionary<Type, IEventNotifier> GetNotifiers()
         {
-            return notifiers;
+            return Notifiers;
         }
 
         protected void AddNotifierType(Type notificationChannelType, IEventNotifier notifier)
         {
-            notifiers.Add(notificationChannelType, notifier);
+            Notifiers.Add(notificationChannelType, notifier);
         }
     }
 }

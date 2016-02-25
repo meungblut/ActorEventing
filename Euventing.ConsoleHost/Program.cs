@@ -8,14 +8,13 @@ using Euventing.Core;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
 using System.Threading.Tasks;
+using Euventing.Core.Startup;
 
 namespace Euventing.ConsoleHost
 {
     class Program
     {
         private static SubscriptionMessage _subscriptionMessage;
-        private static AtomEventNotifier _notifier;
-        private static AtomDocumentRetriever _retriever;
 
         static void Main(string[] args)
         {
@@ -26,11 +25,8 @@ namespace Euventing.ConsoleHost
 
             var actorSystem = actorSystemFactory.GetActorSystem();
 
-            var actorFeedFactory = new ShardedAtomFeedFactory(actorSystem);
-            var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
-
-            _notifier = new AtomEventNotifier(actorFeedFactory);
-            _retriever = new AtomDocumentRetriever(actorFeedFactory, atomDocumentFactory);
+            var subsystemConfig = new AtomSubsystemConfiguration();
+            var eventSystemFactory = new EventSystemFactory(actorSystem, new[] { subsystemConfig });
 
             Console.Title = string.Join(" ", args);
 
@@ -44,25 +40,13 @@ namespace Euventing.ConsoleHost
                 new SubscriptionId(subscriptionId),
                 new AllEventMatcher());
 
-            _notifier.Create(_subscriptionMessage);
+            eventSystemFactory.GetSubscriptionManager().CreateSubscription(_subscriptionMessage);
+            var notifier = eventSystemFactory.GetEventPublisher();
 
-            if (args.Length > 3 && args[3] == "pollHead")
-            {
-                Get();
-            }
-            else
-            {
-                Notify(args[0]);
-            }
-
-        }
-
-        private static void Notify(string port)
-        {
             var i = 0;
             while (true)
             {
-                _notifier.Notify(_subscriptionMessage, new DummyDomainEvent(port + ":" + (++i).ToString()));
+                notifier.PublishMessage(new DummyDomainEvent(GetPortFromCommandLine(args) + ":" + (++i).ToString()));
 
                 Thread.Sleep(TimeSpan.FromMilliseconds(200));
             }
@@ -76,26 +60,6 @@ namespace Euventing.ConsoleHost
         private static string GetValueFromCommandLine(string switchPrefix, string[] args)
         {
             return args.First(x => x.StartsWith(switchPrefix)).Split(new[] { '/' })[1];
-        }
-
-        private async static Task Get()
-        {
-            while (true)
-            {
-                Console.WriteLine(await _retriever.GetSerialisedHeadDocument(_subscriptionMessage.SubscriptionId));
-
-                Thread.Sleep(TimeSpan.FromMilliseconds(200));
-            }
-        }
-    }
-
-    public class DummyDomainEvent : DomainEvent
-    {
-        public string ToString { get; }
-
-        public DummyDomainEvent(string toString) : base(toString, DateTime.Now)
-        {
-            ToString = toString;
         }
     }
 }
