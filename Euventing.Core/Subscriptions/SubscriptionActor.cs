@@ -57,6 +57,8 @@ namespace Euventing.Core.Subscriptions
         {
             this.subscriptionMessage = subscriptionMessage;
             SubscribeToClusterWideBroadcastDomainEvent();
+            var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
+            notifier.Create(subscriptionMessage);
         }
 
         private void SubscribeToClusterWideBroadcastDomainEvent()

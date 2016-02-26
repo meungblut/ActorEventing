@@ -25,15 +25,23 @@ namespace Euventing.Api.Startup
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
             var settings = new AtomNotificationSettings(atomFeedFactory);
 
+            var atomRetriever = new AtomDocumentRetriever(atomFeedFactory, atomDocumentFactory);
+
             iocContainer.Register<SubscriptionManager>(subscriptionManager);
             iocContainer.Register<EventPublisher>(eventPublisher);
             iocContainer.Register<ShardedAtomDocumentFactory>(atomDocumentFactory);
             iocContainer.Register<ShardedAtomFeedFactory>(atomFeedFactory);
+            iocContainer.Register<AtomDocumentRetriever>(atomRetriever);
 
             iocContainer.RegisterMultiple<IOwinConfiguration, WebApiOwinConfiguration>(IocLifecycle.PerRequest);
 
             webApiHost = new WebApiSelfHost(3600, iocContainer);
             webApiHost.Start();
+        }
+
+        public T Get<T>()
+        {
+            return (T)iocContainer.GetService(typeof(T));
         }
 
         public void Stop()

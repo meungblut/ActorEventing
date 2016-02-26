@@ -7,6 +7,7 @@ using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
 using Euventing.Core.Test.LocalEventNotification;
 using NUnit.Framework;
+using Akka.Cluster;
 
 namespace Euventing.Core.Test
 {
@@ -25,6 +26,7 @@ namespace Euventing.Core.Test
         [Test]
         public async Task ReturnNullSubscriptionMessageIfSubscriptionHasNotBeenMade()
         {
+
             var queryMessage = new SubscriptionQuery(new SubscriptionId("someotheruuid"));
             var result = await _subscriptionManager.GetSubscriptionDetails(queryMessage);
             Assert.IsInstanceOf<NullSubscription>(result);

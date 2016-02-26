@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\AtomEventController.cs" />
     <Compile Include="Controllers\EventSubscriptionController.cs" />
     <Compile Include="IIocContainer.cs" />
     <Compile Include="ILoggingFrameworkAdapter.cs" />

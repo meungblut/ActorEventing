@@ -7,18 +7,18 @@ namespace Euventing.AcceptanceTest.Hosting
     [Binding]
     public class SpecflowGlobal
     {
-        private static EventSystemHost host = new EventSystemHost();
+        public static EventSystemHost Host = new EventSystemHost();
 
         [BeforeTestRun]
         public static void BeforeTestRun()
         {
-            host.Start();
+            Host.Start();
         }
 
         [AfterTestRun]
         public static void AfterTestRun()
         {
-            host.Stop();
+            Host.Stop();
         }
     }
 }
