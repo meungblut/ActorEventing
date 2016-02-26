@@ -25,7 +25,7 @@ namespace Euventing.Api.WebApi
             var config = new HttpConfiguration();
 
             MapRoutes(config);
-            ReplaceControllerActivatorWithIocCOntrollerActivator(resolver, config);
+            ReplaceControllerActivatorWithIocControllerActivator(resolver, config);
             LoadMediaFormatters(resolver, config);
             LoadMessageHandlers(resolver, config);
             LoadJsonFormatters(resolver, config);
@@ -71,7 +71,7 @@ namespace Euventing.Api.WebApi
             config.Routes.MapHttpRoute("DefaultApi", "{controller}/{id}", new { id = RouteParameter.Optional });
         }
 
-        private static void ReplaceControllerActivatorWithIocCOntrollerActivator(
+        private static void ReplaceControllerActivatorWithIocControllerActivator(
             IIocContainer resolver,
             HttpConfiguration config)
         {

@@ -80,9 +80,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventSubscriptionController.cs" />
+    <Compile Include="Controllers\EventSubscriptionController.cs" />
     <Compile Include="IIocContainer.cs" />
     <Compile Include="ILoggingFrameworkAdapter.cs" />
+    <Compile Include="Messages\SubscribeMessage.cs" />
     <Compile Include="NoStartupConfigurationsException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup\EventSystemHost.cs" />

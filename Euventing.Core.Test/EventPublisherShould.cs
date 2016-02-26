@@ -32,7 +32,6 @@ namespace Euventing.Core.Test
         {
             var subscriptionMessage = new SubscriptionMessage(
                 new LocalEventNotificationChannel(), 
-                new UserId(Guid.NewGuid().ToString()),
                 new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
 

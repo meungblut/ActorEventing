@@ -25,6 +25,13 @@ namespace Euventing.AcceptanceTest
             this.httpResponseMessage = client.PutAsync(url, content).Result;
         }
 
+        [When(@"I request the subscription from url '(.*)'")]
+        public void WhenIRequestTheSubscriptionFromUrl(string url)
+        {
+            HttpClient client = new HttpClient();
+            this.httpResponseMessage = client.GetAsync(url).Result;
+        }
+
         [Then(@"I should receive a response with the http status code '(.*)'")]
         public void ThenIShouldReceiveAResponseWithTheHttpStatusCode(HttpStatusCode statusCode)
         {

@@ -40,7 +40,6 @@ namespace Euventing.Atom.Test
 
             subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
-                new UserId(Guid.NewGuid().ToString()),
                 new SubscriptionId("1"),
                 new AllEventMatcher());
 

@@ -36,7 +36,6 @@ namespace Euventing.ConsoleHost
 
             _subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
-                new UserId(Guid.NewGuid().ToString()),
                 new SubscriptionId(subscriptionId),
                 new AllEventMatcher());
 

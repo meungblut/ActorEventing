@@ -8,7 +8,7 @@ namespace Euventing.Core.Messages
 {
     public class NullSubscription : SubscriptionMessage
     {
-        public NullSubscription() : base(null, null, null, null)
+        public NullSubscription() : base(null, null, null)
         {
         }
     }

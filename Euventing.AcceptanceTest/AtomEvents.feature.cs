@@ -76,28 +76,48 @@ The subscriber will SUBSCRIBE to an api url and be sent a subscription URL. Once
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Subscribe to all events")]
-        [NUnit.Framework.IgnoreAttribute("Ignored scenario")]
+        [NUnit.Framework.DescriptionAttribute("Create an event subscription")]
         [NUnit.Framework.CategoryAttribute("subscription")]
-        public virtual void SubscribeToAllEvents()
+        public virtual void CreateAnEventSubscription()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Subscribe to all events", new string[] {
-                        "ignore",
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create an event subscription", new string[] {
                         "subscription"});
-#line 18
+#line 17
 this.ScenarioSetup(scenarioInfo);
 #line hidden
-#line 19
- testRunner.And("I PUT a message to \'http://localhost:3605/events\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"4e347f48-fe93-4edd-9f04-0b37ed82767" +
+#line 18
+ testRunner.And("I PUT a message to \'http://localhost:3600/events\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"4e347f48-fe93-4edd-9f04-0b37ed82767" +
                     "b\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 26
- testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 27
- testRunner.And("a content type of \'application/vnd.tesco.eventSubscription+json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 25
+ testRunner.Then("I should receive a response with the http status code \'Accepted\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Get event subscription details")]
+        [NUnit.Framework.CategoryAttribute("subscription")]
+        public virtual void GetEventSubscriptionDetails()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get event subscription details", new string[] {
+                        "subscription"});
 #line 28
- testRunner.And("a body", "{\"Channel\":\"Atom\",\"Id\":\"4e347f48-fe93-4edd-9f04-0b37ed82767b\",\"EventResourceLocat" +
-                    "ion\":\"http://localhost:3605/atom/4e347f48-fe93-4edd-9f04-0b37ed82767b\"}", ((TechTalk.SpecFlow.Table)(null)), "And ");
+this.ScenarioSetup(scenarioInfo);
+#line hidden
+#line 29
+ testRunner.Given("I PUT a message to \'http://localhost:3600/events\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"4e347f48-fe93-4edd-9f04-0b37ed82767" +
+                    "c\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 36
+ testRunner.When("I request the subscription from url \'http://localhost:3600/events/4e347f48-fe93-4" +
+                    "edd-9f04-0b37ed82767c\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 37
+ testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 38
+ testRunner.And("a body", "{\"Channel\":\"Atom\",\"Id\":\"4e347f48-fe93-4edd-9f04-0b37ed82767c\",\"EventResourceLocat" +
+                    "ion\":\"http://localhost:3605/atom/4e347f48-fe93-4edd-9f04-0b37ed82767c\"}", ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 42
+ testRunner.And("a content type of \'application/vnd.tesco.eventSubscription+json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -111,14 +131,14 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("GetSimpleAtomDocument", new string[] {
                         "ignore",
                         "atomEvents"});
-#line 34
+#line 47
 this.ScenarioSetup(scenarioInfo);
-#line 35
+#line 48
  testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'4e347f48-fe93-4edd-9" +
                     "f04-0b37ed82767d\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 36
+#line 49
  testRunner.When("\'10\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 37
+#line 50
  testRunner.Then("I should receive a valid atom document with \'10\' entries", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -133,14 +153,14 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("GetNextDocument", new string[] {
                         "ignore",
                         "atomEvents"});
-#line 41
+#line 54
 this.ScenarioSetup(scenarioInfo);
-#line 42
+#line 55
  testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'4e347f48-fe93-4edd-9" +
                     "f04-0b37ed82767c\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 43
+#line 56
  testRunner.When("\'550\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 44
+#line 57
  testRunner.Then("I should receive an atom document with a link to the next document in the stream", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

@@ -8,13 +8,11 @@ namespace Euventing.Core.Messages
 {
     public class SubscriptionQuery
     {
-        public UserId UserId { get; private set; }
         public SubscriptionId SubscriptionId { get; private set; }
 
 
-        public SubscriptionQuery(UserId userId, SubscriptionId subscriptionId)
+        public SubscriptionQuery(SubscriptionId subscriptionId)
         {
-            UserId = userId;
             SubscriptionId = subscriptionId;
         }
     }

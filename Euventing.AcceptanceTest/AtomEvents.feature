@@ -13,22 +13,35 @@
 
 The subscriber will SUBSCRIBE to an api url and be sent a subscription URL. Once they have connected to that URL, they will be 'sent' events until they unsubscribe.
 
-@ignore
 @subscription
-Scenario: Subscribe to all events
-	And I PUT a message to 'http://localhost:3605/events' with the body
+Scenario: Create an event subscription
+	And I PUT a message to 'http://localhost:3600/events' with the body
 	"""
 	{
 		"channel" : "atom",
 		"subscriptionId" : "4e347f48-fe93-4edd-9f04-0b37ed82767b"
 	}
 	"""
+	Then I should receive a response with the http status code 'Accepted'
+
+@subscription
+Scenario: Get event subscription details
+	Given I PUT a message to 'http://localhost:3600/events' with the body
+	"""
+	{
+		"channel" : "atom",
+		"subscriptionId" : "4e347f48-fe93-4edd-9f04-0b37ed82767c"
+	}
+	"""
+	When I request the subscription from url 'http://localhost:3600/events/4e347f48-fe93-4edd-9f04-0b37ed82767c'
 	Then I should receive a response with the http status code 'OK'
-	And a content type of 'application/vnd.tesco.eventSubscription+json'
 	And a body
 	"""
-{"Channel":"Atom","Id":"4e347f48-fe93-4edd-9f04-0b37ed82767b","EventResourceLocation":"http://localhost:3605/atom/4e347f48-fe93-4edd-9f04-0b37ed82767b"}
+{"Channel":"Atom","Id":"4e347f48-fe93-4edd-9f04-0b37ed82767c","EventResourceLocation":"http://localhost:3605/atom/4e347f48-fe93-4edd-9f04-0b37ed82767c"}
 	"""
+	And a content type of 'application/vnd.tesco.eventSubscription+json'
+
+
 @ignore
 @atomEvents
 Scenario: GetSimpleAtomDocument

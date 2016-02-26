@@ -25,7 +25,7 @@ namespace Euventing.Core.Test
         [Test]
         public async Task ReturnNullSubscriptionMessageIfSubscriptionHasNotBeenMade()
         {
-            var queryMessage = new SubscriptionQuery(new UserId("someuuid"), new SubscriptionId("someotheruuid"));
+            var queryMessage = new SubscriptionQuery(new SubscriptionId("someotheruuid"));
             var result = await _subscriptionManager.GetSubscriptionDetails(queryMessage);
             Assert.IsInstanceOf<NullSubscription>(result);
         }
@@ -35,13 +35,12 @@ namespace Euventing.Core.Test
         {
             var subscriptionMessage = new SubscriptionMessage(
                 new LocalEventNotificationChannel(), 
-                new UserId(Guid.NewGuid().ToString()),
                 new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
 
             _subscriptionManager.CreateSubscription(subscriptionMessage);
 
-            var queryMessage = new SubscriptionQuery(subscriptionMessage.UserId, subscriptionMessage.SubscriptionId);
+            var queryMessage = new SubscriptionQuery(subscriptionMessage.SubscriptionId);
             var result = await _subscriptionManager.GetSubscriptionDetails(queryMessage);
             Assert.AreEqual(subscriptionMessage, result);
         }
