@@ -79,6 +79,7 @@ namespace Euventing.Atom.Document.Actors
         {
             MutateInternalState(newDocumentEvent);
             Persist(newDocumentEvent, null);
+            loggingAdapter.Info("Passivating " + this.PersistenceId);
             Context.Parent.Tell(new Passivate(Stop.Instance));
         }
         private void Process(ReceiveTimeout timeoutEvent)
@@ -88,6 +89,8 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(Stop stopMessage)
         {
+            loggingAdapter.Info("Stopping " + this.PersistenceId);
+
             Context.Stop(Self);
         }
 

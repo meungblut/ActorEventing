@@ -11,7 +11,7 @@ namespace Euventing.Atom.Document.Actors
     public class AtomFeedActor : PersistentActor
     {
         private readonly ILoggingAdapter loggingAdapter;
-        private readonly IAtomDocumentActorFactory builder;
+        private readonly IAtomDocumentActorFactory atomDocumentActorFactory;
         private readonly IAtomDocumentSettings settings;
         private FeedId atomFeedId;
         private DocumentId currentFeedHeadDocument;
@@ -29,7 +29,7 @@ namespace Euventing.Atom.Document.Actors
         {
             loggingAdapter = Context.GetLogger();
             loggingAdapter.Info("Atom FEED actor path is " + Self.Path);
-            this.builder = builder;
+            this.atomDocumentActorFactory = builder;
             this.settings = settings;
             PersistenceId = "AtomFeedActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
         }
@@ -40,7 +40,7 @@ namespace Euventing.Atom.Document.Actors
 
             try
             {
-                ((dynamic) this).MutateInternalState((dynamic) message);
+                ((dynamic)this).MutateInternalState((dynamic)message);
             }
             catch (Exception e)
             {
@@ -59,7 +59,7 @@ namespace Euventing.Atom.Document.Actors
                 loggingAdapter.Info("Received null message");
                 return false;
             }
-            loggingAdapter.Info("AtomFeedActor ReceiveRecover: " + message.GetType() + " with persistence id:" + PersistenceId);
+            loggingAdapter.Info("AtomFeedActor Receive Command: " + message.GetType() + " with persistence id:" + PersistenceId);
 
             try
             {
@@ -81,12 +81,12 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(AtomFeedCreationCommand creationCommand)
         {
-            var documentId = new DocumentId(creationCommand.FeedId.Id + "/0");
+            var documentId = new DocumentId(creationCommand.FeedId.Id + "|" + Guid.NewGuid() + "|0");
             var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author, creationCommand.FeedId);
 
             Persist(atomFeedCreated, MutateInternalState);
 
-            var atomDocument = builder.GetActorRef();
+            var atomDocument = atomDocumentActorFactory.GetActorRef();
             atomDocument.Tell(new CreateAtomDocumentCommand(
                 creationCommand.Title, creationCommand.Author, creationCommand.FeedId, documentId, creationCommand.EarlierEventsDocumentId), Self);
         }
@@ -105,31 +105,29 @@ namespace Euventing.Atom.Document.Actors
         private void Process(EventWithSubscriptionNotificationMessage message)
         {
             var notificationMessage = new EventWithDocumentIdNotificationMessage(currentFeedHeadDocument, message.EventToNotify);
-            var atomDocument = builder.GetActorRef();
+            var atomDocument = atomDocumentActorFactory.GetActorRef();
             atomDocument.Tell(notificationMessage, Self);
 
             var currentEvents = numberOfEventsInCurrentHeadDocument + 1;
             var eventAdded = new EventAddedToDocument(currentEvents);
             Persist(eventAdded, MutateInternalState);
 
-            loggingAdapter.Info("Adding event {0} with id {3} to doc {1} in feed {4} on node {2}", 
-                numberOfEventsInCurrentHeadDocument, 
+            loggingAdapter.Info("Adding event {0} with id {3} to doc {1} in feed {4} on node {2}",
+                numberOfEventsInCurrentHeadDocument,
                 currentFeedHeadDocument.Id, Cluster.Get(Context.System).SelfAddress, message.EventToNotify.Id,
                 this.atomFeedId.Id);
 
             if (currentEvents >= settings.NumberOfEventsPerDocument)
             {
                 var documentId = currentDocumentId + 1;
-                var newDocumentId = new DocumentId(atomFeedId.Id + "/" + documentId);
+                var newDocumentId = new DocumentId(atomFeedId.Id + "|" + Guid.NewGuid() + "|" + documentId);
 
                 Persist(new AtomFeedDocumentHeadChanged(newDocumentId, currentFeedHeadDocument, documentId), MutateInternalState);
-                
+
                 atomDocument.Tell(new CreateAtomDocumentCommand(
                     feedTitle, feedAuthor, atomFeedId, newDocumentId, currentFeedHeadDocument), Self);
 
-                atomDocument.Tell(new NewDocumentAddedEvent(newDocumentId));
-
-                CreateSnapshot();
+                atomDocument.Tell(new NewDocumentAddedEvent(currentFeedHeadDocument));
             }
         }
 
@@ -137,6 +135,7 @@ namespace Euventing.Atom.Document.Actors
         {
             var state = new AtomFeedState(this.atomFeedId, this.currentFeedHeadDocument, this.lastHeadDocument,
                 this.feedTitle, this.feedAuthor, this.numberOfEventsInCurrentHeadDocument);
+
             SaveSnapshot(state);
         }
 
@@ -151,7 +150,7 @@ namespace Euventing.Atom.Document.Actors
             if (!(snapshotOffer.Snapshot is AtomFeedState))
                 return;
 
-            savedState = (AtomFeedState) snapshotOffer.Snapshot;
+            savedState = (AtomFeedState)snapshotOffer.Snapshot;
 
             this.currentFeedHeadDocument = savedState.CurrentFeedHeadDocument;
             this.atomFeedId = savedState.AtomFeedId;
@@ -164,7 +163,7 @@ namespace Euventing.Atom.Document.Actors
         private void Process(GetHeadDocumentForFeedRequest getHeadRequest)
         {
             var atomDocument =
-                builder.GetActorRef().Ask<AtomDocument>(new GetAtomDocumentRequest(currentFeedHeadDocument)).Result;
+                atomDocumentActorFactory.GetActorRef().Ask<AtomDocument>(new GetAtomDocumentRequest(currentFeedHeadDocument)).Result;
             Sender.Tell(atomDocument, Self);
         }
 
@@ -174,6 +173,8 @@ namespace Euventing.Atom.Document.Actors
             lastHeadDocument = headChanged.EarlierDocumentId;
             currentDocumentId = headChanged.CurrentDocumentIndex;
             numberOfEventsInCurrentHeadDocument = 0;
+
+            CreateSnapshot();
         }
 
         private void MutateInternalState(EventAddedToDocument eventAdded)
