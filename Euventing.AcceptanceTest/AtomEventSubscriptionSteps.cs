@@ -21,6 +21,7 @@ namespace Euventing.AcceptanceTest
         private HttpResponseMessage httpResponseMessage;
         private string url;
         private EventPublisher publisher;
+        private string subscriptionId;
 
         [Given(@"I have an eventing url at '(.*)'")]
         public void GivenIHaveAnEventingUrlAt(string url)
@@ -42,7 +43,7 @@ namespace Euventing.AcceptanceTest
         public void WhenIRequestTheSubscriptionFromUrl(string url)
         {
             HttpClient client = new HttpClient();
-            this.httpResponseMessage = client.GetAsync(url).Result;
+            this.httpResponseMessage = client.GetAsync(url + subscriptionId).Result;
         }
 
         [Then(@"I should receive a response with the http status code '(.*)'")]
@@ -75,9 +76,10 @@ namespace Euventing.AcceptanceTest
         {
         }
 
-        [Given(@"I have subscribed to an atom feed with a subscription Id of '(.*)'")]
-        public void GivenIHaveSubscribedToAnAtomFeedWithASubscriptionIdOf(string subscriptionId)
+        [Given(@"I have subscribed to an atom feed with a generated subscription Id")]
+        public void GivenIHaveSubscribedToAnAtomFeedWithASubscriptionIdOf()
         {
+            this.subscriptionId = Guid.NewGuid().ToString();
             string contents = @"
                 {
                 'channel' : 'atom',
@@ -108,7 +110,7 @@ namespace Euventing.AcceptanceTest
         {
             Thread.Sleep(TimeSpan.FromSeconds(1));
 
-            var atomDocument = GetDocumentStream(atomUrl).Result;
+            var atomDocument = GetDocumentStream(atomUrl + subscriptionId).Result;
 
             using (var xmlReader = XmlReader.Create(atomDocument))
             {
@@ -143,7 +145,7 @@ namespace Euventing.AcceptanceTest
         {
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
-            var atomDocument = GetAtomDocument(atomUrl);
+            var atomDocument = GetAtomDocument(atomUrl + subscriptionId);
 
             Assert.IsTrue(atomDocument.Contains("prev-archive"));
         }

@@ -146,18 +146,16 @@ this.ScenarioSetup(scenarioInfo);
 #line 16
 this.FeatureBackground();
 #line 49
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'4e347f48-fe93-4edd-9" +
-                    "f04-0227ed82878d\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a generated subscription Id", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 50
- testRunner.When("I request the subscription from url \'http://localhost:3600/events/4e347f48-fe93-4" +
-                    "edd-9f04-0227ed82878d\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I request the subscription from url \'http://localhost:3600/events/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 51
  testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 52
  testRunner.When("\'10\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 53
  testRunner.Then("I should receive a valid atom document with \'10\' entries from \'http://localhost:3" +
-                    "600/events/atom/4e347f48-fe93-4edd-9f04-0227ed82878d\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "600/events/atom/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -174,13 +172,16 @@ this.ScenarioSetup(scenarioInfo);
 #line 16
 this.FeatureBackground();
 #line 57
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'4e347f48-fe93-4edd-9" +
-                    "f04-0228c\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a generated subscription Id", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 58
- testRunner.When("\'550\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I request the subscription from url \'http://localhost:3600/events/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 59
+ testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 60
+ testRunner.When("\'550\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 61
  testRunner.Then("I should receive an atom document with a link to the next document in the stream " +
-                    "from \'http://localhost:3600/events/atom/4e347f48-fe93-4edd-9f04-0228c\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "from \'http://localhost:3600/events/atom/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

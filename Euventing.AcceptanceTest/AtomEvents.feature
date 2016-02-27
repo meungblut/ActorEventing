@@ -46,14 +46,16 @@ Scenario: Get event subscription details
 
 @atomEvents
 Scenario: GetSimpleAtomDocument
-	Given I have subscribed to an atom feed with a subscription Id of '4e347f48-fe93-4edd-9f04-0227ed82878d'
-	When I request the subscription from url 'http://localhost:3600/events/4e347f48-fe93-4edd-9f04-0227ed82878d'
+	Given I have subscribed to an atom feed with a generated subscription Id
+	When I request the subscription from url 'http://localhost:3600/events/'
 	Then I should receive a response with the http status code 'OK'
 	When '10' events are raised within my domain
-	Then I should receive a valid atom document with '10' entries from 'http://localhost:3600/events/atom/4e347f48-fe93-4edd-9f04-0227ed82878d'
+	Then I should receive a valid atom document with '10' entries from 'http://localhost:3600/events/atom/'
 
 @atomEvents
 Scenario: GetNextDocument
-	Given I have subscribed to an atom feed with a subscription Id of '4e347f48-fe93-4edd-9f04-0228c'
+	Given I have subscribed to an atom feed with a generated subscription Id
+	When I request the subscription from url 'http://localhost:3600/events/'
+	Then I should receive a response with the http status code 'OK'
 	When '550' events are raised within my domain
-	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/4e347f48-fe93-4edd-9f04-0228c'
+	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/'
