@@ -21,8 +21,8 @@ namespace Euventing.Api.Startup
 
             var subscriptionManager = new SubscriptionManager(actorSystem);
             var eventPublisher = new EventPublisher(actorSystem);
-            ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem);
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
+            ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory);
             var settings = new AtomNotificationSettings(atomFeedFactory);
 
             var atomRetriever = new AtomDocumentRetriever(atomFeedFactory, atomDocumentFactory);

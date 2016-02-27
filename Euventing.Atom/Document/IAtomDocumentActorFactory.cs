@@ -2,7 +2,7 @@
 
 namespace Euventing.Atom.Document
 {
-    public interface IAtomDocumentActorBuilder
+    public interface IAtomDocumentActorFactory
     {
         IActorRef GetActorRef();
     }

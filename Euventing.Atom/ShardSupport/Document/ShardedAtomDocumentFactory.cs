@@ -11,34 +11,22 @@ using Euventing.Atom.ShardSupport.Feed;
 
 namespace Euventing.Atom.ShardSupport.Document
 {
-    public class ShardedAtomDocumentFactory : IAtomDocumentActorBuilder
+    public class ShardedAtomDocumentFactory : IAtomDocumentActorFactory
     {
         private readonly ActorSystem actorSystem;
-
-        private static bool _initialised;
-        private static readonly object InitialisationLock = new object();
 
         public ShardedAtomDocumentFactory(ActorSystem actorSystem)
         {
             this.actorSystem = actorSystem;
 
-            lock (InitialisationLock)
-            {
-                if (_initialised)
-                    return;
+            var props = Props.Create(() => new AtomDocumentActor(new HardCodedAtomDocumentSettings()));
 
-                var props = Props.Create(() => new AtomDocumentActor(new HardCodedAtomDocumentSettings()));
-
-                var settings = ClusterShardingSettings.Create(actorSystem);
-                ClusterSharding.Get(actorSystem).Start(
-                    typeName: "AtomDocumentActor",
-                    entityProps: props,
-                    settings: settings,
-                    messageExtractor: new AtomDocumentShardDataMessageExtractor());
-
-                _initialised = true;
-            }
-
+            var settings = ClusterShardingSettings.Create(actorSystem);
+            ClusterSharding.Get(actorSystem).Start(
+                typeName: "AtomDocumentActor",
+                entityProps: props,
+                settings: settings,
+                messageExtractor: new AtomDocumentShardDataMessageExtractor());
         }
 
         public IActorRef GetActorRef()

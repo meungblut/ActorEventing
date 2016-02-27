@@ -102,7 +102,7 @@
     <Compile Include="Document\EventWithDocumentIdNotificationMessage.cs" />
     <Compile Include="Document\GetAtomDocumentRequest.cs" />
     <Compile Include="Document\HardCodedAtomDocumentSettings.cs" />
-    <Compile Include="Document\IAtomDocumentActorBuilder.cs" />
+    <Compile Include="Document\IAtomDocumentActorFactory.cs" />
     <Compile Include="Document\IAtomDocumentSettings.cs" />
     <Compile Include="Document\NewDocumentAddedEvent.cs" />
     <Compile Include="GetHeadDocumentForFeedRequest.cs" />

@@ -13,8 +13,8 @@ namespace Euventing.Atom
     {
         public void Configure(ActorSystem actorSystem)
         {
-            ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem);
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
+            ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory);
 
             var settings = new AtomNotificationSettings(atomFeedFactory);
         }

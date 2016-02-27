@@ -53,8 +53,8 @@ namespace Euventing.Atom.Test
             var factory = new ShardedActorSystemFactory(port, actorSystemName, "inmem", seedNode);
             var actorSystem = factory.GetActorSystem();
             actorSystem.ActorOf(Props.Create<ClusterEventListener>());
-            var actorFactory = new ShardedAtomFeedFactory(actorSystem);
             var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
+            var actorFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory);
             atomNotifiers.Add(new AtomEventNotifier(actorFactory));
             atomDocumentRetrievers.Add(new AtomDocumentRetriever(actorFactory, atomDocumentFactory));
             numberOfNodes++;

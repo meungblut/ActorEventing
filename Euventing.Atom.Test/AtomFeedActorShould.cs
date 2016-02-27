@@ -88,7 +88,7 @@ namespace Euventing.Atom.Test
         }
     }
 
-    internal class DummyAtomDocumentActorCreator : IAtomDocumentActorBuilder
+    internal class DummyAtomDocumentActorCreator : IAtomDocumentActorFactory
     {
         internal DummyActorRef ActorRefReturned { get; private set; }
         public IActorRef GetActorRef()

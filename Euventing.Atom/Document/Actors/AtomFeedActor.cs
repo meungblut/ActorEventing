@@ -10,7 +10,7 @@ namespace Euventing.Atom.Document.Actors
     public class AtomFeedActor : PersistentActor
     {
         private readonly ILoggingAdapter loggingAdapter;
-        private readonly IAtomDocumentActorBuilder builder;
+        private readonly IAtomDocumentActorFactory builder;
         private readonly IAtomDocumentSettings settings;
         private FeedId atomFeedId;
         private DocumentId currentFeedHeadDocument;
@@ -23,7 +23,7 @@ namespace Euventing.Atom.Document.Actors
 
         public override string PersistenceId { get; }
 
-        public AtomFeedActor(IAtomDocumentActorBuilder builder, IAtomDocumentSettings settings)
+        public AtomFeedActor(IAtomDocumentActorFactory builder, IAtomDocumentSettings settings)
         {
             loggingAdapter = Context.GetLogger();
             loggingAdapter.Info("Feed actor path is " + Self.Path);

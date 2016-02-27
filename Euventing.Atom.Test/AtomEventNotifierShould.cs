@@ -24,10 +24,10 @@ namespace Euventing.Atom.Test
         {
             var actorSystem = factory.GetActorSystem();
 
-            ShardedAtomFeedFactory actorFActory = new ShardedAtomFeedFactory(actorSystem);
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
-            _notifier = new AtomEventNotifier(actorFActory);
-            _retriever = new AtomDocumentRetriever(actorFActory, atomDocumentFactory);
+            ShardedAtomFeedFactory actorFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory);
+            _notifier = new AtomEventNotifier(actorFactory);
+            _retriever = new AtomDocumentRetriever(actorFactory, atomDocumentFactory);
 
             subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),

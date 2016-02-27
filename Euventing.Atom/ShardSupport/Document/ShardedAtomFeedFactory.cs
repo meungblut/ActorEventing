@@ -10,11 +10,11 @@ namespace Euventing.Atom.ShardSupport.Document
     {
         private readonly ActorSystem actorSystem;
 
-        public ShardedAtomFeedFactory(ActorSystem actorSystem)
+        public ShardedAtomFeedFactory(ActorSystem actorSystem, ShardedAtomDocumentFactory factory)
         {
             this.actorSystem = actorSystem;
 
-            var props = Props.Create(() => new AtomFeedActor(new ShardedAtomDocumentFactory(actorSystem), new HardCodedAtomDocumentSettings()));
+            var props = Props.Create(() => new AtomFeedActor(factory, new HardCodedAtomDocumentSettings()));
 
             var settings = ClusterShardingSettings.Create(actorSystem);
             ClusterSharding.Get(actorSystem).Start(
