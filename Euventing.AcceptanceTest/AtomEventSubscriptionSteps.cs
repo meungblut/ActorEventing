@@ -42,8 +42,13 @@ namespace Euventing.AcceptanceTest
         [When(@"I request the subscription from url '(.*)'")]
         public void WhenIRequestTheSubscriptionFromUrl(string url)
         {
+            Console.WriteLine(DateTime.Now.ToString("Start M:ss ffff"));
+
             HttpClient client = new HttpClient();
             this.httpResponseMessage = client.GetAsync(url + subscriptionId).Result;
+
+            Console.WriteLine(DateTime.Now.ToString("Finish M:ss ffff"));
+
         }
 
         [Then(@"I should receive a response with the http status code '(.*)'")]
@@ -79,6 +84,7 @@ namespace Euventing.AcceptanceTest
         [Given(@"I have subscribed to an atom feed with a generated subscription Id")]
         public void GivenIHaveSubscribedToAnAtomFeedWithASubscriptionIdOf()
         {
+            Console.WriteLine(DateTime.Now.ToString("Start: M:ss ffff"));
             this.subscriptionId = Guid.NewGuid().ToString();
             string contents = @"
                 {
@@ -93,16 +99,24 @@ namespace Euventing.AcceptanceTest
                 = client.PutAsync(url, content).Result;
             Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
 
+            Console.WriteLine(DateTime.Now.ToString("Finish: M:ss ffff"));
+
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         [When(@"'(.*)' events are raised within my domain")]
         public void WhenEventsAreRaisedWithinMyDomain(int numberOfEventsToRaise)
         {
+            Console.WriteLine(DateTime.Now.ToString("Start M:ss ffff"));
+
             for (int i = 0; i < numberOfEventsToRaise; i++)
             {
                 publisher.PublishMessage(new DummyEvent(i.ToString()));
+                Console.WriteLine(DateTime.Now.ToString("M:ss ffff"));
+
             }
+            Console.WriteLine(DateTime.Now.ToString("Finish M:ss ffff"));
+
         }
 
         [Then(@"I should receive a valid atom document with '(.*)' entries from '(.*)'")]
@@ -143,11 +157,16 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should receive an atom document with a link to the next document in the stream from '(.*)'")]
         public void ThenIShouldReceiveAnAtomDocumentWithALinkToTheNextDocumentInTheStreamFrom(string atomUrl)
         {
+            Console.WriteLine(DateTime.Now.ToString("Start M:ss ffff"));
+
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
             var atomDocument = GetAtomDocument(atomUrl + subscriptionId);
 
             Assert.IsTrue(atomDocument.Contains("prev-archive"));
+
+            Console.WriteLine(DateTime.Now.ToString("Finish M:ss ffff"));
+
         }
     }
 }

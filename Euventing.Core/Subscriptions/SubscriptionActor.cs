@@ -18,6 +18,7 @@ namespace Euventing.Core.Subscriptions
         public SubscriptionActor()
         {
             loggingAdapter = Context.GetLogger();
+            loggingAdapter.Info("SUBSCRIPTION actor path is " + Self.Path);
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
             notifierFactory = new NotifierFactory();
         }
@@ -69,7 +70,7 @@ namespace Euventing.Core.Subscriptions
 
         private void Process(DomainEvent eventToProcess)
         {
-            Console.WriteLine("Publishing message in subscripiton actor");
+            Console.WriteLine("Publishing message in subscription actor");
             var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
             notifier.Notify(subscriptionMessage, eventToProcess);
         }

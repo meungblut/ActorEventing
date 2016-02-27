@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Akka.Actor;
 using Akka.Cluster;
+using Akka.Cluster.Sharding;
+using Akka.Dispatch.SysMsg;
 using Akka.Event;
 using Akka.Persistence;
 using Euventing.Atom.Serialization;
@@ -13,6 +16,7 @@ namespace Euventing.Atom.Document.Actors
         public AtomDocumentActor(IAtomDocumentSettings settings)
         {
             loggingAdapter = Context.GetLogger();
+            loggingAdapter.Info("Atom DOCUMENT actor path is " + Self.Path);
             PersistenceId = "AtomDocumentActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
         }
 
@@ -28,8 +32,20 @@ namespace Euventing.Atom.Document.Actors
         private long sequenceNumber;
         private readonly ILoggingAdapter loggingAdapter;
 
+        protected override void PreStart()
+        {
+            base.PreStart();
+
+            ////Take this instance out of memory after inactivity
+            //Context.SetReceiveTimeout(TimeSpan.FromSeconds(10));
+        }
+
+        private int recoveryevents;
+
         protected override bool ReceiveRecover(object message)
         {
+            loggingAdapter.Info("AtomDocumentActor ReceiveRecover: " + message.GetType() + " with persistence id:" + PersistenceId + " times called :" + ++recoveryevents);
+
             ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
@@ -40,7 +56,7 @@ namespace Euventing.Atom.Document.Actors
             if (message == null)
                 return false;
 
-            loggingAdapter.Info("AtomDocumentActor ReceiveCommand " + message.GetType());
+            loggingAdapter.Info("AtomDocumentActor ReceiveCommand: " + message.GetType() + " with persistence id:" + PersistenceId);
 
             ((dynamic)this).Process((dynamic)message);
 
@@ -63,6 +79,16 @@ namespace Euventing.Atom.Document.Actors
         {
             MutateInternalState(newDocumentEvent);
             Persist(newDocumentEvent, null);
+            Context.Parent.Tell(new Passivate(Stop.Instance));
+        }
+        private void Process(ReceiveTimeout timeoutEvent)
+        {
+            Context.Parent.Tell(new Passivate(Stop.Instance));
+        }
+
+        private void Process(Stop stopMessage)
+        {
+            Context.Stop(Self);
         }
 
         private void MutateInternalState(NewDocumentAddedEvent newDocumentEvent)

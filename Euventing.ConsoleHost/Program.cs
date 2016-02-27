@@ -9,6 +9,7 @@ using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
 using System.Threading.Tasks;
 using Euventing.Core.Startup;
+using NLog;
 
 namespace Euventing.ConsoleHost
 {
@@ -25,14 +26,20 @@ namespace Euventing.ConsoleHost
 
             var actorSystem = actorSystemFactory.GetActorSystem();
 
+            LogManager.GetLogger("").Info("Matt - creating system");
+
             var subsystemConfig = new AtomSubsystemConfiguration();
             var eventSystemFactory = new EventSystemFactory(actorSystem, new[] { subsystemConfig });
 
             Console.Title = string.Join(" ", args);
-
+            LogManager.GetLogger("").Info("Matt - about to sleep");
             Thread.Sleep(TimeSpan.FromSeconds(10));
+            LogManager.GetLogger("").Info("Matt - finished sleeping");
+
 
             var subscriptionId = GetValueFromCommandLine("subscriptionId", args);
+
+            LogManager.GetLogger("").Info("Matt: subscribing to " + subscriptionId);
 
             _subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
@@ -40,6 +47,8 @@ namespace Euventing.ConsoleHost
                 new AllEventMatcher());
 
             eventSystemFactory.GetSubscriptionManager().CreateSubscription(_subscriptionMessage);
+            LogManager.GetLogger("").Info("MAtt: subscription finished " + subscriptionId);
+
             var notifier = eventSystemFactory.GetEventPublisher();
 
             var i = 0;
@@ -47,7 +56,7 @@ namespace Euventing.ConsoleHost
             {
                 notifier.PublishMessage(new DummyDomainEvent(GetPortFromCommandLine(args) + ":" + (++i).ToString()));
 
-                Thread.Sleep(TimeSpan.FromMilliseconds(200));
+                Thread.Sleep(TimeSpan.FromMilliseconds(50));
             }
         }
 

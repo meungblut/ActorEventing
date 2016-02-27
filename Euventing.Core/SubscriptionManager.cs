@@ -20,8 +20,6 @@ namespace Euventing.Core
                 entityProps: Props.Create<SubscriptionActor>(),
                 settings: settings,
                 messageExtractor: new SubscriptionMessageExtractor());
-
-            Console.WriteLine(shardedSubscriptionActorRef.Path);
         }
 
         public void CreateSubscription(SubscriptionMessage subscriptionMessage)

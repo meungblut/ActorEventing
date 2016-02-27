@@ -1,6 +1,7 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.Cluster;
+using Akka.Dispatch.SysMsg;
 using Akka.Event;
 using Akka.Persistence;
 using Euventing.Core;
@@ -18,6 +19,7 @@ namespace Euventing.Atom.Document.Actors
         private string feedTitle;
         private string feedAuthor;
         private int numberOfEventsInCurrentHeadDocument;
+        private int currentDocumentId;
 
         private int recoveryMessages = 0;
 
@@ -26,7 +28,7 @@ namespace Euventing.Atom.Document.Actors
         public AtomFeedActor(IAtomDocumentActorFactory builder, IAtomDocumentSettings settings)
         {
             loggingAdapter = Context.GetLogger();
-            loggingAdapter.Info("Feed actor path is " + Self.Path);
+            loggingAdapter.Info("Atom FEED actor path is " + Self.Path);
             this.builder = builder;
             this.settings = settings;
             PersistenceId = "AtomFeedActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
@@ -34,7 +36,7 @@ namespace Euventing.Atom.Document.Actors
 
         protected override bool ReceiveRecover(object message)
         {
-            loggingAdapter.Info("AtomFeedActor ReceiveRecover " + message.GetType() + recoveryMessages++);
+            loggingAdapter.Info("AtomFeedActor ReceiveRecover: " + message.GetType() + " with persistence id:" + PersistenceId + " times called " + ++recoveryMessages);
 
             try
             {
@@ -51,11 +53,13 @@ namespace Euventing.Atom.Document.Actors
 
         protected override bool ReceiveCommand(object message)
         {
+
             if (message == null)
             {
                 loggingAdapter.Info("Received null message");
                 return false;
             }
+            loggingAdapter.Info("AtomFeedActor ReceiveRecover: " + message.GetType() + " with persistence id:" + PersistenceId);
 
             try
             {
@@ -77,7 +81,7 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(AtomFeedCreationCommand creationCommand)
         {
-            var documentId = new DocumentId(Guid.NewGuid().ToString());
+            var documentId = new DocumentId(creationCommand.FeedId.Id + "/0");
             var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author, creationCommand.FeedId);
 
             Persist(atomFeedCreated, MutateInternalState);
@@ -115,9 +119,10 @@ namespace Euventing.Atom.Document.Actors
 
             if (currentEvents >= settings.NumberOfEventsPerDocument)
             {
-                var newDocumentId = new DocumentId(Guid.NewGuid().ToString());
+                var documentId = currentDocumentId + 1;
+                var newDocumentId = new DocumentId(atomFeedId.Id + "/" + documentId);
 
-                Persist(new AtomFeedDocumentHeadChanged(newDocumentId, currentFeedHeadDocument), MutateInternalState);
+                Persist(new AtomFeedDocumentHeadChanged(newDocumentId, currentFeedHeadDocument, documentId), MutateInternalState);
                 
                 atomDocument.Tell(new CreateAtomDocumentCommand(
                     feedTitle, feedAuthor, atomFeedId, newDocumentId, currentFeedHeadDocument), Self);
@@ -167,6 +172,7 @@ namespace Euventing.Atom.Document.Actors
         {
             currentFeedHeadDocument = headChanged.CurrentHeadDocumentId;
             lastHeadDocument = headChanged.EarlierDocumentId;
+            currentDocumentId = headChanged.CurrentDocumentIndex;
             numberOfEventsInCurrentHeadDocument = 0;
         }
 
