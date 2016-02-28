@@ -80,11 +80,11 @@ namespace Euventing.Atom.Document.Actors
             MutateInternalState(newDocumentEvent);
             Persist(newDocumentEvent, null);
             loggingAdapter.Info("Passivating " + this.PersistenceId);
-            Context.Parent.Tell(new Passivate(Stop.Instance));
+            Context.Parent.Tell(new Passivate(PoisonPill.Instance));
         }
         private void Process(ReceiveTimeout timeoutEvent)
         {
-            Context.Parent.Tell(new Passivate(Stop.Instance));
+            Context.Parent.Tell(new Passivate(PoisonPill.Instance));
         }
 
         private void Process(Stop stopMessage)
@@ -119,6 +119,11 @@ namespace Euventing.Atom.Document.Actors
         private void Process(GetAtomDocumentRequest request)
         {
             Sender.Tell(new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId, laterEventsDocumentId, entries), Self);
+        }
+
+        private void Process(object request)
+        {
+            loggingAdapter.Info("Unhandled command " + request.GetType());
         }
 
         private void MutateInternalState(AtomDocumentCreatedEvent documentCreated)

@@ -2,6 +2,7 @@
 using Akka.Cluster.Sharding;
 using Akka.Persistence;
 using Euventing.Atom.Document;
+using Euventing.Atom.Document.Actors.ShardSupport;
 
 namespace Euventing.Atom.ShardSupport.Document
 {
@@ -27,8 +28,7 @@ namespace Euventing.Atom.ShardSupport.Document
             if (message is NewDocumentAddedEvent)
                 return ((NewDocumentAddedEvent)message).DocumentId.Id;
 
-
-            return null;
+            throw new CouldNotRouteMessageToShardException(this, message);
         }
 
         public object EntityMessage(object message)
@@ -48,7 +48,10 @@ namespace Euventing.Atom.ShardSupport.Document
             if (message is NewDocumentAddedEvent)
                 return ((NewDocumentAddedEvent)message);
 
-            return null;
+            if (message is SaveSnapshotSuccess)
+                return ((SaveSnapshotSuccess)message);
+
+            throw new CouldNotRouteMessageToShardException(this, message);
         }
 
         public string ShardId(object message)
@@ -68,7 +71,10 @@ namespace Euventing.Atom.ShardSupport.Document
             if (message is NewDocumentAddedEvent)
                 return ((NewDocumentAddedEvent)message).DocumentId.Id.GetHashCode().ToString();
 
-            return null;
+            if (message is SaveSnapshotSuccess)
+                return ((SaveSnapshotSuccess) message).Metadata.PersistenceId.GetHashCode().ToString();
+
+            throw new CouldNotRouteMessageToShardException(this, message);
         }
     }
 }

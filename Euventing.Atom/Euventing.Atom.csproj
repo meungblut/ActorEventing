@@ -88,6 +88,8 @@
     <Compile Include="AtomNotificationSettings.cs" />
     <Compile Include="AtomSubsystemConfiguration.cs" />
     <Compile Include="Document\Actors\AtomFeedState.cs" />
+    <Compile Include="Document\Actors\FeedAlreadyCreatedException.cs" />
+    <Compile Include="Document\Actors\ShardSupport\CouldNotRouteMessageToShardException.cs" />
     <Compile Include="Serialization\AtomDocumentSerialiser.cs" />
     <Compile Include="ClusterEventListener.cs" />
     <Compile Include="Document\AtomDocumentCreatedEvent.cs" />
@@ -109,9 +111,9 @@
     <Compile Include="Serialization\JsonEventSerialisation.cs" />
     <Compile Include="Serialization\SerializedWithContentType.cs" />
     <Compile Include="Serialization\XmlEventSerialisation.cs" />
-    <Compile Include="ShardSupport\Document\ShardedAtomFeedFactory.cs" />
-    <Compile Include="ShardSupport\Document\ShardedAtomDocumentFactory.cs" />
-    <Compile Include="ShardSupport\Feed\AtomFeedShardedActorRefFactory.cs" />
+    <Compile Include="Document\Actors\ShardSupport\Document\ShardedAtomFeedFactory.cs" />
+    <Compile Include="Document\Actors\ShardSupport\Document\ShardedAtomDocumentFactory.cs" />
+    <Compile Include="Document\Actors\ShardSupport\Feed\AtomFeedShardedActorRefFactory.cs" />
     <Compile Include="AtomNotificationChannel.cs" />
     <Compile Include="Document\AtomDocument.cs" />
     <Compile Include="Document\Actors\AtomDocumentActor.cs" />
@@ -121,8 +123,8 @@
     <Compile Include="Document\FeedId.cs" />
     <Compile Include="GetHeadDocumentIdForFeedRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShardSupport\Feed\AtomFeedShardDataMessageExtractor.cs" />
-    <Compile Include="ShardSupport\Document\AtomDocumentShardDataMessageExtractor.cs" />
+    <Compile Include="Document\Actors\ShardSupport\Feed\AtomFeedShardDataMessageExtractor.cs" />
+    <Compile Include="Document\Actors\ShardSupport\Document\AtomDocumentShardDataMessageExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Euventing.Core\Euventing.Core.csproj">

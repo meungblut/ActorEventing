@@ -25,8 +25,10 @@ namespace Euventing.Core.Subscriptions
 
         protected override bool ReceiveRecover(object message)
         {
-            if (message is SubscriptionMessage)
-                this.subscriptionMessage = (SubscriptionMessage)message;
+            if (message == null)
+                return false;
+
+            ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
         }
@@ -36,15 +38,7 @@ namespace Euventing.Core.Subscriptions
             if (message == null)
                 return false;
 
-            try
-            {
-                ((dynamic)this).Process((dynamic)message);
-            }
-            catch (Exception e)
-            {
-                loggingAdapter.Error(e.ToString());
-                throw new CouldNotProcessPersistenceMessage("Could not process " + message.GetType(), e);
-            }
+            ((dynamic)this).Process((dynamic)message);
 
             return true;
         }
@@ -56,10 +50,10 @@ namespace Euventing.Core.Subscriptions
 
         private void Process(SubscriptionMessage subscriptionMessage)
         {
-            this.subscriptionMessage = subscriptionMessage;
-            SubscribeToClusterWideBroadcastDomainEvent();
             var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
             notifier.Create(subscriptionMessage);
+
+            Persist(subscriptionMessage, MutateInternalState);
         }
 
         private void SubscribeToClusterWideBroadcastDomainEvent()
@@ -81,6 +75,23 @@ namespace Euventing.Core.Subscriptions
                 Sender.Tell(new NullSubscription(), Context.Self);
             else
                 Sender.Tell(subscriptionMessage, Context.Self);
+        }
+
+        private void Process(object unhandledObject)
+        {
+            loggingAdapter.Info("Subscription Actor. Unhandled command " + unhandledObject.GetType());
+        }
+
+        private void MutateInternalState(SubscriptionMessage message)
+        {
+            this.subscriptionMessage = message;
+
+            SubscribeToClusterWideBroadcastDomainEvent();
+        }
+
+        private void MutateInternalState(object unhandledObject)
+        {
+            loggingAdapter.Info("Subscription Actor. Unhandled persistence command " + unhandledObject.GetType());
         }
     }
 }

@@ -37,17 +37,28 @@ namespace Euventing.ConsoleHost
             LogManager.GetLogger("").Info("Matt - finished sleeping");
 
 
-            var subscriptionId = GetValueFromCommandLine("subscriptionId", args);
+            var subscriptionId = new SubscriptionId(GetValueFromCommandLine("subscriptionId", args));
+            var subscriptionManager = eventSystemFactory.GetSubscriptionManager();
 
             LogManager.GetLogger("").Info("Matt: subscribing to " + subscriptionId);
 
-            _subscriptionMessage = new SubscriptionMessage(
-                new AtomNotificationChannel(),
-                new SubscriptionId(subscriptionId),
-                new AllEventMatcher());
 
-            eventSystemFactory.GetSubscriptionManager().CreateSubscription(_subscriptionMessage);
-            LogManager.GetLogger("").Info("MAtt: subscription finished " + subscriptionId);
+            var currentSubscription = subscriptionManager.GetSubscriptionDetails(new SubscriptionQuery(subscriptionId)).Result;
+
+            if (currentSubscription is NullSubscription)
+            {
+                _subscriptionMessage = new SubscriptionMessage(
+                    new AtomNotificationChannel(),
+                    subscriptionId,
+                    new AllEventMatcher());
+
+                eventSystemFactory.GetSubscriptionManager().CreateSubscription(_subscriptionMessage);
+                LogManager.GetLogger("").Info("MAtt: subscription finished " + subscriptionId);
+            }
+            else
+            {
+                LogManager.GetLogger("").Info("MAtt: subscription existed - not resubscribing " + subscriptionId);
+            }
 
             var notifier = eventSystemFactory.GetEventPublisher();
 

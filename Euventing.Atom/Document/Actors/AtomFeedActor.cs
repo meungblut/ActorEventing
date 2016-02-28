@@ -59,17 +59,10 @@ namespace Euventing.Atom.Document.Actors
                 loggingAdapter.Info("Received null message");
                 return false;
             }
+
             loggingAdapter.Info("AtomFeedActor Receive Command: " + message.GetType() + " with persistence id:" + PersistenceId);
 
-            try
-            {
-                ((dynamic)this).Process((dynamic)message);
-            }
-            catch (Exception e)
-            {
-                loggingAdapter.Error(e.ToString());
-                throw new CouldNotProcessPersistenceMessage("Could not process " + message.GetType(), e);
-            }
+            ((dynamic)this).Process((dynamic)message);
 
             return true;
         }
@@ -81,6 +74,9 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(AtomFeedCreationCommand creationCommand)
         {
+            if (this.currentFeedHeadDocument != null)
+                throw new FeedAlreadyCreatedException(currentFeedHeadDocument.Id);
+
             var documentId = new DocumentId(creationCommand.FeedId.Id + "|" + Guid.NewGuid() + "|0");
             var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author, creationCommand.FeedId);
 
@@ -134,7 +130,7 @@ namespace Euventing.Atom.Document.Actors
         private void CreateSnapshot()
         {
             var state = new AtomFeedState(this.atomFeedId, this.currentFeedHeadDocument, this.lastHeadDocument,
-                this.feedTitle, this.feedAuthor, this.numberOfEventsInCurrentHeadDocument);
+                this.feedTitle, this.feedAuthor, this.numberOfEventsInCurrentHeadDocument, this.currentDocumentId);
 
             SaveSnapshot(state);
         }
@@ -158,6 +154,7 @@ namespace Euventing.Atom.Document.Actors
             this.feedTitle = savedState.FeedTitle;
             this.lastHeadDocument = savedState.LastHeadDocument;
             this.numberOfEventsInCurrentHeadDocument = savedState.NumberOfEventsInCurrentHeadDocument;
+            this.currentDocumentId = savedState.CurrentHeadDocumentIndex;
         }
 
         private void Process(GetHeadDocumentForFeedRequest getHeadRequest)
@@ -193,6 +190,11 @@ namespace Euventing.Atom.Document.Actors
         private void MutateInternalState(object unknownRecoveryCommand)
         {
             loggingAdapter.Info("Received Unknown recovery command: " + unknownRecoveryCommand.GetType().ToString());
+        }
+
+        private void Process(object unknownCommand)
+        {
+            loggingAdapter.Info("Received Unknown command: " + unknownCommand.GetType().ToString());
         }
     }
 }

@@ -8,7 +8,14 @@ namespace Euventing.Atom.Document.Actors
 {
     public class AtomFeedState
     {
-        public AtomFeedState(FeedId atomFeedId, DocumentId currentFeedHeadDocument, DocumentId lastHeadDocument, string feedTitle, string feedAuthor, int numberOfEventsInCurrentHeadDocument)
+        public AtomFeedState(
+            FeedId atomFeedId, 
+            DocumentId currentFeedHeadDocument, 
+            DocumentId lastHeadDocument, 
+            string feedTitle,
+            string feedAuthor, 
+            int numberOfEventsInCurrentHeadDocument, 
+            int currentHeadDocumentIndex)
         {
             AtomFeedId = atomFeedId;
             CurrentFeedHeadDocument = currentFeedHeadDocument;
@@ -16,6 +23,7 @@ namespace Euventing.Atom.Document.Actors
             FeedTitle = feedTitle;
             FeedAuthor = feedAuthor;
             NumberOfEventsInCurrentHeadDocument = numberOfEventsInCurrentHeadDocument;
+            CurrentHeadDocumentIndex = currentHeadDocumentIndex;
         }
 
         public FeedId AtomFeedId { get; private set; }
@@ -24,5 +32,6 @@ namespace Euventing.Atom.Document.Actors
         public string FeedTitle { get; private set; }
         public string FeedAuthor { get; private set; }
         public int NumberOfEventsInCurrentHeadDocument { get; private set; }
+        public int CurrentHeadDocumentIndex { get; private set; }
     }
 }
