@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Dispatch.SysMsg;
@@ -20,6 +21,7 @@ namespace Euventing.Atom.Document.Actors
         private string feedAuthor;
         private int numberOfEventsInCurrentHeadDocument;
         private int currentDocumentId;
+        private Stopwatch stopwatch = new Stopwatch();
 
         private int recoveryMessages = 0;
 
@@ -28,7 +30,6 @@ namespace Euventing.Atom.Document.Actors
         public AtomFeedActor(IAtomDocumentActorFactory builder, IAtomDocumentSettings settings)
         {
             loggingAdapter = Context.GetLogger();
-            loggingAdapter.Info("Atom FEED actor path is " + Self.Path);
             this.atomDocumentActorFactory = builder;
             this.settings = settings;
             PersistenceId = "AtomFeedActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
@@ -36,8 +37,6 @@ namespace Euventing.Atom.Document.Actors
 
         protected override bool ReceiveRecover(object message)
         {
-            loggingAdapter.Info("AtomFeedActor ReceiveRecover: " + message.GetType() + " with persistence id:" + PersistenceId + " times called " + ++recoveryMessages);
-
             try
             {
                 ((dynamic)this).MutateInternalState((dynamic)message);
@@ -60,8 +59,6 @@ namespace Euventing.Atom.Document.Actors
                 return false;
             }
 
-            loggingAdapter.Info("AtomFeedActor Receive Command: " + message.GetType() + " with persistence id:" + PersistenceId);
-
             ((dynamic)this).Process((dynamic)message);
 
             return true;
@@ -69,7 +66,7 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(string message)
         {
-            Console.WriteLine(message);
+            loggingAdapter.Info(DateTime.Now.ToString("mm:ss ffff") + message);
         }
 
         private void Process(AtomFeedCreationCommand creationCommand)
@@ -107,11 +104,6 @@ namespace Euventing.Atom.Document.Actors
             var currentEvents = numberOfEventsInCurrentHeadDocument + 1;
             var eventAdded = new EventAddedToDocument(currentEvents);
             Persist(eventAdded, MutateInternalState);
-
-            loggingAdapter.Info("Adding event {0} with id {3} to doc {1} in feed {4} on node {2}",
-                numberOfEventsInCurrentHeadDocument,
-                currentFeedHeadDocument.Id, Cluster.Get(Context.System).SelfAddress, message.EventToNotify.Id,
-                this.atomFeedId.Id);
 
             if (currentEvents >= settings.NumberOfEventsPerDocument)
             {

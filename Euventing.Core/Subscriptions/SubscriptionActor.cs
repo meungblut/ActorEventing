@@ -48,12 +48,15 @@ namespace Euventing.Core.Subscriptions
 
         }
 
-        private void Process(SubscriptionMessage subscriptionMessage)
+        private void Process(SubscriptionMessage subscription)
         {
-            var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
-            notifier.Create(subscriptionMessage);
+            if (subscriptionMessage != null)
+                return;
 
-            Persist(subscriptionMessage, MutateInternalState);
+            var notifier = notifierFactory.GetNotifierFor(subscription.NotificationChannel.GetType());
+            notifier.Create(subscription);
+
+            Persist(subscription, MutateInternalState);
         }
 
         private void SubscribeToClusterWideBroadcastDomainEvent()
@@ -64,7 +67,6 @@ namespace Euventing.Core.Subscriptions
 
         private void Process(DomainEvent eventToProcess)
         {
-            Console.WriteLine("Publishing message in subscription actor");
             var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
             notifier.Notify(subscriptionMessage, eventToProcess);
         }

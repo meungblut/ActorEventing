@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
-using Akka.Persistence.Sqlite.Snapshot;
 using Euventing.Atom.ShardSupport.Document;
 using Euventing.Core;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
-using Euventing.Core.Test;
 using NUnit.Framework;
 
 namespace Euventing.Atom.Test
@@ -30,22 +28,21 @@ namespace Euventing.Atom.Test
             atomDocumentRetrievers = new List<AtomDocumentRetriever>();
 
             Create(3626, "atomActorSystem", "127.0.0.1:3626");
-            //Create(3627, "atomActorSystem", "127.0.0.1:3626");
-            //Create(3628, "atomActorSystem", "127.0.0.1:3626");
-            //Create(3629, "atomActorSystem", "127.0.0.1:3626");
-            //Create(3630, "atomActorSystem", "127.0.0.1:3626");
 
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+        }
 
-            Thread.Sleep(TimeSpan.FromSeconds(10));
-
+        [SetUp]
+        public void CreateSubscriptionFOrTestRun()
+        {
             subscriptionMessage = new SubscriptionMessage(
                 new AtomNotificationChannel(),
-                new SubscriptionId("1"),
+                new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
 
             atomNotifiers[0].Create(subscriptionMessage);
 
-            Thread.Sleep(TimeSpan.FromSeconds(4));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         private void Create(int port, string actorSystemName, string seedNode)
@@ -82,15 +79,16 @@ namespace Euventing.Atom.Test
         [Test]
         public async Task CreateANewDocumentIdWhen151EventsAreSubmitted()
         {
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             Notify(171);
 
-            Thread.Sleep(TimeSpan.FromSeconds(3));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
 
             var headDocument = await atomDocumentRetrievers[0].GetHeadDocument(subscriptionMessage.SubscriptionId);
             Assert.IsNotNull(headDocument.EarlierEventsDocumentId);
             var earlierDocument = await atomDocumentRetrievers[0].GetDocument(headDocument.EarlierEventsDocumentId);
 
-            Assert.AreEqual(totalNotifications, headDocument.Entries.Count + earlierDocument.Entries.Count);
+            Assert.AreEqual(171, headDocument.Entries.Count + earlierDocument.Entries.Count);
         }
 
         private void Notify(int numberOfNotifications)

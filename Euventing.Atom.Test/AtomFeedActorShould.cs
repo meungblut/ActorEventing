@@ -27,23 +27,21 @@ namespace Euventing.Atom.Test
             dummyAtomDocumentActorCreator = new DummyAtomDocumentActorCreator();
             shardedActorSystemFactory = new ShardedActorSystemFactory(8965, "eventActorSystemForTesting", "inmem", "127.0.0.1:8965");
             system = shardedActorSystemFactory.GetActorSystem();
-            CreateAtomFeedActor("123");
+            CreateAtomFeedActor(Guid.NewGuid().ToString());
+            CreateFeed();
         }
 
         private void CreateAtomFeedActor(string actorId)
         {
             dummyAtomDocumentActorCreator = new DummyAtomDocumentActorCreator();
             var props = Props.Create(() => new AtomFeedActor(dummyAtomDocumentActorCreator, new DummyAtomDocumentSettings(2)));
-
             atomActorRef = system.ActorOf(props, name: actorId);
         }
 
         [Test]
         public void CreateAHeadDocumentWithTheExpectedParametersWhenAFeedIsCreated()
         {
-            CreateFeed();
-
-            dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.WaitOne(TimeSpan.FromSeconds(1));
+            dummyAtomDocumentActorCreator.ActorRefReturned.ActorTellCalled.WaitOne(TimeSpan.FromSeconds(4));
             var documentCreated =
                 (CreateAtomDocumentCommand)dummyAtomDocumentActorCreator.ActorRefReturned.MessageTellCalledWith;
 
@@ -53,19 +51,16 @@ namespace Euventing.Atom.Test
         [Test]
         public void SaveASnapshotWhenTheDocumentIsRotated()
         {
-            CreateFeed();
-
-            var eventId = Guid.NewGuid().ToString();
             atomActorRef.Tell(new EventWithSubscriptionNotificationMessage(new SubscriptionId(this.feedId.Id),
-                new DummyDomainEvent(eventId)));
+                new DummyDomainEvent(Guid.NewGuid().ToString())));
 
             atomActorRef.Tell(new EventWithSubscriptionNotificationMessage(new SubscriptionId(this.feedId.Id),
-                new DummyDomainEvent(eventId)));
+                new DummyDomainEvent(Guid.NewGuid().ToString())));
 
             atomActorRef.Tell(new EventWithSubscriptionNotificationMessage(new SubscriptionId(this.feedId.Id),
-    new DummyDomainEvent(eventId)));
+    new DummyDomainEvent(Guid.NewGuid().ToString())));
 
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+            Thread.Sleep(TimeSpan.FromSeconds(10));
 
             var snapshot = InMemorySnapshotStore.RepositorySavedWIth.GetData<SnapshotEntry>();
 

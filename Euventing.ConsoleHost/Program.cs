@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using Akka.Actor;
 using Euventing.Atom;
-using Euventing.Atom.ShardSupport.Document;
 using Euventing.Core;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
-using System.Threading.Tasks;
 using Euventing.Core.Startup;
 using NLog;
 
@@ -32,15 +29,15 @@ namespace Euventing.ConsoleHost
             var eventSystemFactory = new EventSystemFactory(actorSystem, new[] { subsystemConfig });
 
             Console.Title = string.Join(" ", args);
-            LogManager.GetLogger("").Info("Matt - about to sleep");
+            LogManager.GetLogger("").Info("about to sleep");
             Thread.Sleep(TimeSpan.FromSeconds(10));
-            LogManager.GetLogger("").Info("Matt - finished sleeping");
+            LogManager.GetLogger("").Info("finished sleeping");
 
-
+          
             var subscriptionId = new SubscriptionId(GetValueFromCommandLine("subscriptionId", args));
             var subscriptionManager = eventSystemFactory.GetSubscriptionManager();
 
-            LogManager.GetLogger("").Info("Matt: subscribing to " + subscriptionId);
+            LogManager.GetLogger("").Info("subscribing to " + subscriptionId);
 
 
             var currentSubscription = subscriptionManager.GetSubscriptionDetails(new SubscriptionQuery(subscriptionId)).Result;
@@ -53,12 +50,14 @@ namespace Euventing.ConsoleHost
                     new AllEventMatcher());
 
                 eventSystemFactory.GetSubscriptionManager().CreateSubscription(_subscriptionMessage);
-                LogManager.GetLogger("").Info("MAtt: subscription finished " + subscriptionId);
+                LogManager.GetLogger("").Info("subscription finished " + subscriptionId);
             }
             else
             {
-                LogManager.GetLogger("").Info("MAtt: subscription existed - not resubscribing " + subscriptionId);
+                LogManager.GetLogger("").Info("subscription existed - not resubscribing " + subscriptionId);
             }
+
+            Thread.Sleep(1000);
 
             var notifier = eventSystemFactory.GetEventPublisher();
 
@@ -66,8 +65,8 @@ namespace Euventing.ConsoleHost
             while (true)
             {
                 notifier.PublishMessage(new DummyDomainEvent(GetPortFromCommandLine(args) + ":" + (++i).ToString()));
-
-                Thread.Sleep(TimeSpan.FromMilliseconds(50));
+                LogManager.GetLogger("").Info("Raising event with id" + i);
+                Thread.Sleep(TimeSpan.FromMilliseconds(5));
             }
         }
 

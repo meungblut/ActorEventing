@@ -58,5 +58,5 @@ Scenario: GetNextDocument
 	When I request the subscription from url 'http://localhost:3600/events/'
 	When I request the subscription from url 'http://localhost:3600/events/'
 	Then I should receive a response with the http status code 'OK'
-	When '550' events are raised within my domain
+	When '152' events are raised within my domain
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/'

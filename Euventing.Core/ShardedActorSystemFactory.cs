@@ -22,10 +22,11 @@ namespace Euventing.Core
         public ActorSystem GetActorSystem()
         {
             string seedNodeString = GetSeedNodeList(akkaSystemName, seedNodes);
-            var config = ConfigurationFactory.ParseString(MainConfig.
+            var configString = MainConfig.
                 Replace("{portNumber}", portNumber.ToString()).
                 Replace("{persistencePlugin}", shardRepo).
-                Replace("{seedNodes}", seedNodeString));
+                Replace("{seedNodes}", seedNodeString);
+            var config = ConfigurationFactory.ParseString(configString);
             var system = ActorSystem.Create(akkaSystemName, config);
 
             return system;
@@ -126,7 +127,7 @@ namespace Euventing.Core
                      }
                     persistence {
                         journal {
-                            plugin = ""akka.persistence.journal.sqlite""
+                            plugin = ""akka.persistence.journal.{persistencePlugin}""
                             sqlite {
                                 class = ""Akka.Persistence.Sqlite.Journal.SqliteJournal, Akka.Persistence.Sqlite""
                                 plugin-dispatcher = ""akka.actor.default-dispatcher""
@@ -142,7 +143,7 @@ namespace Euventing.Core
                             }
                         }
                         snapshot-store {
-                            plugin = ""akka.persistence.snapshot-store.sqlite""
+                            plugin = ""akka.persistence.snapshot-store.{persistencePlugin}""
                             sqlite {
                                 class = ""Akka.Persistence.Sqlite.Snapshot.SqliteSnapshotStore, Akka.Persistence.Sqlite""
                                 plugin-dispatcher = ""akka.actor.default-dispatcher""

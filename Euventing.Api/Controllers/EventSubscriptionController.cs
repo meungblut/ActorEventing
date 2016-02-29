@@ -26,8 +26,7 @@ namespace Euventing.Api
         public HttpResponseMessage Put(SubscribeMessage subscribeMessage)
         {
             var subscriptionMessage = new SubscriptionMessage(new AtomNotificationChannel(), new SubscriptionId(subscribeMessage.SubscriptionId), new AllEventMatcher());
-            eventSubscriber.CreateSubscription(
-              subscriptionMessage);
+            eventSubscriber.CreateSubscription(subscriptionMessage);
 
             var response = new HttpResponseMessage(HttpStatusCode.Accepted);
             response.Content = new StringContent(JsonConvert.SerializeObject(string.Empty), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");

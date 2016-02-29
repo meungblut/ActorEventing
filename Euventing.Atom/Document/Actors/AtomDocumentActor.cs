@@ -56,7 +56,7 @@ namespace Euventing.Atom.Document.Actors
             if (message == null)
                 return false;
 
-            loggingAdapter.Info("AtomDocumentActor ReceiveCommand: " + message.GetType() + " with persistence id:" + PersistenceId);
+            //loggingAdapter.Info("AtomDocumentActor ReceiveCommand: " + message.GetType() + " with persistence id:" + PersistenceId);
 
             ((dynamic)this).Process((dynamic)message);
 
@@ -82,6 +82,7 @@ namespace Euventing.Atom.Document.Actors
             loggingAdapter.Info("Passivating " + this.PersistenceId);
             Context.Parent.Tell(new Passivate(PoisonPill.Instance));
         }
+
         private void Process(ReceiveTimeout timeoutEvent)
         {
             Context.Parent.Tell(new Passivate(PoisonPill.Instance));
@@ -89,8 +90,6 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(Stop stopMessage)
         {
-            loggingAdapter.Info("Stopping " + this.PersistenceId);
-
             Context.Stop(Self);
         }
 
@@ -112,8 +111,6 @@ namespace Euventing.Atom.Document.Actors
             atomEntry.SequenceNumber = sequenceNumber;
 
             Persist(atomEntry, MutateInternalState);
-
-            Sender.Tell("Ack", Self);
         }
 
         private void Process(GetAtomDocumentRequest request)
@@ -144,6 +141,9 @@ namespace Euventing.Atom.Document.Actors
             entries.Add(atomEntry);
             sequenceNumber = atomEntry.SequenceNumber;
             updated = atomEntry.Updated;
+
+            loggingAdapter.Info("Added event with id {0} to doc {1} in feed {2} on node {3}",
+    atomEntry.SequenceNumber, atomEntry.Id, this.feedId, Cluster.Get(Context.System).SelfAddress);
         }
     }
 }

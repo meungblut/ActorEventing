@@ -17,12 +17,6 @@ namespace Euventing.InMemoryPersistence
             repository = new InMemoryPersistableEntityRepository();
         }
 
-        //public InMemoryJournal()
-        //{
-        //    //repository = new LoggingPersistableEntityRepositoryDecorator(new InMemoryPersistableEntityRepository());
-        //    repository = new InMemoryPersistableEntityRepository();
-        //}
-
         public override Task ReplayMessagesAsync(string persistenceId, long fromSequenceNr, long toSequenceNr, long max, Action<IPersistentRepresentation> replayCallback)
         {
             Console.WriteLine("Replaying messages for Persistence Id:" + persistenceId);
@@ -55,6 +49,11 @@ namespace Euventing.InMemoryPersistence
         protected override Task DeleteMessagesToAsync(string persistenceId, long toSequenceNr, bool isPermanent)
         {
             return repository.Delete<JournalEntry>(persistenceId, toSequenceNr, isPermanent);
+        }
+
+        public static void Reset()
+        {
+            repository = new InMemoryPersistableEntityRepository();
         }
     }
 }

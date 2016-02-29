@@ -7,7 +7,7 @@ namespace Euventing.InMemoryPersistence
 {
     public class InMemorySnapshotStore : SnapshotStore
     {
-        private static readonly IPersistableEntityRepository repository;
+        private static IPersistableEntityRepository repository;
 
         public static IPersistableEntityRepository RepositorySavedWIth { get { return repository; } }
 
@@ -45,6 +45,11 @@ namespace Euventing.InMemoryPersistence
         protected override async Task DeleteAsync(string persistenceId, SnapshotSelectionCriteria criteria)
         {
             await repository.Delete<SnapshotEntry>(persistenceId, criteria.MaxSequenceNr, criteria.MaxTimeStamp);
+        }
+
+        public static void Reset()
+        {
+            repository = new InMemoryPersistableEntityRepository();
         }
     }
 }

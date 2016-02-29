@@ -11,9 +11,11 @@ namespace Euventing.Core.Startup
     {
         private readonly SubscriptionManager subscriptionManager;
         private readonly EventPublisher eventPublisher;
+        private readonly ActorSystem actorSystem;
 
         public EventSystemFactory(ActorSystem actorSystem, IEnumerable<ISubsytemConfiguration> subsystemConfigurations)
         {
+            this.actorSystem = actorSystem;
             subscriptionManager = new SubscriptionManager(actorSystem);
             eventPublisher = new EventPublisher(actorSystem);
 
@@ -32,6 +34,10 @@ namespace Euventing.Core.Startup
         {
             return eventPublisher;
         }
-        
+
+        public void Stop()
+        {
+            actorSystem.Terminate();
+        }
     }
 }
