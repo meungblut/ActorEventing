@@ -70,17 +70,6 @@ namespace Euventing.AcceptanceTest
             Assert.AreEqual(expectedBody, body, body);
         }
 
-        [When(@"an event is raised within my domain with id '(.*)'")]
-        public void WhenAnEventIsRaisedWithinMyDomainWithId(string id)
-        {
-
-        }
-
-        [Then(@"I should receive that event on my callback channel with id '(.*)'")]
-        public void ThenIShouldReceiveThatEventOnMyCallbackChannelWithId(string expectedEventId)
-        {
-        }
-
         [Given(@"I have subscribed to an atom feed with a generated subscription Id")]
         public void GivenIHaveSubscribedToAnAtomFeedWithASubscriptionIdOf()
         {
@@ -137,6 +126,14 @@ namespace Euventing.AcceptanceTest
             }
         }
 
+        [Then(@"I should be able to retrieve the earlier document by issuing a GET to its url")]
+        public void ThenIShouldBeAbleToRetrieveTheEarlierDocumentByIssuingAGETToItsUrl()
+        {
+            ScenarioContext.Current.Pending();
+        }
+
+
+
         private string GetAtomDocument(string atomUrl)
         {
             HttpClient client = new HttpClient();
@@ -157,16 +154,11 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should receive an atom document with a link to the next document in the stream from '(.*)'")]
         public void ThenIShouldReceiveAnAtomDocumentWithALinkToTheNextDocumentInTheStreamFrom(string atomUrl)
         {
-            Console.WriteLine(DateTime.Now.ToString("Start M:ss ffff"));
-
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
             var atomDocument = GetAtomDocument(atomUrl + subscriptionId);
 
             Assert.IsTrue(atomDocument.Contains("prev-archive"));
-
-            Console.WriteLine(DateTime.Now.ToString("Finish M:ss ffff"));
-
         }
     }
 }

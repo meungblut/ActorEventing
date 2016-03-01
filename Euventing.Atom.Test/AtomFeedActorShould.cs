@@ -60,7 +60,7 @@ namespace Euventing.Atom.Test
             atomActorRef.Tell(new EventWithSubscriptionNotificationMessage(new SubscriptionId(this.feedId.Id),
     new DummyDomainEvent(Guid.NewGuid().ToString())));
 
-            Thread.Sleep(TimeSpan.FromSeconds(10));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
 
             var snapshot = InMemorySnapshotStore.RepositorySavedWIth.GetData<SnapshotEntry>();
 

@@ -135,11 +135,11 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("GetSimpleAtomDocument")]
+        [NUnit.Framework.DescriptionAttribute("Get an atom document with events in it")]
         [NUnit.Framework.CategoryAttribute("atomEvents")]
-        public virtual void GetSimpleAtomDocument()
+        public virtual void GetAnAtomDocumentWithEventsInIt()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("GetSimpleAtomDocument", new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get an atom document with events in it", new string[] {
                         "atomEvents"});
 #line 48
 this.ScenarioSetup(scenarioInfo);
@@ -161,11 +161,13 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("GetNextDocument")]
+        [NUnit.Framework.DescriptionAttribute("Create a new head document when the maximum number of events per document is brea" +
+            "ched")]
         [NUnit.Framework.CategoryAttribute("atomEvents")]
-        public virtual void GetNextDocument()
+        public virtual void CreateANewHeadDocumentWhenTheMaximumNumberOfEventsPerDocumentIsBreached()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("GetNextDocument", new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create a new head document when the maximum number of events per document is brea" +
+                    "ched", new string[] {
                         "atomEvents"});
 #line 56
 this.ScenarioSetup(scenarioInfo);
@@ -176,14 +178,40 @@ this.FeatureBackground();
 #line 58
  testRunner.When("I request the subscription from url \'http://localhost:3600/events/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 59
- testRunner.When("I request the subscription from url \'http://localhost:3600/events/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 60
  testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 61
+#line 60
  testRunner.When("\'152\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 62
+#line 61
  testRunner.Then("I should receive an atom document with a link to the next document in the stream " +
                     "from \'http://localhost:3600/events/atom/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Retrieve documents by document id rather than head document id")]
+        [NUnit.Framework.CategoryAttribute("atomEvents")]
+        public virtual void RetrieveDocumentsByDocumentIdRatherThanHeadDocumentId()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retrieve documents by document id rather than head document id", new string[] {
+                        "atomEvents"});
+#line 64
+this.ScenarioSetup(scenarioInfo);
+#line 16
+this.FeatureBackground();
+#line 65
+ testRunner.Given("I have subscribed to an atom feed with a generated subscription Id", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 66
+ testRunner.When("I request the subscription from url \'http://localhost:3600/events/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 67
+ testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 68
+ testRunner.When("\'152\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 69
+ testRunner.Then("I should receive an atom document with a link to the next document in the stream " +
+                    "from \'http://localhost:3600/events/atom/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 70
+ testRunner.Then("I should be able to retrieve the earlier document by issuing a GET to its url", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
