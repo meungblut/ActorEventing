@@ -13,7 +13,7 @@ namespace Euventing.Atom.Serialization
         {
             string data = @"<?xml version=""1.0"" encoding=""utf-8""?><feed xmlns=""http://www.w3.org/2005/Atom"">";
             data += @"<title>" + feed.Title + @"</title>";
-            data += @"<link href=""" + baseUrl + feed.DocumentId + @"""/>";
+            data += @"<link href=""" + baseUrl + feed.DocumentId.Id + @"""/>";
 
             if (!(feed.EarlierEventsDocumentId == null) && !string.IsNullOrEmpty(feed.EarlierEventsDocumentId.Id))
             {
@@ -34,7 +34,7 @@ namespace Euventing.Atom.Serialization
                 data += "<entry>";
                 data += "<title>" + atomEntry.Title + "</title>";
                 data += "<id>urn:uuid:" + atomEntry.Id + "</id>";
-                data += "<updated>" + atomEntry.Updated.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'") + "</updated>";
+                data += "<updated>" + atomEntry.Updated.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'") + "</updated>";
                 data += @"<content type=""application/json"">" + atomEntry.Content + "</content>";
                 data += "</entry>";
             }

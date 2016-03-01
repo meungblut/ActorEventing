@@ -105,7 +105,7 @@ namespace Euventing.Atom.Document.Actors
             var content = serializer.GetContentWithContentType(eventToAdd.DomainEvent);
             atomEntry.Content = content.Content;
             atomEntry.Id = eventToAdd.DomainEvent.Id;
-            atomEntry.Updated = eventToAdd.DomainEvent.OccurredTime;
+            atomEntry.Updated = DateTime.Now;  //eventToAdd.DomainEvent.OccurredTime;
             atomEntry.Title = content.ContentType;
             sequenceNumber = sequenceNumber + 1;
             atomEntry.SequenceNumber = sequenceNumber;

@@ -155,7 +155,7 @@ this.FeatureBackground();
  testRunner.When("\'10\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 53
  testRunner.Then("I should receive a valid atom document with \'10\' entries from \'http://localhost:3" +
-                    "600/events/atom/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -183,7 +183,7 @@ this.FeatureBackground();
  testRunner.When("\'152\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 61
  testRunner.Then("I should receive an atom document with a link to the next document in the stream " +
-                    "from \'http://localhost:3600/events/atom/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -209,7 +209,7 @@ this.FeatureBackground();
  testRunner.When("\'152\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 69
  testRunner.Then("I should receive an atom document with a link to the next document in the stream " +
-                    "from \'http://localhost:3600/events/atom/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 70
  testRunner.Then("I should be able to retrieve the earlier document by issuing a GET to its url", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

@@ -12,6 +12,7 @@ using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Euventing.Core;
 using System.IO;
+using Euventing.AcceptanceTest.Client;
 
 namespace Euventing.AcceptanceTest
 {
@@ -22,6 +23,7 @@ namespace Euventing.AcceptanceTest
         private string url;
         private EventPublisher publisher;
         private string subscriptionId;
+        private SyndicationFeed retrievedFeed;
 
         [Given(@"I have an eventing url at '(.*)'")]
         public void GivenIHaveAnEventingUrlAt(string url)
@@ -42,13 +44,8 @@ namespace Euventing.AcceptanceTest
         [When(@"I request the subscription from url '(.*)'")]
         public void WhenIRequestTheSubscriptionFromUrl(string url)
         {
-            Console.WriteLine(DateTime.Now.ToString("Start M:ss ffff"));
-
             HttpClient client = new HttpClient();
             this.httpResponseMessage = client.GetAsync(url + subscriptionId).Result;
-
-            Console.WriteLine(DateTime.Now.ToString("Finish M:ss ffff"));
-
         }
 
         [Then(@"I should receive a response with the http status code '(.*)'")]
@@ -73,7 +70,6 @@ namespace Euventing.AcceptanceTest
         [Given(@"I have subscribed to an atom feed with a generated subscription Id")]
         public void GivenIHaveSubscribedToAnAtomFeedWithASubscriptionIdOf()
         {
-            Console.WriteLine(DateTime.Now.ToString("Start: M:ss ffff"));
             this.subscriptionId = Guid.NewGuid().ToString();
             string contents = @"
                 {
@@ -88,24 +84,16 @@ namespace Euventing.AcceptanceTest
                 = client.PutAsync(url, content).Result;
             Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
 
-            Console.WriteLine(DateTime.Now.ToString("Finish: M:ss ffff"));
-
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         [When(@"'(.*)' events are raised within my domain")]
         public void WhenEventsAreRaisedWithinMyDomain(int numberOfEventsToRaise)
         {
-            Console.WriteLine(DateTime.Now.ToString("Start M:ss ffff"));
-
             for (int i = 0; i < numberOfEventsToRaise; i++)
             {
                 publisher.PublishMessage(new DummyEvent(i.ToString()));
-                Console.WriteLine(DateTime.Now.ToString("M:ss ffff"));
-
             }
-            Console.WriteLine(DateTime.Now.ToString("Finish M:ss ffff"));
-
         }
 
         [Then(@"I should receive a valid atom document with '(.*)' entries from '(.*)'")]
@@ -113,26 +101,19 @@ namespace Euventing.AcceptanceTest
         {
             Thread.Sleep(TimeSpan.FromSeconds(1));
 
-            var atomDocument = GetDocumentStream(atomUrl + subscriptionId).Result;
-
-            using (var xmlReader = XmlReader.Create(atomDocument))
-            {
-                SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-
-                if (feed != null)
-                {
-                    Assert.AreEqual(numberOfEventsExpected, feed.Items.Count());
-                }
-            }
+            var atomClient = new AtomClient();
+            retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;
+            Assert.AreEqual(numberOfEventsExpected, retrievedFeed.Items.Count());
         }
 
         [Then(@"I should be able to retrieve the earlier document by issuing a GET to its url")]
         public void ThenIShouldBeAbleToRetrieveTheEarlierDocumentByIssuingAGETToItsUrl()
         {
-            ScenarioContext.Current.Pending();
+            var atomClient = new AtomClient();
+            var url = retrievedFeed.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString();
+            retrievedFeed = atomClient.GetFeed(url).Result;
+            Assert.AreEqual(150, retrievedFeed.Items.Count());
         }
-
-
 
         private string GetAtomDocument(string atomUrl)
         {
@@ -157,6 +138,8 @@ namespace Euventing.AcceptanceTest
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
             var atomDocument = GetAtomDocument(atomUrl + subscriptionId);
+            var atomClient = new AtomClient();
+            retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;
 
             Assert.IsTrue(atomDocument.Contains("prev-archive"));
         }

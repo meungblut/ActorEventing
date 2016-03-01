@@ -133,6 +133,9 @@
       <DependentUpon>AtomEvents.feature</DependentUpon>
     </Compile>
     <Compile Include="AtomEventSubscriptionSteps.cs" />
+    <Compile Include="Client\AtomClient.cs" />
+    <Compile Include="Client\CouldNotCreateSubscriptionException.cs" />
+    <Compile Include="Client\SubscriptionClient.cs" />
     <Compile Include="DummyEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Hosting\SpecflowGlobal.cs" />
