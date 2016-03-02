@@ -10,7 +10,7 @@ using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
 using Newtonsoft.Json;
 
-namespace Euventing.Api
+namespace Euventing.Api.Controllers
 {
     public class EventSubscriptionController : ApiController
     {

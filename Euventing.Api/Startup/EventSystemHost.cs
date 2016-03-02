@@ -1,6 +1,6 @@
 ﻿using Euventing.Api.WebApi;
 using Euventing.Atom;
-using Euventing.Atom.ShardSupport.Document;
+using Euventing.Atom.Document.Actors.ShardSupport.Document;
 using Euventing.Core;
 using Euventing.Core.Startup;
 using TinyIoC;

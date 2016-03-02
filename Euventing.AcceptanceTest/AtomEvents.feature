@@ -60,7 +60,7 @@ Scenario: Create a new head document when the maximum number of events per docum
 	When '152' events are raised within my domain
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 
-	@atomEvents
+@atomEvents
 Scenario: Retrieve documents by document id rather than head document id 
 	Given I have subscribed to an atom feed with a generated subscription Id
 	When I request the subscription from url 'http://localhost:3600/events/'

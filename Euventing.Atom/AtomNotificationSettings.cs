@@ -1,4 +1,4 @@
-﻿using Euventing.Atom.ShardSupport.Document;
+﻿using Euventing.Atom.Document.Actors.ShardSupport.Document;
 using Euventing.Core.Notifications;
 
 namespace Euventing.Atom

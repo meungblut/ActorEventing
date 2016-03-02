@@ -112,6 +112,7 @@ namespace Euventing.AcceptanceTest
             var atomClient = new AtomClient();
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString();
             retrievedFeed = atomClient.GetFeed(url).Result;
+            var atomDocument = GetAtomDocument(url);
             Assert.AreEqual(150, retrievedFeed.Items.Count());
         }
 

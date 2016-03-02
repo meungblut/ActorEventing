@@ -1,10 +1,7 @@
-﻿using System;
-using Akka.Cluster.Sharding;
+﻿using Akka.Cluster.Sharding;
 using Akka.Persistence;
-using Euventing.Atom.Document;
-using Euventing.Atom.Document.Actors.ShardSupport;
 
-namespace Euventing.Atom.ShardSupport.Document
+namespace Euventing.Atom.Document.Actors.ShardSupport.Document
 {
     public class AtomDocumentShardDataMessageExtractor : IMessageExtractor
     {

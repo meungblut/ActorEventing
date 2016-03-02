@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Akka.Actor;
-using Euventing.Atom.ShardSupport.Document;
+using Euventing.Atom.Document.Actors.ShardSupport.Document;
 using Euventing.Core.Startup;
 
 namespace Euventing.Atom
