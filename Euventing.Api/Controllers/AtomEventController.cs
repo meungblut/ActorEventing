@@ -38,7 +38,7 @@ namespace Euventing.Api.Controllers
         {
             var document = await atomDocumentRetriever.GetDocument(new DocumentId(documentId));
             var serialiser = new AtomDocumentSerialiser();
-            StringContent content = new StringContent(serialiser.Serialise(document, "http://localhost:3600/atom/"), Encoding.UTF8, "application/atom+xml");
+            StringContent content = new StringContent(serialiser.Serialise(document, "http://localhost:3600/events/atom/document/"), Encoding.UTF8, "application/atom+xml");
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = content;
             return response;

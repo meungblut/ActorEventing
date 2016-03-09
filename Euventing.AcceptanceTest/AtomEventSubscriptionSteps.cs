@@ -116,7 +116,7 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should receive a valid atom document with '(.*)' entries from '(.*)'")]
         public void ThenIShouldReceiveAValidAtomDocumentWithEntriesFrom(int numberOfEventsExpected, string atomUrl)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(5));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
 
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;
@@ -129,9 +129,18 @@ namespace Euventing.AcceptanceTest
             var atomClient = new AtomClient();
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString();
             retrievedFeed = atomClient.GetFeed(url).Result;
-            var atomDocument = GetAtomDocument(url);
             Assert.AreEqual(150, retrievedFeed.Items.Count());
         }
+
+        [Then(@"the earlier document should have a link to the new head document")]
+        public void ThenTheEarlierDocumentShouldHaveALinkToTheNewHeadDocument()
+        {
+            var atomClient = new AtomClient();
+            var url = retrievedFeed.Links.First(x => x.RelationshipType == "next-archive").Uri.ToString();
+            retrievedFeed = atomClient.GetFeed(url).Result;
+            Assert.AreEqual(150, retrievedFeed.Items.Count());
+        }
+
 
         private string GetAtomDocument(string atomUrl)
         {
