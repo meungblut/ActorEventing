@@ -43,7 +43,6 @@ namespace Euventing.AcceptanceTest
         [When(@"I request the subscription from url '(.*)'")]
         public void WhenIRequestTheSubscriptionFromUrl(string url)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(15));
             HttpClient client = new HttpClient();
             this.httpResponseMessage = client.GetAsync(url + subscriptionId).Result;
         }

@@ -16,7 +16,7 @@ namespace Euventing.Api.Startup
         {
             iocContainer = new TinyIocContainerImplementation(new TinyIoCContainer());
 
-            var actorSystemFactory = new ShardedActorSystemFactory(6483, "akkaSystem", "sqlite", "127.0.0.1:6483");
+            var actorSystemFactory = new ShardedActorSystemFactory(6483, "akkaSystem", "inmem", "127.0.0.1:6483");
             var actorSystem = actorSystemFactory.GetActorSystem();
 
             var subscriptionManager = new SubscriptionManager(actorSystem);

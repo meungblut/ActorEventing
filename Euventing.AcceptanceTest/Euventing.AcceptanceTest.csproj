@@ -146,6 +146,9 @@
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>AtomEvents.feature.cs</LastGenOutput>
     </None>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +159,10 @@
     <ProjectReference Include="..\Euventing.Core\Euventing.Core.csproj">
       <Project>{d95822cd-502d-4e0e-88fe-bbbf34123871}</Project>
       <Name>Euventing.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Euventing.InMemoryPersistence\Euventing.InMemoryPersistence.csproj">
+      <Project>{34575e3f-3b5b-437d-b551-e9dec5b325d8}</Project>
+      <Name>Euventing.InMemoryPersistence</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
