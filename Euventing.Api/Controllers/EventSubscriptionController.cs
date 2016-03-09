@@ -39,6 +39,9 @@ namespace Euventing.Api.Controllers
         {
             var subscription = await eventSubscriber.GetSubscriptionDetails(new SubscriptionQuery(new SubscriptionId(subscriptionId)));
 
+            if (subscription is NullSubscription)
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(JsonConvert.SerializeObject(subscription), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");
             return response;

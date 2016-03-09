@@ -44,6 +44,11 @@ Scenario: Get event subscription details
 	"""
 	And a content type of 'application/vnd.tesco.eventSubscription+json'
 
+@subscription
+Scenario: No event subscription yet
+	When I request the subscription from url 'http://localhost:3600/events/63635463'
+	Then I should receive a response with the http status code 'NotFound'
+
 @atomEvents
 Scenario: Get an atom document with events in it
 	Given I have subscribed to an atom feed with a generated subscription Id
@@ -55,16 +60,14 @@ Scenario: Get an atom document with events in it
 @atomEvents
 Scenario: Create a new head document when the maximum number of events per document is breached
 	Given I have subscribed to an atom feed with a generated subscription Id
-	When I request the subscription from url 'http://localhost:3600/events/'
-	Then I should receive a response with the http status code 'OK'
+	And I wait for the subscription to be created at'http://localhost:3600/events/'
 	When '152' events are raised within my domain
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 
 @atomEvents
 Scenario: Retrieve documents by document id rather than head document id 
 	Given I have subscribed to an atom feed with a generated subscription Id
-	When I request the subscription from url 'http://localhost:3600/events/'
-	Then I should receive a response with the http status code 'OK'
+	And I wait for the subscription to be created at'http://localhost:3600/events/'
 	When '152' events are raised within my domain
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 	Then I should be able to retrieve the earlier document by issuing a GET to its url

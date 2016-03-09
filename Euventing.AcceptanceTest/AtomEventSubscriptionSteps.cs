@@ -31,7 +31,6 @@ namespace Euventing.AcceptanceTest
             publisher = SpecflowGlobal.Host.Get<EventPublisher>();
         }
 
-
         [Given(@"I PUT a message to '(.*)' with the body")]
         public void GivenIputaMessageToWithTheBody(string url, string requestBody)
         {
@@ -45,6 +44,27 @@ namespace Euventing.AcceptanceTest
         {
             HttpClient client = new HttpClient();
             this.httpResponseMessage = client.GetAsync(url + subscriptionId).Result;
+        }
+
+        [Given(@"I wait for the subscription to be created at'(.*)'")]
+        public void GivenIWaitForTheSubscriptionToBeCreatedAt(string resourceLocation)
+        {
+            if (!WaitForSubscriptionToBeCreated(resourceLocation))
+                throw new TimeoutException("Subscription was not created within expected time");
+        }
+
+        private bool WaitForSubscriptionToBeCreated(string resourceLocation)
+        {
+            HttpClient client = new HttpClient();
+            for (int i = 0; i < 60; i++)
+            {
+                this.httpResponseMessage = client.GetAsync(resourceLocation + subscriptionId).Result;
+                if (this.httpResponseMessage.IsSuccessStatusCode)
+                    return true;
+
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+            }
+            return false;
         }
 
         [Then(@"I should receive a response with the http status code '(.*)'")]
@@ -82,8 +102,6 @@ namespace Euventing.AcceptanceTest
             httpResponseMessage
                 = client.PutAsync(url, content).Result;
             Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
-
-            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         [When(@"'(.*)' events are raised within my domain")]
