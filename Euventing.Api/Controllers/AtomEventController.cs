@@ -24,25 +24,25 @@ namespace Euventing.Api.Controllers
         public async Task<HttpResponseMessage> GetFeed([FromUri] string subscriptionId)
         {
             var subscription = new SubscriptionId(subscriptionId);
-            var document = await atomDocumentRetriever.GetHeadDocument(subscription);
-            var serialiser = new AtomDocumentSerialiser();
-            StringContent content = new StringContent(serialiser.Serialise(document, "http://localhost:3600/events/atom/document/"), Encoding.UTF8, "application/atom+xml");
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = content;
-            return response;
+            AtomDocument document = await atomDocumentRetriever.GetHeadDocument(subscription);
+            return SerialiseDocumentToResonse(document);
         }
 
         [HttpGet]
         [Route("events/atom/document/{documentId}")]
         public async Task<HttpResponseMessage> GetDocument([FromUri] string documentId)
         {
-            var document = await atomDocumentRetriever.GetDocument(new DocumentId(documentId));
-            var serialiser = new AtomDocumentSerialiser();
-            StringContent content = new StringContent(serialiser.Serialise(document, "http://localhost:3600/events/atom/document/"), Encoding.UTF8, "application/atom+xml");
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = content;
-            return response;
+            AtomDocument document = await atomDocumentRetriever.GetDocument(new DocumentId(documentId));
+            return SerialiseDocumentToResonse(document);
         }
 
+        private static HttpResponseMessage SerialiseDocumentToResonse(AtomDocument document)
+        {
+            var serialiser = new AtomDocumentSerialiser();
+            var content = new StringContent(serialiser.Serialise(document, "http://localhost:3600/events/atom/document/"),
+                Encoding.UTF8, "application/atom+xml");
+            var response = new HttpResponseMessage(HttpStatusCode.OK) {Content = content};
+            return response;
+        }
     }
 }
