@@ -6,7 +6,6 @@ using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using Euventing.AcceptanceTest.Hosting;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
@@ -44,6 +43,7 @@ namespace Euventing.AcceptanceTest
         [When(@"I request the subscription from url '(.*)'")]
         public void WhenIRequestTheSubscriptionFromUrl(string url)
         {
+            Thread.Sleep(TimeSpan.FromSeconds(15));
             HttpClient client = new HttpClient();
             this.httpResponseMessage = client.GetAsync(url + subscriptionId).Result;
         }
@@ -99,7 +99,7 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should receive a valid atom document with '(.*)' entries from '(.*)'")]
         public void ThenIShouldReceiveAValidAtomDocumentWithEntriesFrom(int numberOfEventsExpected, string atomUrl)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+            Thread.Sleep(TimeSpan.FromSeconds(5));
 
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;

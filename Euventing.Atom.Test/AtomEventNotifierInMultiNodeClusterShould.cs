@@ -69,7 +69,7 @@ namespace Euventing.Atom.Test
         {
             Notify(16);
 
-            Thread.Sleep(TimeSpan.FromSeconds(3));
+            Thread.Sleep(TimeSpan.FromSeconds(2));
 
             var document = await atomDocumentRetrievers[0].GetHeadDocument(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
 

@@ -32,6 +32,10 @@ namespace Euventing.Atom.Document.Actors
         private long sequenceNumber;
         private readonly ILoggingAdapter loggingAdapter;
 
+        private DateTime startMarker;
+        private DateTime serialisedMarker;
+        private DateTime persistedMarker;
+
         protected override void PreStart()
         {
             base.PreStart();
@@ -55,8 +59,6 @@ namespace Euventing.Atom.Document.Actors
         {
             if (message == null)
                 return false;
-
-            //loggingAdapter.Info("AtomDocumentActor ReceiveCommand: " + message.GetType() + " with persistence id:" + PersistenceId);
 
             ((dynamic)this).Process((dynamic)message);
 
@@ -100,16 +102,17 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(EventWithDocumentIdNotificationMessage eventToAdd)
         {
+            startMarker = DateTime.Now;
             var atomEntry = new AtomEntry();
             var serializer = new JsonEventSerialisation();
             var content = serializer.GetContentWithContentType(eventToAdd.DomainEvent);
             atomEntry.Content = content.Content;
             atomEntry.Id = eventToAdd.DomainEvent.Id;
-            atomEntry.Updated = DateTime.Now;  //eventToAdd.DomainEvent.OccurredTime;
+            atomEntry.Updated = DateTime.Now;
             atomEntry.Title = content.ContentType;
             sequenceNumber = sequenceNumber + 1;
             atomEntry.SequenceNumber = sequenceNumber;
-
+            serialisedMarker = DateTime.Now;
             Persist(atomEntry, MutateInternalState);
         }
 
@@ -142,8 +145,13 @@ namespace Euventing.Atom.Document.Actors
             sequenceNumber = atomEntry.SequenceNumber;
             updated = atomEntry.Updated;
 
+            persistedMarker = DateTime.Now;
+
+            loggingAdapter.Info("started {0:h:mm:ss tt ffff}, serialised {1:h:mm:ss tt ffff}, persisted {2:h:mm:ss tt ffff}",
+                startMarker, serialisedMarker, persistedMarker);
+
             loggingAdapter.Info("Added event with id {0} to doc {1} in feed {2} on node {3}",
-    atomEntry.SequenceNumber, atomEntry.Id, this.feedId, Cluster.Get(Context.System).SelfAddress);
+    atomEntry.SequenceNumber, this.documentId.Id, this.feedId.Id, Cluster.Get(Context.System).SelfAddress);
         }
     }
 }

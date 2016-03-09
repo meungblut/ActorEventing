@@ -20,8 +20,10 @@ namespace Euventing.InMemoryPersistence
         {
             var snapshotEntry = repository.GetData<SnapshotEntry>(persistenceId, criteria.MaxSequenceNr, criteria.MaxTimeStamp);
 
-            var snapshot = new SelectedSnapshot(new SnapshotMetadata(snapshotEntry.PersistenceId, snapshotEntry.SequenceNr, snapshotEntry.Timestamp), snapshotEntry.Snapshot);
+            if (snapshotEntry == null)
+                return (SelectedSnapshot) null;
 
+            var snapshot = new SelectedSnapshot(new SnapshotMetadata(snapshotEntry.PersistenceId, snapshotEntry.SequenceNr, snapshotEntry.Timestamp), snapshotEntry.Snapshot);
             return snapshot;
         }
 

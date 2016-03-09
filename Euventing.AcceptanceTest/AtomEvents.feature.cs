@@ -96,8 +96,7 @@ this.ScenarioSetup(scenarioInfo);
 this.FeatureBackground();
 #line hidden
 #line 21
- testRunner.And("I PUT a message to \'http://localhost:3600/events\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"4e347f48-fe93-4edd-9f04-0b37ed82767" +
-                    "b\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I PUT a message to \'http://localhost:3600/events\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"10\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 28
  testRunner.Then("I should receive a response with the http status code \'Accepted\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -117,17 +116,14 @@ this.ScenarioSetup(scenarioInfo);
 this.FeatureBackground();
 #line hidden
 #line 32
- testRunner.Given("I PUT a message to \'http://localhost:3600/events\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"4e347f48-fe93-4edd-9f04-0b37ed82767" +
-                    "c\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I PUT a message to \'http://localhost:3600/events\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"11\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 39
- testRunner.When("I request the subscription from url \'http://localhost:3600/events/4e347f48-fe93-4" +
-                    "edd-9f04-0b37ed82767c\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I request the subscription from url \'http://localhost:3600/events/11\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 40
  testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 41
- testRunner.And("a body", "{\"NotificationChannel\":{},\"SubscriptionId\":{\"Id\":\"4e347f48-fe93-4edd-9f04-0b37ed8" +
-                    "2767c\"},\"AllEventMatcher\":{}}", ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("a body", "{\"NotificationChannel\":{},\"SubscriptionId\":{\"Id\":\"11\"},\"AllEventMatcher\":{}}", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 45
  testRunner.And("a content type of \'application/vnd.tesco.eventSubscription+json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -152,10 +148,10 @@ this.FeatureBackground();
 #line 51
  testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 52
- testRunner.When("\'10\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("\'2\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 53
- testRunner.Then("I should receive a valid atom document with \'10\' entries from \'http://localhost:3" +
-                    "600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("I should receive a valid atom document with \'2\' entries from \'http://localhost:36" +
+                    "00/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

@@ -141,6 +141,24 @@ namespace Euventing.Core
                                 # Dispatcher for the plugin actor.
                                 plugin-dispatcher = ""akka.actor.default-dispatcher""
                             }
+                            inmem1 {
+                                # Class name of the plugin.
+                               class = ""Akka.Persistence.Couchbase.InMemoryJournal, Akka.Persistence.Couchbase""
+                                # Dispatcher for the plugin actor.
+                                plugin-dispatcher = ""akka.actor.default-dispatcher""
+                            }
+                            couchbase {
+                                class = ""Akka.Persistence.Couchbase.CouchbaseJournal, Akka.Persistence.Couchbase""
+                                plugin-dispatcher = ""akka.actor.default-dispatcher""
+                                bucket-name = ""test""
+                                cluster-username = ""Administrator""
+                                cluster-password = ""genericpassword""
+                                bucket-password = ""genericpassword""
+                                n1qlUri = ""http://10.211.55.9:8091/pools""
+                                viewAndQueryUri = ""http://10.211.55.9:8091""
+                                viewAndQueryPort = 8091
+                                server = ""10.211.55.9""
+                            }
                         }
                         snapshot-store {
                             plugin = ""akka.persistence.snapshot-store.{persistencePlugin}""
@@ -157,6 +175,25 @@ namespace Euventing.Core
                                 plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
                                 # Dispatcher for streaming snapshot IO.
                                 stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
+                            }
+                            inmem1 {
+                                class = ""Akka.Persistence.Couchbase.InMemorySnapshotStore, Akka.Persistence.Couchbase""
+                                # Dispatcher for the plugin actor.
+                                plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
+                                # Dispatcher for streaming snapshot IO.
+                                stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
+                            }
+                            couchbase {
+                                class = ""Akka.Persistence.Couchbase.CouchbaseSnapshot, Akka.Persistence.Couchbase""
+                                plugin-dispatcher = ""akka.actor.default-dispatcher""
+                                bucket-name = ""test""
+                                cluster-username = ""Administrator""
+                                cluster-password = ""genericpassword""
+                                bucket-password = ""genericpassword""
+                                n1qlUri = ""http://10.211.55.9:8091/pools""
+                                viewAndQueryUri = ""http://10.211.55.9:8091""
+                                viewAndQueryPort = 8091
+                                server = ""10.211.55.9""
                             }
                         }
                     }

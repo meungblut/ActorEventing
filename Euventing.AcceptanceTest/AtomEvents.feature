@@ -22,7 +22,7 @@ Scenario: Create an event subscription
 	"""
 	{
 		"channel" : "atom",
-		"subscriptionId" : "4e347f48-fe93-4edd-9f04-0b37ed82767b"
+		"subscriptionId" : "10"
 	}
 	"""
 	Then I should receive a response with the http status code 'Accepted'
@@ -33,14 +33,14 @@ Scenario: Get event subscription details
 	"""
 	{
 		"channel" : "atom",
-		"subscriptionId" : "4e347f48-fe93-4edd-9f04-0b37ed82767c"
+		"subscriptionId" : "11"
 	}
 	"""
-	When I request the subscription from url 'http://localhost:3600/events/4e347f48-fe93-4edd-9f04-0b37ed82767c'
+	When I request the subscription from url 'http://localhost:3600/events/11'
 	Then I should receive a response with the http status code 'OK'
 	And a body
 	"""
-{"NotificationChannel":{},"SubscriptionId":{"Id":"4e347f48-fe93-4edd-9f04-0b37ed82767c"},"AllEventMatcher":{}}
+{"NotificationChannel":{},"SubscriptionId":{"Id":"11"},"AllEventMatcher":{}}
 	"""
 	And a content type of 'application/vnd.tesco.eventSubscription+json'
 
@@ -49,8 +49,8 @@ Scenario: Get an atom document with events in it
 	Given I have subscribed to an atom feed with a generated subscription Id
 	When I request the subscription from url 'http://localhost:3600/events/'
 	Then I should receive a response with the http status code 'OK'
-	When '10' events are raised within my domain
-	Then I should receive a valid atom document with '10' entries from 'http://localhost:3600/events/atom/feed/'
+	When '2' events are raised within my domain
+	Then I should receive a valid atom document with '2' entries from 'http://localhost:3600/events/atom/feed/'
 
 @atomEvents
 Scenario: Create a new head document when the maximum number of events per document is breached

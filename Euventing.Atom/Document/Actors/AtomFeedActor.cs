@@ -74,7 +74,7 @@ namespace Euventing.Atom.Document.Actors
             if (this.currentFeedHeadDocument != null)
                 throw new FeedAlreadyCreatedException(currentFeedHeadDocument.Id);
 
-            var documentId = new DocumentId(creationCommand.FeedId.Id + "|" + Guid.NewGuid() + "|0");
+            var documentId = new DocumentId(creationCommand.FeedId.Id + "|0");
             var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author, creationCommand.FeedId);
 
             Persist(atomFeedCreated, MutateInternalState);
@@ -108,7 +108,7 @@ namespace Euventing.Atom.Document.Actors
             if (currentEvents >= settings.NumberOfEventsPerDocument)
             {
                 var documentId = currentDocumentId + 1;
-                var newDocumentId = new DocumentId(atomFeedId.Id + "|" + Guid.NewGuid() + "|" + documentId);
+                var newDocumentId = new DocumentId(atomFeedId.Id + "|" + documentId);
 
                 Persist(new AtomFeedDocumentHeadChanged(newDocumentId, currentFeedHeadDocument, documentId), MutateInternalState);
 
