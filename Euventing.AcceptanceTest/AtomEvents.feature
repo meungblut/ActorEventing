@@ -40,7 +40,7 @@ Scenario: Get event subscription details
 	Then I should receive a response with the http status code 'OK'
 	And a body
 	"""
-{"NotificationChannel":{},"SubscriptionId":{"Id":"11"},"AllEventMatcher":{}}
+{"notificationChannel":{},"subscriptionId":{"id":"11"}}
 	"""
 	And a content type of 'application/vnd.tesco.eventSubscription+json'
 

@@ -41,7 +41,7 @@ namespace Euventing.Api.Controllers
             var serialiser = new AtomDocumentSerialiser();
             var content = new StringContent(serialiser.Serialise(document, "http://localhost:3600/events/atom/document/"),
                 Encoding.UTF8, "application/atom+xml");
-            var response = new HttpResponseMessage(HttpStatusCode.OK) {Content = content};
+            var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = content };
             return response;
         }
     }

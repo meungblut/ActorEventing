@@ -123,7 +123,7 @@ this.FeatureBackground();
  testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 41
- testRunner.And("a body", "{\"NotificationChannel\":{},\"SubscriptionId\":{\"Id\":\"11\"},\"AllEventMatcher\":{}}", ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("a body", "{\"notificationChannel\":{},\"subscriptionId\":{\"id\":\"11\"}}", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 45
  testRunner.And("a content type of \'application/vnd.tesco.eventSubscription+json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden

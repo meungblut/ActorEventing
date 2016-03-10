@@ -9,15 +9,22 @@ using Euventing.Core;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Euventing.Api.Controllers
 {
     public class EventSubscriptionController : ApiController
     {
         private readonly SubscriptionManager eventSubscriber;
+        private JsonSerializerSettings jsonSerializerSettings;
 
         public EventSubscriptionController(SubscriptionManager eventSubscriptionManager)
         {
+            jsonSerializerSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
             eventSubscriber = eventSubscriptionManager;
         }
 
@@ -29,7 +36,7 @@ namespace Euventing.Api.Controllers
             eventSubscriber.CreateSubscription(subscriptionMessage);
 
             var response = new HttpResponseMessage(HttpStatusCode.Accepted);
-            response.Content = new StringContent(JsonConvert.SerializeObject(string.Empty), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");
+            response.Content = new StringContent(JsonConvert.SerializeObject(string.Empty, jsonSerializerSettings), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");
             return response;
         }
 
@@ -43,7 +50,7 @@ namespace Euventing.Api.Controllers
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
 
             var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(JsonConvert.SerializeObject(subscription), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");
+            response.Content = new StringContent(JsonConvert.SerializeObject(subscription, jsonSerializerSettings), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");
             return response;
         }
     }

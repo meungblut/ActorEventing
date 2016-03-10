@@ -14,5 +14,7 @@ namespace Euventing.Core.Messages
         }
 
         public string Id { get; }
+
+
     }
 }

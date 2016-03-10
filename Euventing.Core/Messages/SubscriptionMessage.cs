@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Euventing.Core.EventMatching;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Euventing.Core.Messages
 {
@@ -11,13 +13,15 @@ namespace Euventing.Core.Messages
     {
         public INotificationChannel NotificationChannel { get; private set; }
         public SubscriptionId SubscriptionId { get; private set; }
-        public IEventMatcher AllEventMatcher { get; private set; }
 
-        public SubscriptionMessage(INotificationChannel notificationChannel, SubscriptionId subscriptionId, IEventMatcher allEventMatcher)
+        [JsonIgnore]
+        public IEventMatcher EventMatcher { get; private set; }
+
+        public SubscriptionMessage(INotificationChannel notificationChannel, SubscriptionId subscriptionId, IEventMatcher eventMatcher)
         {
             NotificationChannel = notificationChannel;
             SubscriptionId = subscriptionId;
-            AllEventMatcher = allEventMatcher;
+            EventMatcher = eventMatcher;
         }
     }
 }

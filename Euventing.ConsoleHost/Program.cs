@@ -23,21 +23,15 @@ namespace Euventing.ConsoleHost
 
             var actorSystem = actorSystemFactory.GetActorSystem();
 
-            LogManager.GetLogger("").Info("Matt - creating system");
-
             var subsystemConfig = new AtomSubsystemConfiguration();
             var eventSystemFactory = new EventSystemFactory(actorSystem, new[] { subsystemConfig });
 
             Console.Title = string.Join(" ", args);
-            LogManager.GetLogger("").Info("about to sleep");
             Thread.Sleep(TimeSpan.FromSeconds(10));
-            LogManager.GetLogger("").Info("finished sleeping");
 
           
             var subscriptionId = new SubscriptionId(GetValueFromCommandLine("subscriptionId", args));
             var subscriptionManager = eventSystemFactory.GetSubscriptionManager();
-
-            LogManager.GetLogger("").Info("subscribing to " + subscriptionId);
 
 
             var currentSubscription = subscriptionManager.GetSubscriptionDetails(new SubscriptionQuery(subscriptionId)).Result;
@@ -50,11 +44,6 @@ namespace Euventing.ConsoleHost
                     new AllEventMatcher());
 
                 eventSystemFactory.GetSubscriptionManager().CreateSubscription(_subscriptionMessage);
-                LogManager.GetLogger("").Info("subscription finished " + subscriptionId);
-            }
-            else
-            {
-                LogManager.GetLogger("").Info("subscription existed - not resubscribing " + subscriptionId);
             }
 
             Thread.Sleep(1000);
