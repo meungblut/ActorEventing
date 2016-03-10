@@ -63,6 +63,10 @@
       <HintPath>..\packages\Akka.Persistence.Sqlite.1.0.6.17-beta\lib\net45\Akka.Persistence.Sqlite.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Akka.Persistence.SqlServer, Version=1.0.6.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.Persistence.SqlServer.1.0.6.3-beta\lib\net45\Akka.Persistence.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Akka.Remote, Version=1.0.6.16, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Akka.Remote.1.0.6\lib\net45\Akka.Remote.dll</HintPath>
       <Private>True</Private>

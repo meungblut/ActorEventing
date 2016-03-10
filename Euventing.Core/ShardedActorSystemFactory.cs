@@ -159,6 +159,13 @@ namespace Euventing.Core
                                 viewAndQueryPort = 8091
                                 server = ""10.211.55.9""
                             }
+                            sql-server {
+                                class = ""Akka.Persistence.SqlServer.Journal.SqlServerJournal, Akka.Persistence.SqlServer""
+                                plugin-dispatcher = ""akka.actor.default-dispatcher""
+                                table-name = eventjournal
+                                auto-initialize = true
+                                connection-string = ""Server=localhost\\SQLEXPRESS;Database=myDataBase;User Id=myUsername;Password=myPassword;""
+                            }
                         }
                         snapshot-store {
                             plugin = ""akka.persistence.snapshot-store.{persistencePlugin}""
@@ -194,6 +201,13 @@ namespace Euventing.Core
                                 viewAndQueryUri = ""http://10.211.55.9:8091""
                                 viewAndQueryPort = 8091
                                 server = ""10.211.55.9""
+                            }
+                            sql-server {
+                                class = ""Akka.Persistence.SqlServer.Snapshot.SqlServerSnapshotStore, Akka.Persistence.SqlServer""
+                                plugin-dispatcher = ""akka.actor.default-dispatcher""
+                                table-name = snapshot_store
+                                auto-initialize = true
+                                connection-string = ""Server=localhost\\SQLEXPRESS;Database=myDataBase;User Id=myUsername;Password=myPassword;""
                             }
                         }
                     }
