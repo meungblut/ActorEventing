@@ -12,6 +12,7 @@ using TechTalk.SpecFlow;
 using Euventing.Core;
 using System.IO;
 using Euventing.AcceptanceTest.Client;
+using Euventing.Test.Shared;
 
 namespace Euventing.AcceptanceTest
 {
@@ -28,7 +29,7 @@ namespace Euventing.AcceptanceTest
         public void GivenIHaveAnEventingUrlAt(string url)
         {
             this.url = url;
-            publisher = SpecflowGlobal.Host.Get<EventPublisher>();
+            publisher = SpecflowGlobal.InProcessHost.Get<EventPublisher>();
         }
 
         [Given(@"I PUT a message to '(.*)' with the body")]
@@ -56,7 +57,7 @@ namespace Euventing.AcceptanceTest
         private bool WaitForSubscriptionToBeCreated(string resourceLocation)
         {
             HttpClient client = new HttpClient();
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < 20; i++)
             {
                 this.httpResponseMessage = client.GetAsync(resourceLocation + subscriptionId).Result;
                 if (this.httpResponseMessage.IsSuccessStatusCode)
@@ -116,7 +117,7 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should receive a valid atom document with '(.*)' entries from '(.*)'")]
         public void ThenIShouldReceiveAValidAtomDocumentWithEntriesFrom(int numberOfEventsExpected, string atomUrl)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+            Thread.Sleep(TimeSpan.FromSeconds(3));
 
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;

@@ -1,9 +1,9 @@
 ﻿using System;
 using Euventing.Core.Messages;
 
-namespace Euventing.AcceptanceTest
+namespace Euventing.Test.Shared
 {
-    internal class DummyEvent : DomainEvent
+    public class DummyEvent : DomainEvent
     {
         public DummyEvent(string id) : base(id, DateTime.Now)
         {

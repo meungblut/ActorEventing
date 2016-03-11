@@ -17,49 +17,53 @@ namespace Euventing.ConsoleHost
 
         static void Main(string[] args)
         {
-            var eventSystemHost = new EventSystemHost(6483, "akkaSystem", "sql-server", "127.0.0.1:6483", 3600);
+            var akkaSystemName = GetValueFromCommandLine("akkaSystemName", args);
+            var seedNodes = GetValueFromCommandLine("seedNodes", args);
+            var akkaPortNumber = GetPortFromCommandLine(args);
+            var persistence = GetValueFromCommandLine("persistence", args);
 
-
-            var actorSystemFactory = new ShardedActorSystemFactory(GetPortFromCommandLine(args),
-                GetValueFromCommandLine("akkaSystemName", args),
-                "sql-server",
-                GetValueFromCommandLine("seedNodes", args));
-
-            var actorSystem = actorSystemFactory.GetActorSystem();
-
-            var subsystemConfig = new AtomSubsystemConfiguration();
-            var eventSystemFactory = new EventSystemFactory(actorSystem, new[] { subsystemConfig });
+            var eventSystemHost = new EventSystemHost(akkaPortNumber, akkaSystemName, persistence, seedNodes, 3601);
+            eventSystemHost.Start();
 
             Console.Title = string.Join(" ", args);
             Thread.Sleep(TimeSpan.FromSeconds(10));
 
-          
             var subscriptionId = new SubscriptionId(GetValueFromCommandLine("subscriptionId", args));
-            var subscriptionManager = eventSystemFactory.GetSubscriptionManager();
 
-
-            var currentSubscription = subscriptionManager.GetSubscriptionDetails(new SubscriptionQuery(subscriptionId)).Result;
-
-            if (currentSubscription is NullSubscription)
+            if (! string.IsNullOrEmpty(subscriptionId.Id))
             {
-                _subscriptionMessage = new SubscriptionMessage(
-                    new AtomNotificationChannel(),
-                    subscriptionId,
-                    new AllEventMatcher());
+                Console.WriteLine("Getting subscriptionId");
+                SubscriptionManager subscriptionManager = eventSystemHost.Get<SubscriptionManager>();
+                
+                var currentSubscription =
+                    subscriptionManager.GetSubscriptionDetails(new SubscriptionQuery(subscriptionId)).Result;
 
-                eventSystemFactory.GetSubscriptionManager().CreateSubscription(_subscriptionMessage);
+                if (currentSubscription is NullSubscription)
+                {
+                    _subscriptionMessage = new SubscriptionMessage(
+                        new AtomNotificationChannel(),
+                        subscriptionId,
+                        new AllEventMatcher());
+
+                    subscriptionManager.CreateSubscription(_subscriptionMessage);
+                }
+
+                Thread.Sleep(1000);
+
+                EventPublisher notifier = eventSystemHost.Get<EventPublisher>();
+
+                var i = 0;
+                while (true)
+                {
+                    notifier.PublishMessage(new DummyDomainEvent(GetPortFromCommandLine(args) + ":" + (++i).ToString()));
+                    LogManager.GetLogger("").Info("Raising event with id" + i);
+                    Thread.Sleep(TimeSpan.FromMilliseconds(5));
+                }
             }
 
-            Thread.Sleep(1000);
-
-            var notifier = eventSystemFactory.GetEventPublisher();
-
-            var i = 0;
             while (true)
             {
-                notifier.PublishMessage(new DummyDomainEvent(GetPortFromCommandLine(args) + ":" + (++i).ToString()));
-                LogManager.GetLogger("").Info("Raising event with id" + i);
-                Thread.Sleep(TimeSpan.FromMilliseconds(5));
+                Thread.Sleep(TimeSpan.FromSeconds(5));
             }
         }
 
@@ -70,7 +74,12 @@ namespace Euventing.ConsoleHost
 
         private static string GetValueFromCommandLine(string switchPrefix, string[] args)
         {
-            return args.First(x => x.StartsWith(switchPrefix)).Split(new[] { '/' })[1];
+            string value = args.FirstOrDefault(x => x.StartsWith(switchPrefix));
+
+            if (value == null)
+                return string.Empty;
+
+            return value.Split(new[] { '/' })[1];
         }
     }
 }

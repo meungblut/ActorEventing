@@ -72,3 +72,9 @@ Scenario: Retrieve documents by document id rather than head document id
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 	Then I should be able to retrieve the earlier document by issuing a GET to its url
 	And the earlier document should have a link to the new head document
+
+	@ignore
+@multinode
+Scenario: Retrieve documents from a second node
+	Given I have subscribed to an atom feed with a generated subscription Id
+	And I wait for the subscription to be created at'http://localhost:3601/events/'
