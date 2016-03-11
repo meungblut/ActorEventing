@@ -7,6 +7,7 @@ using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
 using Euventing.Core.Startup;
 using NLog;
+using Euventing.Api.Startup;
 
 namespace Euventing.ConsoleHost
 {
@@ -16,9 +17,12 @@ namespace Euventing.ConsoleHost
 
         static void Main(string[] args)
         {
+            var eventSystemHost = new EventSystemHost(6483, "akkaSystem", "sql-server", "127.0.0.1:6483", 3600);
+
+
             var actorSystemFactory = new ShardedActorSystemFactory(GetPortFromCommandLine(args),
                 GetValueFromCommandLine("akkaSystemName", args),
-                "sqlite",
+                "sql-server",
                 GetValueFromCommandLine("seedNodes", args));
 
             var actorSystem = actorSystemFactory.GetActorSystem();

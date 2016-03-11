@@ -9,14 +9,33 @@ namespace Euventing.Api.Startup
 {
     public class EventSystemHost
     {
-        private static TinyIocContainerImplementation iocContainer;
-        private static WebApiSelfHost webApiHost;
+        private readonly int akkaHostingPort;
+        private readonly string actorSystemName;
+        private readonly string persistenceSectionName;
+        private readonly string akkaSeedNodes;
+        private readonly int apiHostingPort;
+        private TinyIocContainerImplementation iocContainer;
+        private WebApiSelfHost webApiHost;
+
+        public EventSystemHost(
+            int akkahostingPort, 
+            string actorSystemName, 
+            string persistenceSectionName, 
+            string seedNodes,
+            int apiHostingPort)
+        {
+            this.akkaHostingPort = akkahostingPort;
+            this.actorSystemName = actorSystemName;
+            this.persistenceSectionName = persistenceSectionName;
+            this.akkaSeedNodes = seedNodes;
+            this.apiHostingPort = apiHostingPort;
+        }
 
         public void Start()
         {
             iocContainer = new TinyIocContainerImplementation(new TinyIoCContainer());
 
-            var actorSystemFactory = new ShardedActorSystemFactory(6483, "akkaSystem", "inmem", "127.0.0.1:6483");
+            var actorSystemFactory = new ShardedActorSystemFactory(akkaHostingPort, actorSystemName, persistenceSectionName, akkaSeedNodes);
             var actorSystem = actorSystemFactory.GetActorSystem();
 
             var subscriptionManager = new SubscriptionManager(actorSystem);
@@ -35,7 +54,7 @@ namespace Euventing.Api.Startup
 
             iocContainer.RegisterMultiple<IOwinConfiguration, WebApiOwinConfiguration>(IocLifecycle.PerRequest);
 
-            webApiHost = new WebApiSelfHost(3600, iocContainer);
+            webApiHost = new WebApiSelfHost(apiHostingPort, iocContainer);
             webApiHost.Start();
         }
 
