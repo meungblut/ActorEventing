@@ -106,6 +106,7 @@ namespace Euventing.AcceptanceTest
         [When(@"'(.*)' events are raised within my domain")]
         public void WhenEventsAreRaisedWithinMyDomain(int numberOfEventsToRaise)
         {
+            Thread.Sleep(TimeSpan.FromMilliseconds(100));
             for (int i = 0; i < numberOfEventsToRaise; i++)
             {
                 Console.WriteLine("Raising event " + DateTime.Now.ToString("dd/mm/yy hh:mm:ss ffff"));
@@ -129,7 +130,7 @@ namespace Euventing.AcceptanceTest
         [When(@"I get the feed from '(.*)'")]
         public void WhenIGetTheFeedFrom(string atomUrl)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(3));
+            Thread.Sleep(TimeSpan.FromMilliseconds(100));
 
             GetFeed(atomUrl);
         }
@@ -171,7 +172,7 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should receive an atom document with a link to the next document in the stream from '(.*)'")]
         public void ThenIShouldReceiveAnAtomDocumentWithALinkToTheNextDocumentInTheStreamFrom(string atomUrl)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(3));
+            Thread.Sleep(TimeSpan.FromMilliseconds(100));
 
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;

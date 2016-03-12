@@ -55,14 +55,17 @@ namespace Euventing.Core.Subscriptions
             if (subscriptionMessage != null)
             {
                 loggingAdapter.Info("Dumping out of subscription for " + subscription.SubscriptionId.Id +
-                    " subscription id was not null, it was " + subscriptionMessage.SubscriptionId.Id);
+                    " as subscription Id wasn't null ");
 
                 return;
             }
 
+            loggingAdapter.Info("Creating docs for " + subscription.SubscriptionId.Id);
+
             var notifier = notifierFactory.GetNotifierFor(subscription.NotificationChannel.GetType());
             notifier.Create(subscription);
 
+            loggingAdapter.Info("Persisting " + subscription.SubscriptionId.Id);
             Persist(subscription, MutateInternalState);
         }
 
@@ -97,6 +100,7 @@ namespace Euventing.Core.Subscriptions
         private void MutateInternalState(SubscriptionMessage message)
         {
             this.subscriptionMessage = message;
+            loggingAdapter.Info("Persist finished " + subscriptionMessage.SubscriptionId.Id);
 
             SubscribeToClusterWideBroadcastDomainEvent();
         }
