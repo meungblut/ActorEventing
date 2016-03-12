@@ -31,5 +31,12 @@ namespace Euventing.Atom.Document
         public DocumentId EarlierEventsDocumentId { get; }
 
         public List<AtomEntry> Entries { get; }
+
+        public string DocumentInformation { get; private set; }
+
+        public void AddDocumentInformation(string information)
+        {
+            DocumentInformation += information + "\r\n";
+        }
     }
 }

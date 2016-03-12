@@ -18,7 +18,7 @@ namespace Euventing.AcceptanceTest.Hosting
         {
             InProcessHost.Start();
             Thread.Sleep(TimeSpan.FromSeconds(1));
-            //LaunchOutOfProcessHostsToJoinCluster();
+            LaunchOutOfProcessHostsToJoinCluster();
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
@@ -35,8 +35,6 @@ namespace Euventing.AcceptanceTest.Hosting
             _outOfProcessShardMembersHost.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
             _outOfProcessShardMembersHost.StartInfo.FileName = @"C:\projects\ActorEventing\Euventing.ConsoleHost\bin\Debug\Euventing.ConsoleHost.exe";
             _outOfProcessShardMembersHost.StartInfo.UseShellExecute = false;
-            //_outOfProcessShardMembersHost.StartInfo.RedirectStandardOutput = true;
-            //_outOfProcessShardMembersHost.StartInfo.RedirectStandardError = true;
             _outOfProcessShardMembersHost.StartInfo.Arguments = "portNumber/6484 akkaSystemName/akkaSystem seedNodes/127.0.0.1:6483 persistence/inmem";
             _outOfProcessShardMembersHost.StartInfo.Verb = "runas";
             _outOfProcessShardMembersHost.Start();

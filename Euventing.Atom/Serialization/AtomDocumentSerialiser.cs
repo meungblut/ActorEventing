@@ -29,6 +29,9 @@ namespace Euventing.Atom.Serialization
             data += @"<author><name>" + feed.Author + "</name></author>";
             data += @"<id>urn:uuid:" + feed.FeedId.Id + "</id>";
 
+            data += @"<documentInformation>" + feed.DocumentInformation + "</documentInformation>";
+
+
             foreach (var atomEntry in feed.Entries)
             {
                 data += "<entry>";

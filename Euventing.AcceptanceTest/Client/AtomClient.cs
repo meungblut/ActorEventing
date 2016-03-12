@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.ServiceModel.Syndication;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using NUnit.Framework;
 
 namespace Euventing.AcceptanceTest.Client
 {
@@ -21,6 +17,13 @@ namespace Euventing.AcceptanceTest.Client
             {
                 return SyndicationFeed.Load(xmlReader);
             }
+        }
+
+        public async Task<string> GetFeedAsString(string url)
+        {
+            HttpClient client = new HttpClient();
+            var response = await client.GetStringAsync(new Uri(url));
+            return response;
         }
 
         private async Task<Stream> GetDocumentStream(string atomFeedUrl)

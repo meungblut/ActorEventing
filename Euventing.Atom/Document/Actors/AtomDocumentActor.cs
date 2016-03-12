@@ -118,7 +118,10 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(GetAtomDocumentRequest request)
         {
-            Sender.Tell(new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId, laterEventsDocumentId, entries), Self);
+            var atomDocument = new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId,
+                laterEventsDocumentId, entries);
+            atomDocument.AddDocumentInformation(Cluster.Get(Context.System).SelfAddress.ToString());
+            Sender.Tell(atomDocument, Self);
         }
 
         private void Process(object request)

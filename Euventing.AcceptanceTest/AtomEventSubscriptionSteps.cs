@@ -91,19 +91,18 @@ namespace Euventing.AcceptanceTest
         public void GivenIHaveSubscribedToAnAtomFeedWithASubscriptionIdOf()
         {
             this.subscriptionId = Guid.NewGuid().ToString();
-            string contents = @"
-                {
-                'channel' : 'atom',
-		        'subscriptionId' : '{subscriptionId}'
-                }
-            ".Replace("{subscriptionId}", subscriptionId);
-
-            HttpClient client = new HttpClient();
-            HttpContent content = new StringContent(contents, Encoding.UTF8, "application/json");
-            httpResponseMessage
-                = client.PutAsync(url, content).Result;
-            Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
+            var client = new SubscriptionClient(url);
+            client.Subscribe(subscriptionId).Wait();
         }
+
+        [Given(@"I have subscribed to an atom feed with a subscription Id of '(.*)'")]
+        public void GivenIHaveSubscribedToAnAtomFeedWithASubscriptionIdOf(string idToSubscribeWith)
+        {
+            this.subscriptionId = idToSubscribeWith;
+            var client = new SubscriptionClient(url);
+            client.Subscribe(subscriptionId).Wait();
+        }
+
 
         [When(@"'(.*)' events are raised within my domain")]
         public void WhenEventsAreRaisedWithinMyDomain(int numberOfEventsToRaise)
@@ -117,12 +116,27 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should receive a valid atom document with '(.*)' entries from '(.*)'")]
         public void ThenIShouldReceiveAValidAtomDocumentWithEntriesFrom(int numberOfEventsExpected, string atomUrl)
         {
+            Assert.AreEqual(numberOfEventsExpected, retrievedFeed.Items.Count());
+        }
+
+        [Then(@"I should have an atom document with '(.*)' events")]
+        public void ThenIShouldHaveAnAtomDocumentWithEvents(int numberOfEventsExpected)
+        {
+            Assert.AreEqual(numberOfEventsExpected, retrievedFeed.Items.Count());
+        }
+
+
+        [When(@"I get the feed from '(.*)'")]
+        public void WhenIGetTheFeedFrom(string atomUrl)
+        {
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;
-            Assert.AreEqual(numberOfEventsExpected, retrievedFeed.Items.Count());
+
+            Console.WriteLine(atomClient.GetFeedAsString(atomUrl + subscriptionId).Result);
         }
+
 
         [Then(@"I should be able to retrieve the earlier document by issuing a GET to its url")]
         public void ThenIShouldBeAbleToRetrieveTheEarlierDocumentByIssuingAGETToItsUrl()
@@ -142,17 +156,6 @@ namespace Euventing.AcceptanceTest
             Assert.AreEqual(150, retrievedFeed.Items.Count());
         }
 
-
-        private string GetAtomDocument(string atomUrl)
-        {
-            HttpClient client = new HttpClient();
-            httpResponseMessage = client.GetAsync(atomUrl).Result;
-            Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
-            var atomDocument = httpResponseMessage.Content.ReadAsStringAsync().Result;
-            Console.WriteLine(atomDocument);
-            return atomDocument;
-        }
-
         public async Task<Stream> GetDocumentStream(string atomFeedUrl)
         {
             HttpClient client = new HttpClient();
@@ -165,11 +168,10 @@ namespace Euventing.AcceptanceTest
         {
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
-            var atomDocument = GetAtomDocument(atomUrl + subscriptionId);
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;
 
-            Assert.IsTrue(atomDocument.Contains("prev-archive"));
+            Assert.IsTrue(retrievedFeed.Links.Any(x => x.RelationshipType == "prev-archive"));
         }
     }
 }

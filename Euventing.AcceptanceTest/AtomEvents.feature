@@ -51,17 +51,19 @@ Scenario: No event subscription yet
 
 @atomEvents
 Scenario: Get an atom document with events in it
-	Given I have subscribed to an atom feed with a generated subscription Id
+	Given I have subscribed to an atom feed with a subscription Id of '100'
 	When I request the subscription from url 'http://localhost:3600/events/'
 	Then I should receive a response with the http status code 'OK'
-	When '2' events are raised within my domain
-	Then I should receive a valid atom document with '2' entries from 'http://localhost:3600/events/atom/feed/'
+	When '12' events are raised within my domain
+	And I get the feed from 'http://localhost:3600/events/atom/feed/'
+	Then I should have an atom document with '12' events
 
 @atomEvents
 Scenario: Create a new head document when the maximum number of events per document is breached
 	Given I have subscribed to an atom feed with a generated subscription Id
 	And I wait for the subscription to be created at'http://localhost:3600/events/'
 	When '152' events are raised within my domain
+		And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 
 @atomEvents
@@ -73,7 +75,6 @@ Scenario: Retrieve documents by document id rather than head document id
 	Then I should be able to retrieve the earlier document by issuing a GET to its url
 	And the earlier document should have a link to the new head document
 
-	@ignore
 @multinode
 Scenario: Retrieve documents from a second node
 	Given I have subscribed to an atom feed with a generated subscription Id
