@@ -102,13 +102,13 @@ namespace Euventing.AcceptanceTest
             var client = new SubscriptionClient(url);
             client.Subscribe(subscriptionId).Wait();
         }
-
-
+        
         [When(@"'(.*)' events are raised within my domain")]
         public void WhenEventsAreRaisedWithinMyDomain(int numberOfEventsToRaise)
         {
             for (int i = 0; i < numberOfEventsToRaise; i++)
             {
+                Console.WriteLine("Raising event " + DateTime.Now.ToString("dd/mm/yy hh:mm:ss ffff"));
                 publisher.PublishMessage(new DummyEvent(i.ToString()));
             }
         }
@@ -131,6 +131,11 @@ namespace Euventing.AcceptanceTest
         {
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
+            GetFeed(atomUrl);
+        }
+
+        private void GetFeed(string atomUrl)
+        {
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;
 

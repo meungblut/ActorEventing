@@ -161,7 +161,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 16
 this.FeatureBackground();
 #line 54
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'100\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'69857\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 55
  testRunner.When("I request the subscription from url \'http://localhost:3600/events/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 56
@@ -196,7 +196,7 @@ this.FeatureBackground();
 #line 65
  testRunner.When("\'152\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 66
-  testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 67
  testRunner.Then("I should receive an atom document with a link to the next document in the stream " +
                     "from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -247,6 +247,21 @@ this.FeatureBackground();
  testRunner.Given("I have subscribed to an atom feed with a generated subscription Id", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 81
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3601/events/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Raise events on two nodes")]
+        [NUnit.Framework.CategoryAttribute("multinode")]
+        public virtual void RaiseEventsOnTwoNodes()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Raise events on two nodes", new string[] {
+                        "multinode"});
+#line 84
+this.ScenarioSetup(scenarioInfo);
+#line 16
+this.FeatureBackground();
 #line hidden
             this.ScenarioCleanup();
         }

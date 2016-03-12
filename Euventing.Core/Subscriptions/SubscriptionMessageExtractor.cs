@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Akka.Cluster.Sharding;
+using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Persistence;
 using Euventing.Core.Messages;
 
@@ -18,7 +19,7 @@ namespace Euventing.Core.Subscriptions
             
             if (message is SubscriptionQuery)
                 return ((SubscriptionQuery)message).SubscriptionId.Id;
-            
+
             return ((SubscriptionMessage)message).SubscriptionId.Id;
         }
 

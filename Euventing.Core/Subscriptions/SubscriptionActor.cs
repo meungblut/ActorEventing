@@ -45,13 +45,20 @@ namespace Euventing.Core.Subscriptions
 
         private void Process(SubscribeAck eventToProcess)
         {
-
+            loggingAdapter.Info("Received subscribe ack " + subscriptionMessage.SubscriptionId.Id);
         }
 
         private void Process(SubscriptionMessage subscription)
         {
+            loggingAdapter.Info("Creating a subscription with id " + subscription.SubscriptionId.Id);
+
             if (subscriptionMessage != null)
+            {
+                loggingAdapter.Info("Dumping out of subscription for " + subscription.SubscriptionId.Id +
+                    " subscription id was not null, it was " + subscriptionMessage.SubscriptionId.Id);
+
                 return;
+            }
 
             var notifier = notifierFactory.GetNotifierFor(subscription.NotificationChannel.GetType());
             notifier.Create(subscription);
@@ -61,12 +68,15 @@ namespace Euventing.Core.Subscriptions
 
         private void SubscribeToClusterWideBroadcastDomainEvent()
         {
+            loggingAdapter.Info("Subscribed to cluster domain events " + subscriptionMessage.SubscriptionId.Id);
+
             var mediator = DistributedPubSub.Get(Context.System).Mediator;
             mediator.Tell(new Subscribe("publishedEventsTopic", Self), Self);
         }
 
         private void Process(DomainEvent eventToProcess)
         {
+            loggingAdapter.Info("Received an event notification " + eventToProcess.Id + " on subscription " + subscriptionMessage.SubscriptionId.Id);
             var notifier = notifierFactory.GetNotifierFor(subscriptionMessage.NotificationChannel.GetType());
             notifier.Notify(subscriptionMessage, eventToProcess);
         }

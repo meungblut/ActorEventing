@@ -118,6 +118,10 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(GetAtomDocumentRequest request)
         {
+            loggingAdapter.Info("Request for document id {0} from feed {1} on node {2} with events {3}",
+     this.documentId.Id, this.feedId.Id, Cluster.Get(Context.System).SelfAddress, entries.Count);
+
+
             var atomDocument = new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId,
                 laterEventsDocumentId, entries);
             atomDocument.AddDocumentInformation(Cluster.Get(Context.System).SelfAddress.ToString());
