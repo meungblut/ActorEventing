@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using Euventing.Api.Startup;
 using TechTalk.SpecFlow;
+using Euventing.ConsoleHost;
 
 namespace Euventing.AcceptanceTest.Hosting
 {
@@ -10,7 +13,7 @@ namespace Euventing.AcceptanceTest.Hosting
     [Binding]
     public class SpecflowGlobal
     {
-        public static EventSystemHost InProcessHost = new EventSystemHost(6483, "akkaSystem", "inmem", "127.0.0.1:6483", 3600);
+        public static EventSystemHost InProcessHost = new EventSystemHost(6483, "akkaSystem", "sqlite", "127.0.0.1:6483", 3600);
         private static Process _outOfProcessShardMembersHost;
 
         [BeforeTestRun]
@@ -33,9 +36,9 @@ namespace Euventing.AcceptanceTest.Hosting
         {
             _outOfProcessShardMembersHost = new Process();
             _outOfProcessShardMembersHost.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-            _outOfProcessShardMembersHost.StartInfo.FileName = @"C:\projects\ActorEventing\Euventing.ConsoleHost\bin\Debug\Euventing.ConsoleHost.exe";
+            _outOfProcessShardMembersHost.StartInfo.FileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..\..\Euventing.ConsoleHost\bin\debug\Euventing.ConsoleHost.exe";
             _outOfProcessShardMembersHost.StartInfo.UseShellExecute = false;
-            _outOfProcessShardMembersHost.StartInfo.Arguments = "portNumber/6484 akkaSystemName/akkaSystem seedNodes/127.0.0.1:6483 persistence/inmem";
+            _outOfProcessShardMembersHost.StartInfo.Arguments = "portNumber/6484 akkaSystemName/akkaSystem seedNodes/127.0.0.1:6483 persistence/sqlite";
             _outOfProcessShardMembersHost.StartInfo.Verb = "runas";
             _outOfProcessShardMembersHost.Start();
         }

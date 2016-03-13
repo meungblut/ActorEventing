@@ -171,6 +171,10 @@
       <Project>{70d1e426-9cd3-418d-ad21-5218b6742f99}</Project>
       <Name>Euventing.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Euventing.ConsoleHost\Euventing.ConsoleHost.csproj">
+      <Project>{f2a4f054-ead5-4dfd-904b-fed6ef1afb62}</Project>
+      <Name>Euventing.ConsoleHost</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Euventing.Core\Euventing.Core.csproj">
       <Project>{d95822cd-502d-4e0e-88fe-bbbf34123871}</Project>
       <Name>Euventing.Core</Name>

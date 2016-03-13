@@ -29,7 +29,7 @@ namespace Euventing.Api.Controllers
         }
 
         [HttpPut]
-        [Route("events")]
+        [Route("subscriptions")]
         public HttpResponseMessage Put(SubscribeMessage subscribeMessage)
         {
             var subscriptionMessage = new SubscriptionMessage(new AtomNotificationChannel(), new SubscriptionId(subscribeMessage.SubscriptionId), new AllEventMatcher());
@@ -41,7 +41,7 @@ namespace Euventing.Api.Controllers
         }
 
         [HttpGet]
-        [Route("events/{subscriptionId}")]
+        [Route("subscriptions/{subscriptionId}")]
         public async Task<HttpResponseMessage> Get([FromUri] string subscriptionId)
         {
             var subscription = await eventSubscriber.GetSubscriptionDetails(new SubscriptionQuery(new SubscriptionId(subscriptionId)));

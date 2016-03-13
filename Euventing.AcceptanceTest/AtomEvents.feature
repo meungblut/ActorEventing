@@ -14,11 +14,11 @@
 The subscriber will SUBSCRIBE to an api url and be sent a subscription URL. Once they have connected to that URL, they will be 'sent' events until they unsubscribe.
 
 Background: Create Url
-	Given I have an eventing url at 'http://localhost:3600/events'
+	Given I have an eventing url at 'http://localhost:3600/subscriptions'
 
 @subscription
 Scenario: Create an event subscription
-	And I PUT a message to 'http://localhost:3600/events' with the body
+	And I PUT a message to 'http://localhost:3600/subscriptions' with the body
 	"""
 	{
 		"channel" : "atom",
@@ -29,14 +29,14 @@ Scenario: Create an event subscription
 
 @subscription
 Scenario: Get event subscription details
-	Given I PUT a message to 'http://localhost:3600/events' with the body
+	Given I PUT a message to 'http://localhost:3600/subscriptions' with the body
 	"""
 	{
 		"channel" : "atom",
 		"subscriptionId" : "11"
 	}
 	"""
-	When I request the subscription from url 'http://localhost:3600/events/11'
+	When I request the subscription from url 'http://localhost:3600/subscriptions/11'
 	Then I should receive a response with the http status code 'OK'
 	And a body
 	"""
@@ -46,13 +46,13 @@ Scenario: Get event subscription details
 
 @subscription
 Scenario: No event subscription yet
-	When I request the subscription from url 'http://localhost:3600/events/63635463'
+	When I request the subscription from url 'http://localhost:3600/subscriptions/63635463'
 	Then I should receive a response with the http status code 'NotFound'
 
 @atomEvents
 Scenario: Get an atom document with events in it
 	Given I have subscribed to an atom feed with a subscription Id of '69857'
-	And I wait for the subscription to be created at'http://localhost:3600/events/'
+	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When '12' events are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '12' events
@@ -60,7 +60,7 @@ Scenario: Get an atom document with events in it
 @atomEvents
 Scenario: Create a new head document when the maximum number of events per document is breached
 	Given I have subscribed to an atom feed with a generated subscription Id
-	And I wait for the subscription to be created at'http://localhost:3600/events/'
+	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When '152' events are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
@@ -68,7 +68,7 @@ Scenario: Create a new head document when the maximum number of events per docum
 @atomEvents
 Scenario: Retrieve documents by document id rather than head document id 
 	Given I have subscribed to an atom feed with a generated subscription Id
-	And I wait for the subscription to be created at'http://localhost:3600/events/'
+	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When '152' events are raised within my domain
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 	Then I should be able to retrieve the earlier document by issuing a GET to its url
@@ -80,8 +80,13 @@ Scenario: Cancel an event subscription
 @multinode
 Scenario: Retrieve documents from a second node
 	Given I have subscribed to an atom feed with a subscription Id of '561902'
-	And I wait for the subscription to be created at'http://localhost:3601/events/'
+	And I wait for the subscription to be created at'http://localhost:3601/subscriptions/'
 
 @multinode
 Scenario: Raise events on two nodes
 	Given I have subscribed to an atom feed with a generated subscription Id
+	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
+	When '2' events are raised within my domain
+	And '2' events are raised on a different node
+    And I get the feed from 'http://localhost:3600/events/atom/feed/'
+	Then I should have an atom document with '4' events

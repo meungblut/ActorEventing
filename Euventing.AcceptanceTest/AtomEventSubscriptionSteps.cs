@@ -115,6 +115,19 @@ namespace Euventing.AcceptanceTest
             }
         }
 
+        [When(@"'(.*)' events are raised on a different node")]
+        public void WhenEventsAreRaisedOnADifferentNode(int numberOfEventsToRaise)
+        {
+            HttpClient client = new HttpClient();
+
+            for (int i = 0; i < numberOfEventsToRaise; i++)
+            {
+                HttpContent content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+                this.httpResponseMessage = client.PutAsync("http://localhost:3601/events/" + i, content).Result;
+            }
+        }
+
+
         [Then(@"I should receive a valid atom document with '(.*)' entries from '(.*)'")]
         public void ThenIShouldReceiveAValidAtomDocumentWithEntriesFrom(int numberOfEventsExpected, string atomUrl)
         {
@@ -173,7 +186,7 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should receive an atom document with a link to the next document in the stream from '(.*)'")]
         public void ThenIShouldReceiveAnAtomDocumentWithALinkToTheNextDocumentInTheStreamFrom(string atomUrl)
         {
-            Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            Thread.Sleep(TimeSpan.FromMilliseconds(300));
 
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;

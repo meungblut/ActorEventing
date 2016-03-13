@@ -11,11 +11,11 @@ using Euventing.Api.Startup;
 
 namespace Euventing.ConsoleHost
 {
-    class Program
+    public class Program
     {
         private static SubscriptionMessage _subscriptionMessage;
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var akkaSystemName = GetValueFromCommandLine("akkaSystemName", args);
             var seedNodes = GetValueFromCommandLine("seedNodes", args);
