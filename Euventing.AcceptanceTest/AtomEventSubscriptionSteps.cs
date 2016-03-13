@@ -91,6 +91,7 @@ namespace Euventing.AcceptanceTest
         public void GivenIHaveSubscribedToAnAtomFeedWithASubscriptionIdOf()
         {
             this.subscriptionId = Guid.NewGuid().ToString();
+            Console.WriteLine("Subscribed with subscription id " + subscriptionId);
             var client = new SubscriptionClient(url);
             client.Subscribe(subscriptionId).Wait();
         }
@@ -130,7 +131,7 @@ namespace Euventing.AcceptanceTest
         [When(@"I get the feed from '(.*)'")]
         public void WhenIGetTheFeedFrom(string atomUrl)
         {
-            Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            Thread.Sleep(TimeSpan.FromMilliseconds(200));
 
             GetFeed(atomUrl);
         }
