@@ -13,8 +13,8 @@ namespace Euventing.AcceptanceTest.Hosting
     [Binding]
     public class SpecflowGlobal
     {
-        public static EventSystemHost InProcessHost = new EventSystemHost(6483, "akkaSystem", "sqlite", "127.0.0.1:6483", 3600);
-        private static Process _outOfProcessShardMembersHost;
+        public static EventSystemHost InProcessHost = new EventSystemHost(6483, "akkaSystem", "inmem", "127.0.0.1:6483", 3600);
+        private static Process _outOfProcessClusterMembersHost;
 
         [BeforeTestRun]
         public static void BeforeTestRun()
@@ -29,18 +29,18 @@ namespace Euventing.AcceptanceTest.Hosting
         public static void AfterTestRun()
         {
             InProcessHost.Stop();
-            _outOfProcessShardMembersHost.Kill();
+            _outOfProcessClusterMembersHost.Kill();
         }
 
         private static void LaunchOutOfProcessHostsToJoinCluster()
         {
-            _outOfProcessShardMembersHost = new Process();
-            _outOfProcessShardMembersHost.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-            _outOfProcessShardMembersHost.StartInfo.FileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..\..\Euventing.ConsoleHost\bin\debug\Euventing.ConsoleHost.exe";
-            _outOfProcessShardMembersHost.StartInfo.UseShellExecute = false;
-            _outOfProcessShardMembersHost.StartInfo.Arguments = "portNumber/6484 akkaSystemName/akkaSystem seedNodes/127.0.0.1:6483 persistence/sqlite";
-            _outOfProcessShardMembersHost.StartInfo.Verb = "runas";
-            _outOfProcessShardMembersHost.Start();
+            _outOfProcessClusterMembersHost = new Process();
+            _outOfProcessClusterMembersHost.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+            _outOfProcessClusterMembersHost.StartInfo.FileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..\..\Euventing.ConsoleHost\bin\debug\Euventing.ConsoleHost.exe";
+            _outOfProcessClusterMembersHost.StartInfo.UseShellExecute = false;
+            _outOfProcessClusterMembersHost.StartInfo.Arguments = "portNumber/6484 akkaSystemName/akkaSystem seedNodes/127.0.0.1:6483 persistence/inmem";
+            _outOfProcessClusterMembersHost.StartInfo.Verb = "runas";
+            _outOfProcessClusterMembersHost.Start();
         }
     }
 }

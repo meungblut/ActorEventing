@@ -48,6 +48,13 @@ namespace Euventing.Core.Subscriptions
             loggingAdapter.Info("Received subscribe ack " + subscriptionMessage.SubscriptionId.Id);
         }
 
+        private void Process(DeleteSubscriptionMessage deleteSubscription)
+        {
+            loggingAdapter.Info("Received delete subscription message " + subscriptionMessage.SubscriptionId.Id);
+            var mediator = DistributedPubSub.Get(Context.System).Mediator;
+            mediator.Tell(new Unsubscribe("publishedEventsTopic", Self), Self);
+        }
+
         private void Process(SubscriptionMessage subscription)
         {
             loggingAdapter.Info("Creating a subscription with id " + subscription.SubscriptionId.Id);

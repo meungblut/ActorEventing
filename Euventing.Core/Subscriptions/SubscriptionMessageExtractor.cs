@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Akka.Cluster.Sharding;
-using Akka.Cluster.Tools.PublishSubscribe;
+﻿using Akka.Cluster.Sharding;
 using Akka.Persistence;
 using Euventing.Core.Messages;
 
@@ -20,6 +14,9 @@ namespace Euventing.Core.Subscriptions
             if (message is SubscriptionQuery)
                 return ((SubscriptionQuery)message).SubscriptionId.Id;
 
+            if (message is DeleteSubscriptionMessage)
+                return ((DeleteSubscriptionMessage)message).SubscriptionId.Id;
+
             return ((SubscriptionMessage)message).SubscriptionId.Id;
         }
 
@@ -31,6 +28,9 @@ namespace Euventing.Core.Subscriptions
             if (message is SubscriptionQuery)
                 return (SubscriptionQuery) message;
 
+            if (message is DeleteSubscriptionMessage)
+                return (DeleteSubscriptionMessage)message;
+
             return null;
         }
 
@@ -38,6 +38,9 @@ namespace Euventing.Core.Subscriptions
         {
             if (message is SubscriptionQuery)
                 return ((SubscriptionQuery)message).SubscriptionId.Id.GetHashCode().ToString();
+
+            if (message is DeleteSubscriptionMessage)
+                return ((DeleteSubscriptionMessage)message).SubscriptionId.Id.GetHashCode().ToString();
 
             return ((SubscriptionMessage)message).SubscriptionId.Id.GetHashCode().ToString();
         }

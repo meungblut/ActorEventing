@@ -1,7 +1,9 @@
 ﻿using Euventing.Api.WebApi;
 using Euventing.Atom;
 using Euventing.Atom.Document.Actors.ShardSupport.Document;
+using Euventing.Atom.Logging;
 using Euventing.Core;
+using Euventing.Core.Logging;
 using Euventing.Core.Startup;
 using TinyIoC;
 
@@ -29,9 +31,12 @@ namespace Euventing.Api.Startup
             this.persistenceSectionName = persistenceSectionName;
             this.akkaSeedNodes = seedNodes;
             this.apiHostingPort = apiHostingPort;
+
+            ConfigureIoc();
+
         }
 
-        public void Start()
+        private void ConfigureIoc()
         {
             iocContainer = new TinyIocContainerImplementation(new TinyIoCContainer());
 
@@ -40,20 +45,27 @@ namespace Euventing.Api.Startup
 
             var subscriptionManager = new SubscriptionManager(actorSystem);
             var eventPublisher = new EventPublisher(actorSystem);
+            var loggingEventPublisher = new LoggingEventPublisherDecorator(eventPublisher);
+
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
             ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory);
+
             var settings = new AtomNotificationSettings(atomFeedFactory);
 
             var atomRetriever = new AtomDocumentRetriever(atomFeedFactory, atomDocumentFactory);
+            var loggingAtomRetriever = new LoggingAtomDocumentRetrieverDecorator(atomRetriever);
 
             iocContainer.Register<SubscriptionManager>(subscriptionManager);
-            iocContainer.Register<EventPublisher>(eventPublisher);
+            iocContainer.Register<IEventPublisher>(loggingEventPublisher);
             iocContainer.Register<ShardedAtomDocumentFactory>(atomDocumentFactory);
             iocContainer.Register<ShardedAtomFeedFactory>(atomFeedFactory);
-            iocContainer.Register<AtomDocumentRetriever>(atomRetriever);
+            iocContainer.Register<IAtomDocumentRetriever>(loggingAtomRetriever);
 
             iocContainer.RegisterMultiple<IOwinConfiguration, WebApiOwinConfiguration>(IocLifecycle.PerRequest);
+        }
 
+        public void Start()
+        {
             webApiHost = new WebApiSelfHost(apiHostingPort, iocContainer);
             webApiHost.Start();
         }

@@ -13,7 +13,9 @@ namespace Euventing.Atom.Serialization
         {
             string data = @"<?xml version=""1.0"" encoding=""utf-8""?><feed xmlns=""http://www.w3.org/2005/Atom"">";
             data += @"<title>" + feed.Title + @"</title>";
-            data += @"<link href=""" + baseUrl + feed.DocumentId.Id + @"""/>";
+
+            if (feed.DocumentId != null)
+                data += @"<link href=""" + baseUrl + feed.DocumentId.Id + @"""/>";
 
             if (!(feed.EarlierEventsDocumentId == null) && !string.IsNullOrEmpty(feed.EarlierEventsDocumentId.Id))
             {

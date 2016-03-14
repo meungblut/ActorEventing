@@ -27,6 +27,11 @@ namespace Euventing.Core
             shardedSubscriptionActorRef.Tell(subscriptionMessage);
         }
 
+        public void DeleteSubscription(DeleteSubscriptionMessage subscriptionMessage)
+        {
+            shardedSubscriptionActorRef.Tell(subscriptionMessage);
+        }
+
         public async Task<SubscriptionMessage> GetSubscriptionDetails(SubscriptionQuery query)
         {
             return await shardedSubscriptionActorRef.Ask<SubscriptionMessage>(query, TimeSpan.FromSeconds(3));

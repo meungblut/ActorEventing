@@ -10,7 +10,7 @@ namespace Euventing.Atom.Document
     {
         public int NumberOfEventsPerDocument
         {
-            get { return 150; }
+            get { return 10; }
         }
     }
 }

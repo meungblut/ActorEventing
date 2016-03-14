@@ -41,5 +41,16 @@ namespace Euventing.AcceptanceTest.Client
             var httpResponseMessage = client.GetAsync(url).Result;
             return await httpResponseMessage.Content.ReadAsStringAsync();
         }
+
+        public async Task Unsubscribe(string subscriptionId)
+        {
+            HttpClient client = new HttpClient();
+
+            var httpResponseMessage
+                = await client.DeleteAsync(subscriptionUrl + "/" + subscriptionId);
+
+            if (!httpResponseMessage.IsSuccessStatusCode)
+                throw new CouldNotCreateSubscriptionException(httpResponseMessage.ReasonPhrase);
+        }
     }
 }

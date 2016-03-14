@@ -5,7 +5,7 @@ using Euventing.Core.Messages;
 
 namespace Euventing.Core
 {
-    public class EventPublisher
+    public class EventPublisher : IEventPublisher
     {
         private readonly ActorSystem actorSystem;
         private readonly IActorRef mediator;

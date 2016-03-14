@@ -69,7 +69,7 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(CreateAtomDocumentCommand creationRequest)
         {
-            loggingAdapter.Info("Creating document " + creationRequest.DocumentId + " on node " + Cluster.Get(Context.System).SelfAddress);
+            loggingAdapter.Info("Creating document " + creationRequest.DocumentId.Id + " on node " + Cluster.Get(Context.System).SelfAddress);
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
                 creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
 
@@ -118,8 +118,8 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(GetAtomDocumentRequest request)
         {
-            loggingAdapter.Info("Request for document id {0} from feed {1} on node {2} with events {3}",
-     this.documentId.Id, this.feedId.Id, Cluster.Get(Context.System).SelfAddress, entries.Count);
+            loggingAdapter.Info("Request for document id {0} on node {2} with events {3}",
+     PersistenceId, Cluster.Get(Context.System).SelfAddress, entries.Count);
 
 
             var atomDocument = new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId,
@@ -140,6 +140,7 @@ namespace Euventing.Atom.Document.Actors
             this.earlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.title = documentCreated.Title;
             this.feedId = documentCreated.FeedId;
+            loggingAdapter.Info("Setting Feed Id to " + feedId.Id + " and document id to " + documentId.Id +" on persistence id " + PersistenceId);
         }
 
         private void MutateInternalState(RecoveryCompleted documentCreated)

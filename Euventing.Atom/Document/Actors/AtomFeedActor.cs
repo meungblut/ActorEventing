@@ -97,8 +97,13 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(EventWithSubscriptionNotificationMessage message)
         {
+            if (currentFeedHeadDocument == null)
+                throw new TryingToRaiseEventToFeedWithNoHeadException(PersistenceId);
+
             var notificationMessage = new EventWithDocumentIdNotificationMessage(currentFeedHeadDocument, message.EventToNotify);
+
             var atomDocument = atomDocumentActorFactory.GetActorRef();
+
             atomDocument.Tell(notificationMessage, Self);
 
             var currentEvents = numberOfEventsInCurrentHeadDocument + 1;

@@ -51,40 +51,50 @@ Scenario: No event subscription yet
 
 @atomEvents
 Scenario: Get an atom document with events in it
-	Given I have subscribed to an atom feed with a subscription Id of '69857'
+	Given I have subscribed to an atom feed with a subscription Id of '11111'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
-	When '12' events are raised within my domain
+	When '8' events are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
-	Then I should have an atom document with '12' events
+	Then I should have an atom document with '8' events
 
 @atomEvents
 Scenario: Create a new head document when the maximum number of events per document is breached
-	Given I have subscribed to an atom feed with a generated subscription Id
+	Given I have subscribed to an atom feed with a subscription Id of '22222'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
-	When '152' events are raised within my domain
+	When '12' events are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 
 @atomEvents
-Scenario: Retrieve documents by document id rather than head document id 
-	Given I have subscribed to an atom feed with a generated subscription Id
+Scenario: Retrieve documents by document id
+	Given I have subscribed to an atom feed with a subscription Id of '33333'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
-	When '152' events are raised within my domain
+	When '12' events are raised within my domain
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 	Then I should be able to retrieve the earlier document by issuing a GET to its url
 	And the earlier document should have a link to the new head document
 
 @atomEvents
 Scenario: Cancel an event subscription
+	Given I have subscribed to an atom feed with a subscription Id of '44444'
+	And I wait for the subscription to be created at'http://localhost:3601/subscriptions/'
+	And '1' events are raised within my domain
+	When I cancel the subscription
+	And '2' events are raised within my domain
+	And I get the feed from 'http://localhost:3600/events/atom/feed/'
+	Then I should have an atom document with '1' events
 
 @multinode
 Scenario: Retrieve documents from a second node
-	Given I have subscribed to an atom feed with a subscription Id of '561902'
+	Given I have subscribed to an atom feed with a subscription Id of '55555'
 	And I wait for the subscription to be created at'http://localhost:3601/subscriptions/'
+	When '2' events are raised within my domain
+	And I get the feed from 'http://localhost:3601/events/atom/feed/'
+	Then I should have an atom document with '2' events
 
 @multinode
 Scenario: Raise events on two nodes
-	Given I have subscribed to an atom feed with a generated subscription Id
+	Given I have subscribed to an atom feed with a subscription Id of '66666'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When '2' events are raised within my domain
 	And '2' events are raised on a different node

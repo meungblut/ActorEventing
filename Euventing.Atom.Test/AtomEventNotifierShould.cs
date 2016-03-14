@@ -47,19 +47,19 @@ namespace Euventing.Atom.Test
         [Test]
         public async Task AddAnEventToTheHeadDocumentIdWhenAnEventIsSubmitted()
         {
-            Notify(16);
+            Notify(3);
 
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
             var document = await _retriever.GetHeadDocument(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
 
-            Assert.AreEqual(16, document.Entries.Count);
+            Assert.AreEqual(3, document.Entries.Count);
         }
 
         [Test]
-        public async Task CreateANewDocumentIdWhen151EventsAreSubmitted()
+        public async Task CreateANewDocumentIdWhen11EventsAreSubmitted()
         {
-            Notify(171);
+            Notify(11);
 
             Thread.Sleep(TimeSpan.FromSeconds(3));
 

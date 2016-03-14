@@ -7,7 +7,7 @@ using Euventing.Core.Messages;
 
 namespace Euventing.Atom
 {
-    public class AtomDocumentRetriever
+    public class AtomDocumentRetriever : IAtomDocumentRetriever
     {
         private readonly ShardedAtomFeedFactory factory;
         private readonly ShardedAtomDocumentFactory shardedAtomDocumentFactory;

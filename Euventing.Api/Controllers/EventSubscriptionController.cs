@@ -53,5 +53,21 @@ namespace Euventing.Api.Controllers
             response.Content = new StringContent(JsonConvert.SerializeObject(subscription, jsonSerializerSettings), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");
             return response;
         }
+
+        [HttpDelete]
+        [Route("subscriptions/{subscriptionId}")]
+        public async Task<HttpResponseMessage> Delete([FromUri] string subscriptionId)
+        {
+            var subscription = await eventSubscriber.GetSubscriptionDetails(new SubscriptionQuery(new SubscriptionId(subscriptionId)));
+
+            if (subscription is NullSubscription)
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+
+            eventSubscriber.DeleteSubscription(new DeleteSubscriptionMessage(new SubscriptionId(subscriptionId)));
+
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(JsonConvert.SerializeObject(subscription, jsonSerializerSettings), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");
+            return response;
+        }
     }
 }

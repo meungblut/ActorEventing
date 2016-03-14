@@ -8,6 +8,7 @@ using Euventing.Core.Messages;
 using Euventing.Core.Startup;
 using NLog;
 using Euventing.Api.Startup;
+using Euventing.Test.Shared;
 
 namespace Euventing.ConsoleHost
 {
@@ -23,6 +24,7 @@ namespace Euventing.ConsoleHost
             var persistence = GetValueFromCommandLine("persistence", args);
 
             var eventSystemHost = new EventSystemHost(akkaPortNumber, akkaSystemName, persistence, seedNodes, 3601);
+            var EventRaisingController = eventSystemHost.Get<EventRaisingController>();
             eventSystemHost.Start();
 
             Console.Title = string.Join(" ", args);
@@ -50,7 +52,7 @@ namespace Euventing.ConsoleHost
 
                 Thread.Sleep(1000);
 
-                EventPublisher notifier = eventSystemHost.Get<EventPublisher>();
+                IEventPublisher notifier = eventSystemHost.Get<IEventPublisher>();
 
                 var i = 0;
                 while (true)

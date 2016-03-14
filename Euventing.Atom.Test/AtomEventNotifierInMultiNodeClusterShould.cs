@@ -67,20 +67,20 @@ namespace Euventing.Atom.Test
         [Test]
         public async Task AddAnEventToTheHeadDocumentIdWhenAnEventIsSubmitted()
         {
-            Notify(16);
+            Notify(8);
 
             Thread.Sleep(TimeSpan.FromSeconds(2));
 
             var document = await atomDocumentRetrievers[0].GetHeadDocument(subscriptionMessage.SubscriptionId).WithTimeout(TimeSpan.FromSeconds(5));
 
-            Assert.AreEqual(16, document.Entries.Count);
+            Assert.AreEqual(8, document.Entries.Count);
         }
 
         [Test]
         public async Task CreateANewDocumentIdWhen151EventsAreSubmitted()
         {
             Thread.Sleep(TimeSpan.FromSeconds(1));
-            Notify(171);
+            Notify(17);
 
             Thread.Sleep(TimeSpan.FromSeconds(1));
 
@@ -88,7 +88,7 @@ namespace Euventing.Atom.Test
             Assert.IsNotNull(headDocument.EarlierEventsDocumentId);
             var earlierDocument = await atomDocumentRetrievers[0].GetDocument(headDocument.EarlierEventsDocumentId);
 
-            Assert.AreEqual(171, headDocument.Entries.Count + earlierDocument.Entries.Count);
+            Assert.AreEqual(17, headDocument.Entries.Count + earlierDocument.Entries.Count);
         }
 
         private void Notify(int numberOfNotifications)

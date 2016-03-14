@@ -101,6 +101,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CouldNotProcessPersistenceMessage.cs" />
+    <Compile Include="IEventPublisher.cs" />
+    <Compile Include="Logging\LoggingEventPublisherDecorator.cs" />
+    <Compile Include="Messages\DeleteSubscriptionMessage.cs" />
     <Compile Include="EventMatching\AllEventMatcher.cs" />
     <Compile Include="EventMatching\IEventMatcher.cs" />
     <Compile Include="EventPublisher.cs" />

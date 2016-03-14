@@ -21,15 +21,22 @@ namespace Euventing.AcceptanceTest
     {
         private HttpResponseMessage httpResponseMessage;
         private string url;
-        private EventPublisher publisher;
+        private IEventPublisher publisher;
         private string subscriptionId;
         private SyndicationFeed retrievedFeed;
+
+        [AfterScenario("atomEvents", "multiNode")]
+        public void UnsubscribeFromMessages()
+        {
+            var client = new SubscriptionClient(url);
+            client.Unsubscribe(subscriptionId).Wait();
+        }
 
         [Given(@"I have an eventing url at '(.*)'")]
         public void GivenIHaveAnEventingUrlAt(string url)
         {
             this.url = url;
-            publisher = SpecflowGlobal.InProcessHost.Get<EventPublisher>();
+            publisher = SpecflowGlobal.InProcessHost.Get<IEventPublisher>();
         }
 
         [Given(@"I PUT a message to '(.*)' with the body")]
@@ -103,7 +110,8 @@ namespace Euventing.AcceptanceTest
             var client = new SubscriptionClient(url);
             client.Subscribe(subscriptionId).Wait();
         }
-        
+
+        [Given(@"'(.*)' events are raised within my domain")]
         [When(@"'(.*)' events are raised within my domain")]
         public void WhenEventsAreRaisedWithinMyDomain(int numberOfEventsToRaise)
         {
@@ -115,6 +123,14 @@ namespace Euventing.AcceptanceTest
             }
         }
 
+        [When(@"I cancel the subscription")]
+        public void WhenICancelTheSubscription()
+        {
+            var client = new SubscriptionClient(url);
+            client.Unsubscribe(subscriptionId).Wait();
+        }
+
+
         [When(@"'(.*)' events are raised on a different node")]
         public void WhenEventsAreRaisedOnADifferentNode(int numberOfEventsToRaise)
         {
@@ -123,8 +139,10 @@ namespace Euventing.AcceptanceTest
             for (int i = 0; i < numberOfEventsToRaise; i++)
             {
                 HttpContent content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
-                this.httpResponseMessage = client.PutAsync("http://localhost:3601/events/" + i, content).Result;
+                var result = this.httpResponseMessage = client.PutAsync("http://localhost:3601/events/" + i, content).Result;
+                Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
             }
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
 
@@ -164,7 +182,7 @@ namespace Euventing.AcceptanceTest
             var atomClient = new AtomClient();
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString();
             retrievedFeed = atomClient.GetFeed(url).Result;
-            Assert.AreEqual(150, retrievedFeed.Items.Count());
+            Assert.AreEqual(10, retrievedFeed.Items.Count());
         }
 
         [Then(@"the earlier document should have a link to the new head document")]
@@ -173,7 +191,7 @@ namespace Euventing.AcceptanceTest
             var atomClient = new AtomClient();
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "next-archive").Uri.ToString();
             retrievedFeed = atomClient.GetFeed(url).Result;
-            Assert.AreEqual(150, retrievedFeed.Items.Count());
+            Assert.AreEqual(10, retrievedFeed.Items.Count());
         }
 
         public async Task<Stream> GetDocumentStream(string atomFeedUrl)

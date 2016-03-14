@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,14 +8,15 @@ using Euventing.Atom;
 using Euventing.Atom.Document;
 using Euventing.Atom.Serialization;
 using Euventing.Core.Messages;
+using NLog;
 
 namespace Euventing.Api.Controllers
 {
     public class AtomEventController : ApiController
     {
-        private readonly AtomDocumentRetriever atomDocumentRetriever;
+        private readonly IAtomDocumentRetriever atomDocumentRetriever;
 
-        public AtomEventController(AtomDocumentRetriever retriever)
+        public AtomEventController(IAtomDocumentRetriever retriever)
         {
             atomDocumentRetriever = retriever;
         }
