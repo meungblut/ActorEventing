@@ -8,7 +8,7 @@ namespace Euventing.Atom.Document.Actors.ShardSupport.Document
     {
         private readonly ActorSystem actorSystem;
 
-        public ShardedAtomFeedFactory(ActorSystem actorSystem, ShardedAtomDocumentFactory factory)
+        public ShardedAtomFeedFactory(ActorSystem actorSystem, IAtomDocumentActorFactory factory)
         {
             this.actorSystem = actorSystem;
 
