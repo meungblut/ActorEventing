@@ -12,6 +12,7 @@ using TechTalk.SpecFlow;
 using Euventing.Core;
 using System.IO;
 using Euventing.AcceptanceTest.Client;
+using Euventing.Api.Startup;
 using Euventing.Test.Shared;
 
 namespace Euventing.AcceptanceTest
@@ -24,6 +25,34 @@ namespace Euventing.AcceptanceTest
         private IEventPublisher publisher;
         private string subscriptionId;
         private SyndicationFeed retrievedFeed;
+        private static int eventsPerDocument = 50;
+
+        private static EventSystemHost inProcessHost;
+        private static OutOfProcessProcessClusterMember outOfProcessClusterMembersHost;
+
+
+        [Given(@"I have an eventing url at '(.*)'")]
+        public void GivenIHaveAnEventingUrlAt(string url)
+        {
+            this.url = url;
+            publisher = inProcessHost.Get<IEventPublisher>();
+        }
+
+        [BeforeFeature]
+        public static void StartEventHosts()
+        {
+            inProcessHost = new EventSystemHost(6483, "akkaSystem", "inmem", "127.0.0.1:6483", 3600, eventsPerDocument);
+            inProcessHost.Start();
+            outOfProcessClusterMembersHost = new OutOfProcessProcessClusterMember(eventsPerDocument);
+            outOfProcessClusterMembersHost.Start();
+        }
+
+        [AfterFeature]
+        public static void StopEventHosts()
+        {
+            inProcessHost.Stop();
+            outOfProcessClusterMembersHost.Stop();
+        }
 
         [AfterScenario("atomEvents", "multiNode")]
         public void UnsubscribeFromMessages()
@@ -32,12 +61,12 @@ namespace Euventing.AcceptanceTest
             client.Unsubscribe(subscriptionId).Wait();
         }
 
-        [Given(@"I have an eventing url at '(.*)'")]
-        public void GivenIHaveAnEventingUrlAt(string url)
+        [Given(@"atom documents contain '(.*)' events")]
+        public void GivenAtomDocumentsContainEvents(int events)
         {
-            this.url = url;
-            publisher = SpecflowGlobal.InProcessHost.Get<IEventPublisher>();
+            eventsPerDocument = events;
         }
+
 
         [Given(@"I PUT a message to '(.*)' with the body")]
         public void GivenIputaMessageToWithTheBody(string url, string requestBody)
@@ -182,7 +211,7 @@ namespace Euventing.AcceptanceTest
             var atomClient = new AtomClient();
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString();
             retrievedFeed = atomClient.GetFeed(url).Result;
-            Assert.AreEqual(10, retrievedFeed.Items.Count());
+            Assert.AreEqual(eventsPerDocument, retrievedFeed.Items.Count());
         }
 
         [Then(@"the earlier document should have a link to the new head document")]
@@ -191,7 +220,6 @@ namespace Euventing.AcceptanceTest
             var atomClient = new AtomClient();
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "next-archive").Uri.ToString();
             retrievedFeed = atomClient.GetFeed(url).Result;
-            Assert.AreEqual(10, retrievedFeed.Items.Count());
         }
 
         public async Task<Stream> GetDocumentStream(string atomFeedUrl)
@@ -204,7 +232,7 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should receive an atom document with a link to the next document in the stream from '(.*)'")]
         public void ThenIShouldReceiveAnAtomDocumentWithALinkToTheNextDocumentInTheStreamFrom(string atomUrl)
         {
-            Thread.Sleep(TimeSpan.FromMilliseconds(300));
+            Thread.Sleep(TimeSpan.FromMilliseconds(500));
 
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;

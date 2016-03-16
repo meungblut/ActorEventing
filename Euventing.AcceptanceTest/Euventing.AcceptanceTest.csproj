@@ -152,6 +152,7 @@
     <Compile Include="Client\AtomClient.cs" />
     <Compile Include="Client\CouldNotCreateSubscriptionException.cs" />
     <Compile Include="Client\SubscriptionClient.cs" />
+    <Compile Include="Hosting\OutOfProcessProcessClusterMember.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Hosting\SpecflowGlobal.cs" />
   </ItemGroup>

@@ -14,7 +14,7 @@
 The subscriber will SUBSCRIBE to an api url and be sent a subscription URL. Once they have connected to that URL, they will be 'sent' events until they unsubscribe.
 
 Background: Create Url
-	Given I have an eventing url at 'http://localhost:3600/subscriptions'
+	And I have an eventing url at 'http://localhost:3600/subscriptions'
 
 @subscription
 Scenario: Create an event subscription
@@ -61,7 +61,7 @@ Scenario: Get an atom document with events in it
 Scenario: Create a new head document when the maximum number of events per document is breached
 	Given I have subscribed to an atom feed with a subscription Id of '22222'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
-	When '12' events are raised within my domain
+	When '52' events are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 
@@ -69,7 +69,7 @@ Scenario: Create a new head document when the maximum number of events per docum
 Scenario: Retrieve documents by document id
 	Given I have subscribed to an atom feed with a subscription Id of '33333'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
-	When '12' events are raised within my domain
+	When '52' events are raised within my domain
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 	Then I should be able to retrieve the earlier document by issuing a GET to its url
 	And the earlier document should have a link to the new head document

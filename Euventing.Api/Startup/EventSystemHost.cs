@@ -5,7 +5,6 @@ using Euventing.Atom.Document.Actors.ShardSupport.Document;
 using Euventing.Atom.Logging;
 using Euventing.Core;
 using Euventing.Core.Logging;
-using Euventing.Core.Startup;
 using TinyIoC;
 
 namespace Euventing.Api.Startup
@@ -19,14 +18,17 @@ namespace Euventing.Api.Startup
         private readonly int apiHostingPort;
         private TinyIocContainerImplementation iocContainer;
         private WebApiSelfHost webApiHost;
+        private readonly int entriesPerDocument;
 
         public EventSystemHost(
             int akkahostingPort, 
             string actorSystemName, 
             string persistenceSectionName, 
             string seedNodes,
-            int apiHostingPort)
+            int apiHostingPort,
+            int entriesPerDocument)
         {
+            this.entriesPerDocument = entriesPerDocument;
             this.akkaHostingPort = akkahostingPort;
             this.actorSystemName = actorSystemName;
             this.persistenceSectionName = persistenceSectionName;
@@ -49,7 +51,7 @@ namespace Euventing.Api.Startup
             var loggingEventPublisher = new LoggingEventPublisherDecorator(eventPublisher);
 
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
-            ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory, new ConfigurableAtomDocumentSettings(10));
+            ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory, new ConfigurableAtomDocumentSettings(entriesPerDocument));
 
             var settings = new AtomNotificationSettings(atomFeedFactory);
 

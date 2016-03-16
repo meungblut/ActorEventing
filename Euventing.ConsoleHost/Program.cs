@@ -20,10 +20,11 @@ namespace Euventing.ConsoleHost
         {
             var akkaSystemName = GetValueFromCommandLine("akkaSystemName", args);
             var seedNodes = GetValueFromCommandLine("seedNodes", args);
-            var akkaPortNumber = GetPortFromCommandLine(args);
+            var akkaPortNumber = GetIntFromCommandLine(args, "portNumber");
+            var entriesPerDocument = GetIntFromCommandLine(args, "entriesPerDocument");
             var persistence = GetValueFromCommandLine("persistence", args);
 
-            var eventSystemHost = new EventSystemHost(akkaPortNumber, akkaSystemName, persistence, seedNodes, 3601);
+            var eventSystemHost = new EventSystemHost(akkaPortNumber, akkaSystemName, persistence, seedNodes, 3601, entriesPerDocument);
             var EventRaisingController = eventSystemHost.Get<EventRaisingController>();
             eventSystemHost.Start();
 
@@ -57,7 +58,7 @@ namespace Euventing.ConsoleHost
                 var i = 0;
                 while (true)
                 {
-                    notifier.PublishMessage(new DummyDomainEvent(GetPortFromCommandLine(args) + ":" + (++i).ToString()));
+                    notifier.PublishMessage(new DummyDomainEvent(akkaPortNumber + ":" + (++i).ToString()));
                     LogManager.GetLogger("").Info("Raising event with id" + i);
                     Thread.Sleep(TimeSpan.FromMilliseconds(5));
                 }
@@ -69,9 +70,9 @@ namespace Euventing.ConsoleHost
             }
         }
 
-        private static int GetPortFromCommandLine(string[] args)
+        private static int GetIntFromCommandLine(string[] args, string prefix)
         {
-            return int.Parse(GetValueFromCommandLine("portNumber", args));
+            return int.Parse(GetValueFromCommandLine(prefix, args));
         }
 
         private static string GetValueFromCommandLine(string switchPrefix, string[] args)
