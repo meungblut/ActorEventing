@@ -1,5 +1,6 @@
 ﻿using Euventing.Api.WebApi;
 using Euventing.Atom;
+using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors.ShardSupport.Document;
 using Euventing.Atom.Logging;
 using Euventing.Core;
@@ -48,7 +49,7 @@ namespace Euventing.Api.Startup
             var loggingEventPublisher = new LoggingEventPublisherDecorator(eventPublisher);
 
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
-            ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory);
+            ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory, new ConfigurableAtomDocumentSettings(10));
 
             var settings = new AtomNotificationSettings(atomFeedFactory);
 

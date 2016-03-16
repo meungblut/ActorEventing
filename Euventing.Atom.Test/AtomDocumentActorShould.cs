@@ -30,7 +30,7 @@ namespace Euventing.Atom.Test
 
         private void CreateAtomActor(string actorId)
         {
-            var props = Props.Create(() => new AtomDocumentActor(new DummyAtomDocumentSettings(2)));
+            var props = Props.Create(() => new AtomDocumentActor());
 
             atomActorRef = system.ActorOf(props, name: actorId);
 

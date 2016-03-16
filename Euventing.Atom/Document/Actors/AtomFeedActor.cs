@@ -66,7 +66,7 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(string message)
         {
-            loggingAdapter.Info(DateTime.Now.ToString("mm:ss ffff") + message);
+
         }
 
         private void Process(AtomFeedCreationCommand creationCommand)

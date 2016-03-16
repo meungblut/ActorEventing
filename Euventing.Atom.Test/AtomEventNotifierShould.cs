@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors.ShardSupport.Document;
 using Euventing.Core;
 using Euventing.Core.EventMatching;
@@ -25,7 +26,7 @@ namespace Euventing.Atom.Test
             var actorSystem = factory.GetActorSystem();
 
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
-            ShardedAtomFeedFactory actorFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory);
+            ShardedAtomFeedFactory actorFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory, new ConfigurableAtomDocumentSettings(10));
             _notifier = new AtomEventNotifier(actorFactory);
             _retriever = new AtomDocumentRetriever(actorFactory, atomDocumentFactory);
 

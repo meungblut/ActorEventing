@@ -11,7 +11,7 @@ namespace Euventing.Atom.Document.Actors.ShardSupport.Document
         {
             this.actorSystem = actorSystem;
 
-            var props = Props.Create(() => new AtomDocumentActor(new HardCodedAtomDocumentSettings()));
+            var props = Props.Create(() => new AtomDocumentActor());
 
             var settings = ClusterShardingSettings.Create(actorSystem);
             ClusterSharding.Get(actorSystem).Start(

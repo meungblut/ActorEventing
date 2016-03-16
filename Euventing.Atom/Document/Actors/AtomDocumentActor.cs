@@ -13,7 +13,7 @@ namespace Euventing.Atom.Document.Actors
     public class AtomDocumentActor : PersistentActor
     {
 
-        public AtomDocumentActor(IAtomDocumentSettings settings)
+        public AtomDocumentActor()
         {
             loggingAdapter = Context.GetLogger();
             loggingAdapter.Info("Atom DOCUMENT actor path is " + Self.Path);
@@ -35,14 +35,6 @@ namespace Euventing.Atom.Document.Actors
         private DateTime startMarker;
         private DateTime serialisedMarker;
         private DateTime persistedMarker;
-
-        protected override void PreStart()
-        {
-            base.PreStart();
-
-            ////Take this instance out of memory after inactivity
-            //Context.SetReceiveTimeout(TimeSpan.FromSeconds(10));
-        }
 
         private int recoveryevents;
 
@@ -69,7 +61,7 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(CreateAtomDocumentCommand creationRequest)
         {
-            loggingAdapter.Info("Creating document " + creationRequest.DocumentId.Id + " on node " + Cluster.Get(Context.System).SelfAddress);
+            loggingAdapter.Debug("Creating document " + creationRequest.DocumentId.Id + " on node " + Cluster.Get(Context.System).SelfAddress);
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
                 creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
 
@@ -81,7 +73,6 @@ namespace Euventing.Atom.Document.Actors
         {
             MutateInternalState(newDocumentEvent);
             Persist(newDocumentEvent, null);
-            loggingAdapter.Info("Passivating " + this.PersistenceId);
             Context.Parent.Tell(new Passivate(PoisonPill.Instance));
         }
 
@@ -118,7 +109,7 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(GetAtomDocumentRequest request)
         {
-            loggingAdapter.Info("Request for document id {0} on node {2} with events {3}",
+            loggingAdapter.Debug("Request for document id {0} on node {2} with events {3}",
      PersistenceId, Cluster.Get(Context.System).SelfAddress, entries.Count);
 
 
@@ -140,7 +131,7 @@ namespace Euventing.Atom.Document.Actors
             this.earlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.title = documentCreated.Title;
             this.feedId = documentCreated.FeedId;
-            loggingAdapter.Info("Setting Feed Id to " + feedId.Id + " and document id to " + documentId.Id +" on persistence id " + PersistenceId);
+            loggingAdapter.Debug("Setting Feed Id to " + feedId.Id + " and document id to " + documentId.Id +" on persistence id " + PersistenceId);
         }
 
         private void MutateInternalState(RecoveryCompleted documentCreated)
@@ -155,10 +146,10 @@ namespace Euventing.Atom.Document.Actors
 
             persistedMarker = DateTime.Now;
 
-            loggingAdapter.Info("started {0:h:mm:ss tt ffff}, serialised {1:h:mm:ss tt ffff}, persisted {2:h:mm:ss tt ffff}",
+            loggingAdapter.Debug("started {0:h:mm:ss tt ffff}, serialised {1:h:mm:ss tt ffff}, persisted {2:h:mm:ss tt ffff}",
                 startMarker, serialisedMarker, persistedMarker);
 
-            loggingAdapter.Info("Added event with id {0} to doc {1} in feed {2} on node {3}",
+            loggingAdapter.Debug("Added event with id {0} to doc {1} in feed {2} on node {3}",
     atomEntry.SequenceNumber, this.documentId.Id, this.feedId.Id, Cluster.Get(Context.System).SelfAddress);
         }
     }

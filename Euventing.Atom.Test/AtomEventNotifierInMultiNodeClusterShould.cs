@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors.ShardSupport.Document;
 using Euventing.Core;
 using Euventing.Core.EventMatching;
@@ -51,7 +52,7 @@ namespace Euventing.Atom.Test
             var actorSystem = factory.GetActorSystem();
             actorSystem.ActorOf(Props.Create<ClusterEventListener>());
             var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
-            var actorFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory);
+            var actorFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory, new ConfigurableAtomDocumentSettings(10));
             atomNotifiers.Add(new AtomEventNotifier(actorFactory));
             atomDocumentRetrievers.Add(new AtomDocumentRetriever(actorFactory, atomDocumentFactory));
             numberOfNodes++;
