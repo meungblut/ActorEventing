@@ -8,6 +8,7 @@ using Euventing.Core.Messages;
 using Euventing.Core.Startup;
 using NLog;
 using Euventing.Api.Startup;
+using Euventing.Core.Subscriptions;
 using Euventing.Test.Shared;
 
 namespace Euventing.ConsoleHost
@@ -36,10 +37,10 @@ namespace Euventing.ConsoleHost
             if (! string.IsNullOrEmpty(subscriptionId.Id))
             {
                 Console.WriteLine("Getting subscriptionId");
-                SubscriptionManager subscriptionManager = eventSystemHost.Get<SubscriptionManager>();
+                SingleShardedSubscriptionManager singleShardedSubscriptionManager = eventSystemHost.Get<SingleShardedSubscriptionManager>();
                 
                 var currentSubscription =
-                    subscriptionManager.GetSubscriptionDetails(new SubscriptionQuery(subscriptionId)).Result;
+                    singleShardedSubscriptionManager.GetSubscriptionDetails(new SubscriptionQuery(subscriptionId)).Result;
 
                 if (currentSubscription is NullSubscription)
                 {
@@ -48,7 +49,7 @@ namespace Euventing.ConsoleHost
                         subscriptionId,
                         new AllEventMatcher());
 
-                    subscriptionManager.CreateSubscription(_subscriptionMessage);
+                    singleShardedSubscriptionManager.CreateSubscription(_subscriptionMessage);
                 }
 
                 Thread.Sleep(1000);

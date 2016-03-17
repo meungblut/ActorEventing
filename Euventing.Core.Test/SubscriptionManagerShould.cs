@@ -8,19 +8,20 @@ using Euventing.Core.Messages;
 using Euventing.Core.Test.LocalEventNotification;
 using NUnit.Framework;
 using Akka.Cluster;
+using Euventing.Core.Subscriptions;
 
 namespace Euventing.Core.Test
 {
     public class SubscriptionManagerShould
     {
-        private static SubscriptionManager _subscriptionManager;
+        private static SingleShardedSubscriptionManager _singleShardedSubscriptionManager;
 
         [OneTimeSetUp]
         public static void SetupActorSystem()
         {
             var actorSystemFactory = new ShardedActorSystemFactory(8964, "eventActorSystemForTesting", "inmem", "127.0.0.1:8964");
             var actorSystem = actorSystemFactory.GetActorSystem();
-            _subscriptionManager = new SubscriptionManager(actorSystem);
+            _singleShardedSubscriptionManager = new SingleShardedSubscriptionManager(actorSystem);
         }
 
         [Test]
@@ -28,7 +29,7 @@ namespace Euventing.Core.Test
         {
 
             var queryMessage = new SubscriptionQuery(new SubscriptionId("someotheruuid"));
-            var result = await _subscriptionManager.GetSubscriptionDetails(queryMessage);
+            var result = await _singleShardedSubscriptionManager.GetSubscriptionDetails(queryMessage);
             Assert.IsInstanceOf<NullSubscription>(result);
         }
 
@@ -40,10 +41,10 @@ namespace Euventing.Core.Test
                 new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
 
-            _subscriptionManager.CreateSubscription(subscriptionMessage);
+            _singleShardedSubscriptionManager.CreateSubscription(subscriptionMessage);
 
             var queryMessage = new SubscriptionQuery(subscriptionMessage.SubscriptionId);
-            var result = await _subscriptionManager.GetSubscriptionDetails(queryMessage);
+            var result = await _singleShardedSubscriptionManager.GetSubscriptionDetails(queryMessage);
             Assert.AreEqual(subscriptionMessage, result);
         }
     }

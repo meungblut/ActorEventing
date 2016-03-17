@@ -3,15 +3,14 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Euventing.Core.Messages;
-using Euventing.Core.Subscriptions;
 
-namespace Euventing.Core
+namespace Euventing.Core.Subscriptions
 {
-    public class SubscriptionManager
+    public class SingleShardedSubscriptionManager : ISubscriptionManager
     {
         private readonly IActorRef shardedSubscriptionActorRef;
 
-        public SubscriptionManager(ActorSystem actorSystem)
+        public SingleShardedSubscriptionManager(ActorSystem actorSystem)
         {
             var settings = ClusterShardingSettings.Create(actorSystem);
 

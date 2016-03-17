@@ -1,16 +1,15 @@
-﻿using System;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.Cluster.Tools.PublishSubscribe;
 using Euventing.Core.Messages;
 
-namespace Euventing.Core
+namespace Euventing.Core.Publishing
 {
-    public class EventPublisher : IEventPublisher
+    public class DistributedPubSubEventPublisher : IEventPublisher
     {
         private readonly ActorSystem actorSystem;
         private readonly IActorRef mediator;
 
-        public EventPublisher(ActorSystem actorSystem)
+        public DistributedPubSubEventPublisher(ActorSystem actorSystem)
         {
             this.actorSystem = actorSystem;
             mediator = DistributedPubSub.Get(actorSystem).Mediator;

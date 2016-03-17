@@ -5,6 +5,8 @@ using Euventing.Atom.Document.Actors.ShardSupport.Document;
 using Euventing.Atom.Logging;
 using Euventing.Core;
 using Euventing.Core.Logging;
+using Euventing.Core.Publishing;
+using Euventing.Core.Subscriptions;
 using TinyIoC;
 
 namespace Euventing.Api.Startup
@@ -46,8 +48,8 @@ namespace Euventing.Api.Startup
             var actorSystemFactory = new ShardedActorSystemFactory(akkaHostingPort, actorSystemName, persistenceSectionName, akkaSeedNodes);
             var actorSystem = actorSystemFactory.GetActorSystem();
 
-            var subscriptionManager = new SubscriptionManager(actorSystem);
-            var eventPublisher = new EventPublisher(actorSystem);
+            var subscriptionManager = new SingleShardedSubscriptionManager(actorSystem);
+            var eventPublisher = new DistributedPubSubEventPublisher(actorSystem);
             var loggingEventPublisher = new LoggingEventPublisherDecorator(eventPublisher);
 
             ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
@@ -58,7 +60,7 @@ namespace Euventing.Api.Startup
             var atomRetriever = new AtomDocumentRetriever(atomFeedFactory, atomDocumentFactory);
             var loggingAtomRetriever = new LoggingAtomDocumentRetrieverDecorator(atomRetriever);
 
-            iocContainer.Register<SubscriptionManager>(subscriptionManager);
+            iocContainer.Register<SingleShardedSubscriptionManager>(subscriptionManager);
             iocContainer.Register<IEventPublisher>(loggingEventPublisher);
             iocContainer.Register<ShardedAtomDocumentFactory>(atomDocumentFactory);
             iocContainer.Register<ShardedAtomFeedFactory>(atomFeedFactory);

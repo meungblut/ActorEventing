@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Euventing.Core.EventMatching;
 using Euventing.Core.Messages;
+using Euventing.Core.Publishing;
+using Euventing.Core.Subscriptions;
 using Euventing.Core.Test.LocalEventNotification;
 using NUnit.Framework;
 
@@ -13,8 +15,8 @@ namespace Euventing.Core.Test
 {
     public class EventPublisherShould
     {
-        private static SubscriptionManager _subscriptionManager;
-        private static EventPublisher _eventPublisher;
+        private static SingleShardedSubscriptionManager _singleShardedSubscriptionManager;
+        private static DistributedPubSubEventPublisher _distributedPubSubEventPublisher;
 
         [OneTimeSetUp]
         public static void SetupActorSystem()
@@ -22,8 +24,8 @@ namespace Euventing.Core.Test
             var settings = new LocalNotificationSettings();
             var actorSystemFactory = new ShardedActorSystemFactory(8965, "eventActorSystemForTesting", "inmem", "127.0.0.1:8965");
             var actorSystem = actorSystemFactory.GetActorSystem();
-            _subscriptionManager = new SubscriptionManager(actorSystem);
-            _eventPublisher = new EventPublisher(actorSystem);
+            _singleShardedSubscriptionManager = new SingleShardedSubscriptionManager(actorSystem);
+            _distributedPubSubEventPublisher = new DistributedPubSubEventPublisher(actorSystem);
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
@@ -35,12 +37,12 @@ namespace Euventing.Core.Test
                 new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
 
-            _subscriptionManager.CreateSubscription(subscriptionMessage);
+            _singleShardedSubscriptionManager.CreateSubscription(subscriptionMessage);
 
             Thread.Sleep(TimeSpan.FromSeconds(2));
 
             var dummyEvent = new DummyDomainEvent("some id");
-            _eventPublisher.PublishMessage(dummyEvent);
+            _distributedPubSubEventPublisher.PublishMessage(dummyEvent);
 
             if (!LocalEventNotifier.EventReceived.WaitOne(TimeSpan.FromSeconds(2)))
                 Assert.Fail("Expected but did not receive event notification");

@@ -11,14 +11,13 @@ namespace Euventing.Core.Subscriptions
     {
         private SubscriptionMessage subscriptionMessage;
         private readonly NotifierFactory notifierFactory;
-        private ILoggingAdapter loggingAdapter;
+        private readonly ILoggingAdapter loggingAdapter;
 
         public override string PersistenceId { get; }
 
         public SubscriptionActor()
         {
             loggingAdapter = Context.GetLogger();
-            loggingAdapter.Info("SUBSCRIPTION actor path is " + Self.Path);
             PersistenceId = Context.Parent.Path.Name + "-" + Self.Path.Name;
             notifierFactory = new NotifierFactory();
         }
