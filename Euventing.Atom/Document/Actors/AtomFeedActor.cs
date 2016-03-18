@@ -23,8 +23,6 @@ namespace Euventing.Atom.Document.Actors
         private int currentDocumentId;
         private Stopwatch stopwatch = new Stopwatch();
 
-        private int recoveryMessages = 0;
-
         public override string PersistenceId { get; }
 
         public AtomFeedActor(IAtomDocumentActorFactory builder, IAtomDocumentSettings settings)
@@ -106,11 +104,15 @@ namespace Euventing.Atom.Document.Actors
 
             atomDocument.Tell(notificationMessage, Self);
 
-            var currentEvents = numberOfEventsInCurrentHeadDocument + 1;
-            var eventAdded = new EventAddedToDocument(currentEvents);
-            Persist(eventAdded, MutateInternalState);
+            numberOfEventsInCurrentHeadDocument += 1;
 
-            if (currentEvents >= settings.NumberOfEventsPerDocument)
+            if (numberOfEventsInCurrentHeadDocument % 100 == 0)
+            {
+                var eventAdded = new EventAddedToDocument(numberOfEventsInCurrentHeadDocument);
+                Persist(eventAdded, MutateInternalState);
+            }
+
+            if (numberOfEventsInCurrentHeadDocument >= settings.NumberOfEventsPerDocument)
             {
                 var documentId = currentDocumentId + 1;
                 var newDocumentId = new DocumentId(atomFeedId.Id + "|" + documentId);
