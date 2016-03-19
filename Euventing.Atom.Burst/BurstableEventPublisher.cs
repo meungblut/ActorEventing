@@ -4,21 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Euventing.Core;
 using Euventing.Core.Messages;
 
-namespace Euventing.Core.Publishing
+namespace Euventing.Atom.Burst
 {
-    public class LocalNodeEventPublisher : IEventPublisher
+    public class BurstableEventPublisher : IEventPublisher
     {
-        private readonly ActorSystem actorSystem;
+        private ActorSystem actorSystem;
 
-        public LocalNodeEventPublisher(ActorSystem actorSystem)
+        public BurstableEventPublisher(ActorSystem actorSystem)
         {
             this.actorSystem = actorSystem;
         }
 
         public void PublishMessage(DomainEvent thingToPublish)
         {
+            throw new NotImplementedException();
         }
     }
 }

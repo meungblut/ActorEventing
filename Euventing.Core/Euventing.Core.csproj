@@ -120,7 +120,6 @@
     <Compile Include="Notifications\NotificationSettings.cs" />
     <Compile Include="Notifications\NotifierFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Publishing\LocalNodeEventPublisher.cs" />
     <Compile Include="ShardedActorSystemFactory.cs" />
     <Compile Include="Startup\EventSystemFactory.cs" />
     <Compile Include="Startup\ISubsytemConfiguration.cs" />

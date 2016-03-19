@@ -91,6 +91,7 @@
     <Compile Include="AtomEventNotifier.cs" />
     <Compile Include="AtomNotificationSettings.cs" />
     <Compile Include="AtomSubsystemConfiguration.cs" />
+    <Compile Include="Document\Actors\AtomDocumentActorBase.cs" />
     <Compile Include="Document\Actors\AtomFeedState.cs" />
     <Compile Include="Document\Actors\FeedAlreadyCreatedException.cs" />
     <Compile Include="Document\Actors\ShardSupport\CouldNotRouteMessageToShardException.cs" />

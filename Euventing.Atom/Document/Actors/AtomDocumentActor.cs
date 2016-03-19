@@ -10,28 +10,8 @@ using Euventing.Atom.Serialization;
 
 namespace Euventing.Atom.Document.Actors
 {
-    public class AtomDocumentActor : PersistentActor
+    public class AtomDocumentActor : AtomDocumentActorBase
     {
-
-        public AtomDocumentActor()
-        {
-            loggingAdapter = Context.GetLogger();
-            loggingAdapter.Info("Atom DOCUMENT actor path is " + Self.Path);
-            PersistenceId = "AtomDocumentActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
-        }
-
-        private string title;
-        private DateTime updated;
-        private string author;
-        private FeedId feedId;
-        private DocumentId documentId;
-        private DocumentId laterEventsDocumentId;
-        private DocumentId earlierEventsDocumentId;
-        private readonly List<AtomEntry> entries = new List<AtomEntry>();
-
-        private long sequenceNumber;
-        private readonly ILoggingAdapter loggingAdapter;
-
         private DateTime startMarker;
         private DateTime serialisedMarker;
         private DateTime persistedMarker;
@@ -56,8 +36,6 @@ namespace Euventing.Atom.Document.Actors
 
             return true;
         }
-
-        public override string PersistenceId { get; }
 
         private void Process(CreateAtomDocumentCommand creationRequest)
         {
@@ -113,10 +91,7 @@ namespace Euventing.Atom.Document.Actors
      PersistenceId, Cluster.Get(Context.System).SelfAddress, entries.Count);
 
 
-            var atomDocument = new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId,
-                laterEventsDocumentId, entries);
-            atomDocument.AddDocumentInformation(Cluster.Get(Context.System).SelfAddress.ToString());
-            Sender.Tell(atomDocument, Self);
+            GetCurrentAtomDocument();
         }
 
         private void Process(object request)
@@ -131,7 +106,7 @@ namespace Euventing.Atom.Document.Actors
             this.earlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.title = documentCreated.Title;
             this.feedId = documentCreated.FeedId;
-            loggingAdapter.Debug("Setting Feed Id to " + feedId.Id + " and document id to " + documentId.Id +" on persistence id " + PersistenceId);
+            loggingAdapter.Debug("Setting Feed Id to " + feedId.Id + " and document id to " + documentId.Id + " on persistence id " + PersistenceId);
         }
 
         private void MutateInternalState(RecoveryCompleted documentCreated)
