@@ -61,7 +61,7 @@
   <ItemGroup>
     <Compile Include="AllLocalSubscriptionsActor.cs" />
     <Compile Include="BurstableEventPublisher.cs" />
-    <Compile Include="DocumentActor.cs" />
+    <Compile Include="WorkPullingDocumentActor.cs" />
     <Compile Include="FeedActor.cs" />
     <Compile Include="RequestEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

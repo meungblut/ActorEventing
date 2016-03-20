@@ -96,6 +96,7 @@
     <Compile Include="Document\Actors\FeedAlreadyCreatedException.cs" />
     <Compile Include="Document\Actors\ShardSupport\CouldNotRouteMessageToShardException.cs" />
     <Compile Include="Document\Actors\TryingToRaiseEventToFeedWithNoHeadException.cs" />
+    <Compile Include="Document\DomainEventToAtomEntryConverter.cs" />
     <Compile Include="IAtomDocumentRetriever.cs" />
     <Compile Include="Logging\LoggingAtomDocumentRetrieverDecorator.cs" />
     <Compile Include="Serialization\AtomDocumentSerialiser.cs" />

@@ -7,6 +7,7 @@ using Akka.Dispatch.SysMsg;
 using Akka.Event;
 using Akka.Persistence;
 using Euventing.Atom.Serialization;
+using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Document.Actors
 {
@@ -18,21 +19,19 @@ namespace Euventing.Atom.Document.Actors
 
         private int recoveryevents;
 
-        protected override bool ReceiveRecover(object message)
-        {
-            loggingAdapter.Info("AtomDocumentActor ReceiveRecover: " + message.GetType() + " with persistence id:" + PersistenceId + " times called :" + ++recoveryevents);
-
-            ((dynamic)this).MutateInternalState((dynamic)message);
-
-            return true;
-        }
-
         protected override bool ReceiveCommand(object message)
         {
             if (message == null)
                 return false;
 
             ((dynamic)this).Process((dynamic)message);
+
+            return true;
+        }
+
+        protected override bool ReceiveRecover(object message)
+        {
+            ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
         }
@@ -72,15 +71,8 @@ namespace Euventing.Atom.Document.Actors
         private void Process(EventWithDocumentIdNotificationMessage eventToAdd)
         {
             startMarker = DateTime.Now;
-            var atomEntry = new AtomEntry();
-            var serializer = new JsonEventSerialisation();
-            var content = serializer.GetContentWithContentType(eventToAdd.DomainEvent);
-            atomEntry.Content = content.Content;
-            atomEntry.Id = eventToAdd.DomainEvent.Id;
-            atomEntry.Updated = DateTime.Now;
-            atomEntry.Title = content.ContentType;
-            sequenceNumber = sequenceNumber + 1;
-            atomEntry.SequenceNumber = sequenceNumber;
+            var converter = new DomainEventToAtomEntryConverter();
+            var atomEntry = converter.ConvertDomainEventToAtomEntry(eventToAdd.DomainEvent);
             serialisedMarker = DateTime.Now;
             Persist(atomEntry, MutateInternalState);
         }
@@ -89,8 +81,7 @@ namespace Euventing.Atom.Document.Actors
         {
             loggingAdapter.Debug("Request for document id {0} on node {2} with events {3}",
      PersistenceId, Cluster.Get(Context.System).SelfAddress, entries.Count);
-
-
+            
             GetCurrentAtomDocument();
         }
 
@@ -116,7 +107,7 @@ namespace Euventing.Atom.Document.Actors
         private void MutateInternalState(AtomEntry atomEntry)
         {
             entries.Add(atomEntry);
-            sequenceNumber = atomEntry.SequenceNumber;
+            sequenceNumber = sequenceNumber + 1;
             updated = atomEntry.Updated;
 
             persistedMarker = DateTime.Now;
@@ -125,7 +116,7 @@ namespace Euventing.Atom.Document.Actors
                 startMarker, serialisedMarker, persistedMarker);
 
             loggingAdapter.Debug("Added event with id {0} to doc {1} in feed {2} on node {3}",
-    atomEntry.SequenceNumber, this.documentId.Id, this.feedId.Id, Cluster.Get(Context.System).SelfAddress);
+    sequenceNumber, this.documentId.Id, this.feedId.Id, Cluster.Get(Context.System).SelfAddress);
         }
     }
 }

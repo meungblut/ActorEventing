@@ -7,19 +7,13 @@ using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
 using Euventing.Atom.Document;
+using Euventing.Atom.Document.Actors;
 
 namespace Euventing.Atom.Burst
 {
-    public class DocumentActor : PersistentActor
+    public class WorkPullingDocumentActor : AtomDocumentActorBase
     {
         protected Cluster Cluster;
-
-        private DocumentId documentId;
-        private DocumentId laterEventsDocumentId;
-        private DocumentId earlierEventsDocumentId;
-        private int maximumEventsInDocument;
-
-        private readonly List<AtomEntry> entries = new List<AtomEntry>();
 
         protected override void PreStart()
         {
@@ -41,14 +35,37 @@ namespace Euventing.Atom.Burst
             }
         }
 
-        protected override bool ReceiveRecover(object message)
+        private void Process(IEnumerable<QueuedEvent> requestedEvents)
         {
-            throw new NotImplementedException();
+            foreach (var requestedEvent in requestedEvents)
+            {
+                
+            }
+        }
+
+        private void Process(GetAtomDocumentRequest request)
+        {
+            loggingAdapter.Debug("Request for document id {0} on node {2} with events {3}",
+     PersistenceId, Cluster.Get(Context.System).SelfAddress, entries.Count);
+
+            GetCurrentAtomDocument();
         }
 
         protected override bool ReceiveCommand(object message)
         {
-            throw new NotImplementedException();
+            if (message == null)
+                return false;
+
+            ((dynamic)this).Process((dynamic)message);
+
+            return true;
+        }
+
+        protected override bool ReceiveRecover(object message)
+        {
+            ((dynamic)this).MutateInternalState((dynamic)message);
+
+            return true;
         }
 
         public override string PersistenceId { get; }

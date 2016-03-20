@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using Akka.Persistence;
+using Euventing.Atom.Document;
+using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst
 {
     public class SubscriptionQueueActor : PersistentActor
     {
-        readonly Queue<object> queuedItems = new Queue<object>();
+        readonly Queue<AtomEntry> queuedItems = new Queue<AtomEntry>();
         private bool shouldBeInThisStream = true;
         private int queueLength;
 
@@ -16,7 +18,8 @@ namespace Euventing.Atom.Burst
 
         protected override bool ReceiveRecover(object message)
         {
-            Persist(message, x => queuedItems.Enqueue(message));
+            if (message is DomainEvent)
+                Persist(message, x => Enqueue((DomainEvent)message));
             return true;
         }
 
@@ -26,15 +29,15 @@ namespace Euventing.Atom.Burst
                 DequeueAndSend();
 
             if (shouldBeInThisStream)
-                Persist(message, x => Enqueue(x));
+                Persist(message, x => Enqueue((DomainEvent)x));
 
             return true;
         }
 
-        private void Enqueue(object message)
+        private void Enqueue(DomainEvent message)
         {
             queueLength++;
-            queuedItems.Enqueue(message);
+            queuedItems.Enqueue(new AtomEntry());
         }
 
         private void DequeueAndSend()
@@ -49,10 +52,10 @@ namespace Euventing.Atom.Burst
 
     public class QueuedEvent
     {
-        public object Message { get; }
+        public AtomEntry Message { get; }
         public int QueueLength { get; }
 
-        public QueuedEvent(object message, int queueLength)
+        public QueuedEvent(AtomEntry message, int queueLength)
         {
             Message = message;
             QueueLength = queueLength;
