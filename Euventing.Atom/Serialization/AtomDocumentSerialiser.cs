@@ -12,7 +12,7 @@ namespace Euventing.Atom.Serialization
         public string Serialise(AtomDocument feed, string baseUrl)
         {
             string data = @"<?xml version=""1.0"" encoding=""utf-8""?><feed xmlns=""http://www.w3.org/2005/Atom"">";
-            data += @"<title>" + feed.Title + @"</title>";
+            data += @"<Title>" + feed.Title + @"</Title>";
 
             if (feed.DocumentId != null)
                 data += @"<link href=""" + baseUrl + feed.DocumentId.Id + @"""/>";
@@ -27,8 +27,8 @@ namespace Euventing.Atom.Serialization
                 data += @"<link rel=""next-archive"" type =""application/atom+xml"" href =""" + baseUrl + feed.LaterEventsDocumentId.Id + @""" />";
             }
 
-            data += @"<updated>" + feed.Updated.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'") + "</updated>";
-            data += @"<author><name>" + feed.Author + "</name></author>";
+            data += @"<Updated>" + feed.Updated.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'") + "</Updated>";
+            data += @"<Author><name>" + feed.Author + "</name></Author>";
             data += @"<id>urn:uuid:" + feed.FeedId.Id + "</id>";
 
             data += @"<documentInformation>" + feed.DocumentInformation + "</documentInformation>";
@@ -37,9 +37,9 @@ namespace Euventing.Atom.Serialization
             foreach (var atomEntry in feed.Entries)
             {
                 data += "<entry>";
-                data += "<title>" + atomEntry.Title + "</title>";
+                data += "<Title>" + atomEntry.Title + "</Title>";
                 data += "<id>urn:uuid:" + atomEntry.Id + "</id>";
-                data += "<updated>" + atomEntry.Updated.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'") + "</updated>";
+                data += "<Updated>" + atomEntry.Updated.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'") + "</Updated>";
                 data += @"<content type=""application/json"">" + atomEntry.Content + "</content>";
                 data += "</entry>";
             }

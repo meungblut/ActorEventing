@@ -17,8 +17,6 @@ namespace Euventing.Atom.Document.Actors
         private DateTime serialisedMarker;
         private DateTime persistedMarker;
 
-        private int recoveryevents;
-
         protected override bool ReceiveCommand(object message)
         {
             if (message == null)
@@ -38,7 +36,7 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(CreateAtomDocumentCommand creationRequest)
         {
-            loggingAdapter.Debug("Creating document " + creationRequest.DocumentId.Id + " on node " + Cluster.Get(Context.System).SelfAddress);
+            LoggingAdapter.Debug("Creating document " + creationRequest.DocumentId.Id + " on node " + Cluster.Get(Context.System).SelfAddress);
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
                 creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
 
@@ -65,7 +63,7 @@ namespace Euventing.Atom.Document.Actors
 
         private void MutateInternalState(NewDocumentAddedEvent newDocumentEvent)
         {
-            this.laterEventsDocumentId = newDocumentEvent.DocumentId;
+            this.LaterEventsDocumentId = newDocumentEvent.DocumentId;
         }
 
         private void Process(EventWithDocumentIdNotificationMessage eventToAdd)
@@ -79,25 +77,15 @@ namespace Euventing.Atom.Document.Actors
 
         private void Process(GetAtomDocumentRequest request)
         {
-            loggingAdapter.Debug("Request for document id {0} on node {2} with events {3}",
-     PersistenceId, Cluster.Get(Context.System).SelfAddress, entries.Count);
+            LoggingAdapter.Debug("Request for document id {0} on node {2} with events {3}",
+     PersistenceId, Cluster.Get(Context.System).SelfAddress, Entries.Count);
             
             GetCurrentAtomDocument();
         }
 
         private void Process(object request)
         {
-            loggingAdapter.Info("Unhandled command " + request.GetType());
-        }
-
-        private void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
-        {
-            this.author = documentCreated.Author;
-            this.documentId = documentCreated.DocumentId;
-            this.earlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
-            this.title = documentCreated.Title;
-            this.feedId = documentCreated.FeedId;
-            loggingAdapter.Debug("Setting Feed Id to " + feedId.Id + " and document id to " + documentId.Id + " on persistence id " + PersistenceId);
+            LoggingAdapter.Info("Unhandled command " + request.GetType());
         }
 
         private void MutateInternalState(RecoveryCompleted documentCreated)
@@ -106,17 +94,17 @@ namespace Euventing.Atom.Document.Actors
 
         private void MutateInternalState(AtomEntry atomEntry)
         {
-            entries.Add(atomEntry);
-            sequenceNumber = sequenceNumber + 1;
-            updated = atomEntry.Updated;
+            Entries.Add(atomEntry);
+            SequenceNumber = SequenceNumber + 1;
+            Updated = atomEntry.Updated;
 
             persistedMarker = DateTime.Now;
 
-            loggingAdapter.Debug("started {0:h:mm:ss tt ffff}, serialised {1:h:mm:ss tt ffff}, persisted {2:h:mm:ss tt ffff}",
+            LoggingAdapter.Debug("started {0:h:mm:ss tt ffff}, serialised {1:h:mm:ss tt ffff}, persisted {2:h:mm:ss tt ffff}",
                 startMarker, serialisedMarker, persistedMarker);
 
-            loggingAdapter.Debug("Added event with id {0} to doc {1} in feed {2} on node {3}",
-    sequenceNumber, this.documentId.Id, this.feedId.Id, Cluster.Get(Context.System).SelfAddress);
+            LoggingAdapter.Debug("Added event with id {0} to doc {1} in feed {2} on node {3}",
+    SequenceNumber, this.DocumentId.Id, this.FeedId.Id, Cluster.Get(Context.System).SelfAddress);
         }
     }
 }

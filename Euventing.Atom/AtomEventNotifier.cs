@@ -24,7 +24,7 @@ namespace Euventing.Atom
 
         public void Create(SubscriptionMessage message)
         {
-            factory.GetActorRef().Tell(new AtomFeedCreationCommand("Title", "author", new FeedId(message.SubscriptionId.Id), null));
+            factory.GetActorRef().Tell(new AtomFeedCreationCommand("Title", "Author", new FeedId(message.SubscriptionId.Id), null));
         }
     }
 }

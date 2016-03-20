@@ -1,40 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Akka.Cluster;
 using Akka.Event;
 using Akka.Persistence;
+using Euventing.Core;
 
 namespace Euventing.Atom.Document.Actors
 {
-    public abstract class AtomDocumentActorBase : PersistentActor
+    public abstract class AtomDocumentActorBase : PersistentActorBase
     {
-        protected string title;
-        protected DateTime updated;
-        protected string author;
-        protected FeedId feedId;
-        protected DocumentId documentId;
-        protected DocumentId laterEventsDocumentId;
-        protected DocumentId earlierEventsDocumentId;
-        protected readonly List<AtomEntry> entries = new List<AtomEntry>();
+        protected string Title;
+        protected DateTime Updated;
+        protected string Author;
+        protected FeedId FeedId;
+        protected DocumentId DocumentId;
+        protected DocumentId LaterEventsDocumentId;
+        protected DocumentId EarlierEventsDocumentId;
+        protected readonly List<AtomEntry> Entries = new List<AtomEntry>();
 
-        protected long sequenceNumber;
-        protected readonly ILoggingAdapter loggingAdapter;
+        protected long SequenceNumber;
 
-        public AtomDocumentActorBase()
+        protected void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
         {
-            loggingAdapter = Context.GetLogger();
-            PersistenceId = "AtomDocumentActor|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
+            this.Author = documentCreated.Author;
+            this.DocumentId = documentCreated.DocumentId;
+            this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
+            this.Title = documentCreated.Title;
+            this.FeedId = documentCreated.FeedId;
         }
 
-        public override string PersistenceId { get; }
+        private void Process(CreateAtomDocumentCommand creationRequest)
+        {
+            var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
+                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
+
+            MutateInternalState(atomDocumentCreatedEvent);
+            Persist(atomDocumentCreatedEvent, MutateInternalState);
+        }
 
         protected void GetCurrentAtomDocument()
         {
-            var atomDocument = new AtomDocument(title, author, feedId, documentId, earlierEventsDocumentId,
-    laterEventsDocumentId, entries);
+            var atomDocument = new AtomDocument(Title, Author, FeedId, DocumentId, EarlierEventsDocumentId,
+    LaterEventsDocumentId, Entries);
             atomDocument.AddDocumentInformation(Cluster.Get(Context.System).SelfAddress.ToString());
             Sender.Tell(atomDocument, Self);
         }

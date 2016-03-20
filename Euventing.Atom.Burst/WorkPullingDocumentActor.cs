@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster;
-using Akka.Persistence;
 using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors;
 
@@ -14,6 +10,14 @@ namespace Euventing.Atom.Burst
     public class WorkPullingDocumentActor : AtomDocumentActorBase
     {
         protected Cluster Cluster;
+        private readonly IAtomDocumentSettings atomDocumentSettings;
+
+        private int entriesInCurrentDocument;
+
+        public WorkPullingDocumentActor(IAtomDocumentSettings settings)
+        {
+            atomDocumentSettings = settings;
+        }
 
         protected override void PreStart()
         {
@@ -39,15 +43,41 @@ namespace Euventing.Atom.Burst
         {
             foreach (var requestedEvent in requestedEvents)
             {
-                
+                Persist(requestedEvent.Message, MutateInternalState);
             }
+
+            if (entriesInCurrentDocument >= atomDocumentSettings.NumberOfEventsPerDocument)
+            {
+                DocumentIsFull();
+            }
+        }
+
+        private void DocumentIsFull()
+        {
+            var documentId = new DocumentId((int.Parse(DocumentId.Id) + 1).ToString());
+            var addressToDeployOn = GetDifferentNodeIfPossible();
+            var newActor =
+                Context.System.ActorOf(
+                    Props.Create<WorkPullingDocumentActor>().WithDeploy(new Deploy(new RemoteScope(addressToDeployOn))));
+            newActor.Tell(new CreateAtomDocumentCommand(this.Title, this.Author, this.FeedId, documentId, this.DocumentId));
+        }
+
+        private Address GetDifferentNodeIfPossible()
+        {
+            if (Cluster.ReadView.IsSingletonCluster)
+                return Cluster.ReadView.SelfAddress;
+
+            return Cluster.ReadView.Members.First(x => x.Address != Cluster.SelfAddress).Address;
+        }
+
+        private void MutateInternalState(AtomEntry entry)
+        {
+            Entries.Add(entry);
+            entriesInCurrentDocument++;
         }
 
         private void Process(GetAtomDocumentRequest request)
         {
-            loggingAdapter.Debug("Request for document id {0} on node {2} with events {3}",
-     PersistenceId, Cluster.Get(Context.System).SelfAddress, entries.Count);
-
             GetCurrentAtomDocument();
         }
 
@@ -66,13 +96,6 @@ namespace Euventing.Atom.Burst
             ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
-        }
-
-        public override string PersistenceId { get; }
-
-        private void DocumentFull()
-        {
-            
         }
     }
 }

@@ -106,6 +106,7 @@
     <Compile Include="Messages\DeleteSubscriptionMessage.cs" />
     <Compile Include="EventMatching\AllEventMatcher.cs" />
     <Compile Include="EventMatching\IEventMatcher.cs" />
+    <Compile Include="PersistentActorBase.cs" />
     <Compile Include="Publishing\DistributedPubSubEventPublisher.cs" />
     <Compile Include="EventWithSubscriptionNotificationMessage.cs" />
     <Compile Include="IActorSystemFactory.cs" />
