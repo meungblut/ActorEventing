@@ -27,7 +27,7 @@ namespace Euventing.Atom.Burst
 
         private void PollQueues()
         {
-            string addressFormat = "akka://akkaSystemName@{0}/user/localEventQueue";
+            string addressFormat = "akka://akkaSystemName@{0}/user/subscriptionQueueActor";
             while (true)
             {
                 foreach (var member in Cluster.ReadView.Members)

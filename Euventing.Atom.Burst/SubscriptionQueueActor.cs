@@ -11,6 +11,15 @@ namespace Euventing.Atom.Burst
         readonly Queue<AtomEntry> queuedItems = new Queue<AtomEntry>();
         private bool shouldBeInThisStream = true;
         private int queueLength;
+        private FeedId feedId;
+
+        protected override void PreStart()
+        {
+            var actor = Context.ActorSelection(ActorLocations.LocalSubscriptionManagerLocation);
+            actor.Tell(new NewSubscription(Context.Self));
+
+            base.PreStart();
+        }
 
         protected override bool ReceiveRecover(object message)
         {

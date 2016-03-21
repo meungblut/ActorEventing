@@ -125,7 +125,7 @@
     <Compile Include="Startup\EventSystemFactory.cs" />
     <Compile Include="Startup\ISubsytemConfiguration.cs" />
     <Compile Include="Subscriptions\ISubscriptionManager.cs" />
-    <Compile Include="Subscriptions\SingleShardedSubscriptionManager.cs" />
+    <Compile Include="Subscriptions\ShardedSubscriptionManager.cs" />
     <Compile Include="Subscriptions\SubscriptionActor.cs" />
     <Compile Include="Subscriptions\SubscriptionMessageExtractor.cs" />
   </ItemGroup>

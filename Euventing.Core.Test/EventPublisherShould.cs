@@ -15,7 +15,7 @@ namespace Euventing.Core.Test
 {
     public class EventPublisherShould
     {
-        private static SingleShardedSubscriptionManager _singleShardedSubscriptionManager;
+        private static ShardedSubscriptionManager _shardedSubscriptionManager;
         private static DistributedPubSubEventPublisher _distributedPubSubEventPublisher;
 
         [OneTimeSetUp]
@@ -24,7 +24,7 @@ namespace Euventing.Core.Test
             var settings = new LocalNotificationSettings();
             var actorSystemFactory = new ShardedActorSystemFactory(8965, "eventActorSystemForTesting", "inmem", "127.0.0.1:8965");
             var actorSystem = actorSystemFactory.GetActorSystem();
-            _singleShardedSubscriptionManager = new SingleShardedSubscriptionManager(actorSystem);
+            _shardedSubscriptionManager = new ShardedSubscriptionManager(actorSystem);
             _distributedPubSubEventPublisher = new DistributedPubSubEventPublisher(actorSystem);
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
@@ -37,7 +37,7 @@ namespace Euventing.Core.Test
                 new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
 
-            _singleShardedSubscriptionManager.CreateSubscription(subscriptionMessage);
+            _shardedSubscriptionManager.CreateSubscription(subscriptionMessage);
 
             Thread.Sleep(TimeSpan.FromSeconds(2));
 

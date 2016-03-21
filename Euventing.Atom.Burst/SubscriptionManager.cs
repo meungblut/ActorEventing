@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Cluster.Sharding;
+using Euventing.Atom.Document.Actors.ShardSupport.Feed;
 using Euventing.Core.Messages;
 using Euventing.Core.Subscriptions;
 
@@ -11,26 +13,32 @@ namespace Euventing.Atom.Burst
 {
     public class SubscriptionManager : ISubscriptionManager
     {
-        private ActorSystem system;
-        const string localSubscriptionNode = "subscriptionManager";
+        private readonly IActorRef shardedSubscriptionActorRef;
 
         public SubscriptionManager(ActorSystem actorSystem)
         {
-            system = actorSystem;
+            var settings = ClusterShardingSettings.Create(actorSystem);
+
+            shardedSubscriptionActorRef = ClusterSharding.Get(actorSystem).Start(
+                typeName: "FeedActor",
+                entityProps: Props.Create<FeedActor>(),
+                settings: settings,
+                messageExtractor: new AtomFeedShardDataMessageExtractor());
         }
 
         public void CreateSubscription(SubscriptionMessage subscriptionMessage)
         {
+            shardedSubscriptionActorRef.Tell(subscriptionMessage);
         }
 
         public void DeleteSubscription(DeleteSubscriptionMessage subscriptionMessage)
         {
-            throw new NotImplementedException();
+            shardedSubscriptionActorRef.Tell(subscriptionMessage);
         }
 
-        public Task<SubscriptionMessage> GetSubscriptionDetails(SubscriptionQuery query)
+        public async Task<SubscriptionMessage> GetSubscriptionDetails(SubscriptionQuery query)
         {
-            throw new NotImplementedException();
+            return await shardedSubscriptionActorRef.Ask<SubscriptionMessage>(query, TimeSpan.FromSeconds(3));
         }
     }
 }

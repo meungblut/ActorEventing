@@ -22,7 +22,7 @@ namespace Euventing.ConsoleHost
             var akkaSystemName = GetValueFromCommandLine("akkaSystemName", args);
             var seedNodes = GetValueFromCommandLine("seedNodes", args);
             var akkaPortNumber = GetIntFromCommandLine(args, "portNumber");
-            var entriesPerDocument = GetIntFromCommandLine(args, "entriesPerDocument");
+            var entriesPerDocument = GetIntFromCommandLine(args, "EntriesPerDocument");
             var persistence = GetValueFromCommandLine("persistence", args);
 
             var eventSystemHost = new EventSystemHost(akkaPortNumber, akkaSystemName, persistence, seedNodes, 3601, entriesPerDocument);
@@ -37,10 +37,10 @@ namespace Euventing.ConsoleHost
             if (! string.IsNullOrEmpty(subscriptionId.Id))
             {
                 Console.WriteLine("Getting subscriptionId");
-                SingleShardedSubscriptionManager singleShardedSubscriptionManager = eventSystemHost.Get<SingleShardedSubscriptionManager>();
+                ISubscriptionManager shardedSubscriptionManager = eventSystemHost.Get<ISubscriptionManager>();
                 
                 var currentSubscription =
-                    singleShardedSubscriptionManager.GetSubscriptionDetails(new SubscriptionQuery(subscriptionId)).Result;
+                    shardedSubscriptionManager.GetSubscriptionDetails(new SubscriptionQuery(subscriptionId)).Result;
 
                 if (currentSubscription is NullSubscription)
                 {
@@ -49,7 +49,7 @@ namespace Euventing.ConsoleHost
                         subscriptionId,
                         new AllEventMatcher());
 
-                    singleShardedSubscriptionManager.CreateSubscription(_subscriptionMessage);
+                    shardedSubscriptionManager.CreateSubscription(_subscriptionMessage);
                 }
 
                 Thread.Sleep(1000);

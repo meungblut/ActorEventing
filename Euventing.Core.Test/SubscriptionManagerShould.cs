@@ -14,14 +14,14 @@ namespace Euventing.Core.Test
 {
     public class SubscriptionManagerShould
     {
-        private static SingleShardedSubscriptionManager _singleShardedSubscriptionManager;
+        private static ShardedSubscriptionManager _shardedSubscriptionManager;
 
         [OneTimeSetUp]
         public static void SetupActorSystem()
         {
             var actorSystemFactory = new ShardedActorSystemFactory(8964, "eventActorSystemForTesting", "inmem", "127.0.0.1:8964");
             var actorSystem = actorSystemFactory.GetActorSystem();
-            _singleShardedSubscriptionManager = new SingleShardedSubscriptionManager(actorSystem);
+            _shardedSubscriptionManager = new ShardedSubscriptionManager(actorSystem);
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace Euventing.Core.Test
         {
 
             var queryMessage = new SubscriptionQuery(new SubscriptionId("someotheruuid"));
-            var result = await _singleShardedSubscriptionManager.GetSubscriptionDetails(queryMessage);
+            var result = await _shardedSubscriptionManager.GetSubscriptionDetails(queryMessage);
             Assert.IsInstanceOf<NullSubscription>(result);
         }
 
@@ -41,10 +41,10 @@ namespace Euventing.Core.Test
                 new SubscriptionId(Guid.NewGuid().ToString()),
                 new AllEventMatcher());
 
-            _singleShardedSubscriptionManager.CreateSubscription(subscriptionMessage);
+            _shardedSubscriptionManager.CreateSubscription(subscriptionMessage);
 
             var queryMessage = new SubscriptionQuery(subscriptionMessage.SubscriptionId);
-            var result = await _singleShardedSubscriptionManager.GetSubscriptionDetails(queryMessage);
+            var result = await _shardedSubscriptionManager.GetSubscriptionDetails(queryMessage);
             Assert.AreEqual(subscriptionMessage, result);
         }
     }

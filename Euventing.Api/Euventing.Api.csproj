@@ -91,7 +91,9 @@
     <Compile Include="Messages\SubscribeMessage.cs" />
     <Compile Include="NoStartupConfigurationsException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup\BurstingEventSystemHost.cs" />
     <Compile Include="Startup\EventSystemHost.cs" />
+    <Compile Include="Startup\EventSystemHostBase.cs" />
     <Compile Include="TinyIoC.cs" />
     <Compile Include="TinyIocContainerImplementation.cs" />
     <Compile Include="WebApi\IocHttpWebApiControllerActivator.cs" />
@@ -106,6 +108,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Euventing.Atom.Burst\Euventing.Atom.Burst.csproj">
+      <Project>{cb575587-dc7d-4b99-98b8-2d39261f86ac}</Project>
+      <Name>Euventing.Atom.Burst</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Euventing.Atom\Euventing.Atom.csproj">
       <Project>{4454c7c7-bd4b-4897-b1ca-eab60badffcd}</Project>
       <Name>Euventing.Atom</Name>

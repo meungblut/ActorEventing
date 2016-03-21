@@ -6,11 +6,11 @@ using Euventing.Core.Messages;
 
 namespace Euventing.Core.Subscriptions
 {
-    public class SingleShardedSubscriptionManager : ISubscriptionManager
+    public class ShardedSubscriptionManager : ISubscriptionManager
     {
         private readonly IActorRef shardedSubscriptionActorRef;
 
-        public SingleShardedSubscriptionManager(ActorSystem actorSystem)
+        public ShardedSubscriptionManager(ActorSystem actorSystem)
         {
             var settings = ClusterShardingSettings.Create(actorSystem);
 

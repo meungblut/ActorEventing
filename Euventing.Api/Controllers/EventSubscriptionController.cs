@@ -16,17 +16,17 @@ namespace Euventing.Api.Controllers
 {
     public class EventSubscriptionController : ApiController
     {
-        private readonly SingleShardedSubscriptionManager eventSingleShardedSubscriber;
+        private readonly ISubscriptionManager eventShardedSubscriber;
         private JsonSerializerSettings jsonSerializerSettings;
 
-        public EventSubscriptionController(SingleShardedSubscriptionManager eventSingleShardedSubscriptionManager)
+        public EventSubscriptionController(ISubscriptionManager eventShardedSubscriptionManager)
         {
             jsonSerializerSettings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
 
-            eventSingleShardedSubscriber = eventSingleShardedSubscriptionManager;
+            eventShardedSubscriber = eventShardedSubscriptionManager;
         }
 
         [HttpPut]
@@ -34,7 +34,7 @@ namespace Euventing.Api.Controllers
         public HttpResponseMessage Put(SubscribeMessage subscribeMessage)
         {
             var subscriptionMessage = new SubscriptionMessage(new AtomNotificationChannel(), new SubscriptionId(subscribeMessage.SubscriptionId), new AllEventMatcher());
-            eventSingleShardedSubscriber.CreateSubscription(subscriptionMessage);
+            eventShardedSubscriber.CreateSubscription(subscriptionMessage);
 
             var response = new HttpResponseMessage(HttpStatusCode.Accepted);
             response.Content = new StringContent(JsonConvert.SerializeObject(string.Empty, jsonSerializerSettings), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");
@@ -45,7 +45,7 @@ namespace Euventing.Api.Controllers
         [Route("subscriptions/{subscriptionId}")]
         public async Task<HttpResponseMessage> Get([FromUri] string subscriptionId)
         {
-            var subscription = await eventSingleShardedSubscriber.GetSubscriptionDetails(new SubscriptionQuery(new SubscriptionId(subscriptionId)));
+            var subscription = await eventShardedSubscriber.GetSubscriptionDetails(new SubscriptionQuery(new SubscriptionId(subscriptionId)));
 
             if (subscription is NullSubscription)
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
@@ -59,12 +59,12 @@ namespace Euventing.Api.Controllers
         [Route("subscriptions/{subscriptionId}")]
         public async Task<HttpResponseMessage> Delete([FromUri] string subscriptionId)
         {
-            var subscription = await eventSingleShardedSubscriber.GetSubscriptionDetails(new SubscriptionQuery(new SubscriptionId(subscriptionId)));
+            var subscription = await eventShardedSubscriber.GetSubscriptionDetails(new SubscriptionQuery(new SubscriptionId(subscriptionId)));
 
             if (subscription is NullSubscription)
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
 
-            eventSingleShardedSubscriber.DeleteSubscription(new DeleteSubscriptionMessage(new SubscriptionId(subscriptionId)));
+            eventShardedSubscriber.DeleteSubscription(new DeleteSubscriptionMessage(new SubscriptionId(subscriptionId)));
 
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(JsonConvert.SerializeObject(subscription, jsonSerializerSettings), Encoding.UTF8, "application/vnd.tesco.eventSubscription+json");

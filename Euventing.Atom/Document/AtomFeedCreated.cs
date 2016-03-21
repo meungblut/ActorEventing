@@ -1,6 +1,6 @@
 ﻿namespace Euventing.Atom.Document
 {
-    internal class AtomFeedCreated
+    public class AtomFeedCreated
     {
         public DocumentId DocumentId { get;  }
         public string FeedTitle { get;  }

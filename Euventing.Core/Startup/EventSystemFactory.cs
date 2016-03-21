@@ -11,14 +11,14 @@ namespace Euventing.Core.Startup
 {
     public class EventSystemFactory
     {
-        private readonly SingleShardedSubscriptionManager singleShardedSubscriptionManager;
+        private readonly ISubscriptionManager shardedSubscriptionManager;
         private readonly DistributedPubSubEventPublisher distributedPubSubEventPublisher;
         private readonly ActorSystem actorSystem;
 
         public EventSystemFactory(ActorSystem actorSystem, IEnumerable<ISubsytemConfiguration> subsystemConfigurations)
         {
             this.actorSystem = actorSystem;
-            singleShardedSubscriptionManager = new SingleShardedSubscriptionManager(actorSystem);
+            shardedSubscriptionManager = new ShardedSubscriptionManager(actorSystem);
             distributedPubSubEventPublisher = new DistributedPubSubEventPublisher(actorSystem);
 
             foreach (var subsytemConfiguration in subsystemConfigurations)
@@ -27,9 +27,9 @@ namespace Euventing.Core.Startup
             }
         }
 
-        public SingleShardedSubscriptionManager GetSubscriptionManager()
+        public ISubscriptionManager GetSubscriptionManager()
         {
-            return singleShardedSubscriptionManager;
+            return shardedSubscriptionManager;
         }
 
         public DistributedPubSubEventPublisher GetEventPublisher()
