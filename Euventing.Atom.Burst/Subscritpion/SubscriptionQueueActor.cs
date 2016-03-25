@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using Euventing.Atom.Document;
 using Euventing.Core;
 using Euventing.Core.Messages;
@@ -32,9 +33,9 @@ namespace Euventing.Atom.Burst.Subscritpion
         protected override bool ReceiveCommand(object message)
         {
             if (message is RequestEvents)
-                DequeueAndSend();
+                DequeueAndSend((RequestEvents)message);
 
-            if (shouldBeInThisStream)
+            if (message is DomainEvent && shouldBeInThisStream)
                 Persist(message, x => Enqueue((DomainEvent)x));
 
             return true;
@@ -48,12 +49,19 @@ namespace Euventing.Atom.Burst.Subscritpion
             queuedItems.Enqueue(atomEntry);
         }
 
-        private void DequeueAndSend()
+        private void DequeueAndSend(RequestEvents eventRequest)
         {
-            queueLength--;
-            var sendItem = new QueuedEvent(queuedItems.Dequeue(), queueLength);
-            Context.Sender.Tell(sendItem, Self);
-            DeleteMessages(1, true);
+            int i = 0;
+            var events = new List<QueuedEvent>();
+
+            while (i < eventRequest.MaxEventsToSend && queueLength > 0)
+            {
+                queueLength--;
+                events.Add(new QueuedEvent(queuedItems.Dequeue(), queueLength));
+                DeleteMessages(1, true);
+            }
+
+            Context.Sender.Tell(events, Context.Self);
         }
     }
 }

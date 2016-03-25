@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using Akka.Actor;
 using Akka.Cluster;
 using Euventing.Atom.Document;
@@ -38,16 +40,16 @@ namespace Euventing.Atom.Burst.Feed
             if (CurrentFeedHeadDocument != null)
                 throw new FeedAlreadyCreatedException(CurrentFeedHeadDocument.Id);
 
-            var documentId = new DocumentId(creationCommand.FeedId.Id + "_0");
+            var documentId = new DocumentId("0");
             var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author,
                 creationCommand.FeedId);
 
             Persist(atomFeedCreated, MutateInternalState);
 
-            CreateAtomDocument(documentId);
+            CreateAtomDocument(documentId, creationCommand.FeedId);
         }
 
-        private void CreateAtomDocument(DocumentId documentId)
+        private void CreateAtomDocument(DocumentId documentId, FeedId feedId)
         {
             var memberToDeployFirstDocumentOn = cluster.ReadView.Members.First();
 
@@ -58,11 +60,11 @@ namespace Euventing.Atom.Burst.Feed
                  props
                  .WithDeploy(
                      new Deploy(
-                         new RemoteScope(memberToDeployFirstDocumentOn.Address))), "atomDocument_" + documentId.Id);
+                         new RemoteScope(memberToDeployFirstDocumentOn.Address))), "atomDocument_" + feedId.Id + "_" + documentId.Id);
 
             atomDocument.Tell(
                 new CreateAtomDocumentCommand(
-                    FeedTitle, FeedAuthor, AtomFeedId, documentId, null), Self);
+                    FeedTitle, FeedAuthor, feedId, documentId, null), Self);
         }
         
         private void MutateInternalState(AtomFeedCreated atomFeedCreated)
