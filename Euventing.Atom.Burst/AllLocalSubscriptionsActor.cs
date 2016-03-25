@@ -4,15 +4,9 @@ using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst
 {
-    public class AllLocalSubscriptionsActor : ReceiveActor
+    public class AllLocalSubscriptionsActor : UntypedActor
     {
         protected HashSet<IActorRef> Subscribers = new HashSet<IActorRef>();
-
-        public AllLocalSubscriptionsActor()
-        {
-            Receive<NewSubscription>(s => CreateSubscription(s));
-            Receive<DomainEvent>(s => Publish(s));
-        }
 
         private void Publish(DomainEvent domainEvent)
         {
@@ -26,15 +20,16 @@ namespace Euventing.Atom.Burst
         {
             Subscribers.Add(s.SubscriptionQueue);
         }
-    }
 
-    public class NewSubscription
-    {
-        public NewSubscription(IActorRef subscriber)
+        protected override void OnReceive(object message)
         {
-            SubscriptionQueue = subscriber;
-        }
+            if (message is NewSubscription)
+                CreateSubscription((NewSubscription)message);
 
-        public IActorRef SubscriptionQueue { get; }
+            string s = Context.Self.Path.Name.ToString();
+
+            if (message is DomainEvent)
+                Publish((DomainEvent)message);
+        }
     }
 }

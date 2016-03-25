@@ -22,10 +22,10 @@ namespace Euventing.ConsoleHost
             var akkaSystemName = GetValueFromCommandLine("akkaSystemName", args);
             var seedNodes = GetValueFromCommandLine("seedNodes", args);
             var akkaPortNumber = GetIntFromCommandLine(args, "portNumber");
-            var entriesPerDocument = GetIntFromCommandLine(args, "EntriesPerDocument");
+            var entriesPerDocument = GetIntFromCommandLine(args, "entriesPerDocument");
             var persistence = GetValueFromCommandLine("persistence", args);
 
-            var eventSystemHost = new EventSystemHost(akkaPortNumber, akkaSystemName, persistence, seedNodes, 3601, entriesPerDocument);
+            var eventSystemHost = new BurstingEventSystemHost(akkaPortNumber, akkaSystemName, persistence, seedNodes, 3601, entriesPerDocument);
             var EventRaisingController = eventSystemHost.Get<EventRaisingController>();
             eventSystemHost.Start();
 

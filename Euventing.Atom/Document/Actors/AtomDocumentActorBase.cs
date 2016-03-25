@@ -20,24 +20,6 @@ namespace Euventing.Atom.Document.Actors
 
         protected long SequenceNumber;
 
-        protected void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
-        {
-            this.Author = documentCreated.Author;
-            this.DocumentId = documentCreated.DocumentId;
-            this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
-            this.Title = documentCreated.Title;
-            this.FeedId = documentCreated.FeedId;
-        }
-
-        private void Process(CreateAtomDocumentCommand creationRequest)
-        {
-            var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
-                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
-
-            MutateInternalState(atomDocumentCreatedEvent);
-            Persist(atomDocumentCreatedEvent, MutateInternalState);
-        }
-
         protected void GetCurrentAtomDocument()
         {
             var atomDocument = new AtomDocument(Title, Author, FeedId, DocumentId, EarlierEventsDocumentId,

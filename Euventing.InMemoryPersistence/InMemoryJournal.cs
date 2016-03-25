@@ -14,6 +14,7 @@ namespace Euventing.InMemoryPersistence
 
         static InMemoryJournal()
         {
+            //repository = new LoggingPersistableEntityRepositoryDecorator(new InMemoryPersistableEntityRepository());
             repository = new InMemoryPersistableEntityRepository();
         }
 

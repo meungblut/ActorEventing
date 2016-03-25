@@ -44,6 +44,15 @@ namespace Euventing.Atom.Document.Actors
             Persist(atomDocumentCreatedEvent, MutateInternalState);
         }
 
+        protected void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
+        {
+            this.Author = documentCreated.Author;
+            this.DocumentId = documentCreated.DocumentId;
+            this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
+            this.Title = documentCreated.Title;
+            this.FeedId = documentCreated.FeedId;
+        }
+
         private void Process(NewDocumentAddedEvent newDocumentEvent)
         {
             MutateInternalState(newDocumentEvent);

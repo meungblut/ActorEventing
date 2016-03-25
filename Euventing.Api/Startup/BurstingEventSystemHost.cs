@@ -1,5 +1,6 @@
 ﻿using Euventing.Api.WebApi;
 using Euventing.Atom.Burst;
+using Euventing.Atom.Burst.Subscritpion;
 using Euventing.Core;
 using Euventing.Core.Logging;
 using Euventing.Core.Subscriptions;
@@ -18,7 +19,7 @@ namespace Euventing.Api.Startup
             var actorSystemFactory = new ShardedActorSystemFactory(AkkaHostingPort, ActorSystemName, PersistenceSectionName, AkkaSeedNodes);
             var actorSystem = actorSystemFactory.GetActorSystem();
 
-            var subscriptionManager = new SubscriptionManager(actorSystem);
+            var subscriptionManager = new BurstSubscriptionManager(actorSystem);
             var eventPublisher = new BurstableEventPublisher(actorSystem);
             var loggingEventPublisher = new LoggingEventPublisherDecorator(eventPublisher);
 

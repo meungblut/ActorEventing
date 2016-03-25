@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using Akka.Persistence;
 using Euventing.Atom.Document;
 using Euventing.Core;
 using Euventing.Core.Messages;
 
-namespace Euventing.Atom.Burst
+namespace Euventing.Atom.Burst.Subscritpion
 {
     public class SubscriptionQueueActor : PersistentActorBase
     {
@@ -15,7 +14,8 @@ namespace Euventing.Atom.Burst
 
         protected override void PreStart()
         {
-            var actor = Context.ActorSelection(ActorLocations.LocalSubscriptionManagerLocation);
+            var actor = Context.ActorSelection("/user/" + ActorLocations.LocalSubscriptionManagerLocation);
+
             actor.Tell(new NewSubscription(Context.Self));
 
             base.PreStart();

@@ -4,6 +4,7 @@ using Akka.Actor;
 using Akka.Cluster;
 using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors;
+using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst
 {
@@ -19,15 +20,11 @@ namespace Euventing.Atom.Burst
             atomDocumentSettings = settings;
         }
 
-        protected override void PreStart()
-        {
-            Cluster = Cluster.Get(Context.System);
-            PollQueues();
-        }
-
         private void PollQueues()
         {
-            string addressFormat = "akka://akkaSystemName@{0}/user/subscriptionQueueActor";
+            Cluster = Cluster.Get(Context.System);
+
+            string addressFormat = "akka://akkaSystemName@{0}/user/subscription_" + FeedId.Id;
             while (true)
             {
                 foreach (var member in Cluster.ReadView.Members)
@@ -37,6 +34,17 @@ namespace Euventing.Atom.Burst
                     actorRef.Tell(new RequestEvents(5));
                 }
             }
+        }
+
+        protected void Process(CreateAtomDocumentCommand creationRequest)
+        {
+            var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
+                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
+
+            MutateInternalState(atomDocumentCreatedEvent);
+            Persist(atomDocumentCreatedEvent, MutateInternalState);
+
+            PollQueues();
         }
 
         private void Process(IEnumerable<QueuedEvent> requestedEvents)
@@ -79,6 +87,15 @@ namespace Euventing.Atom.Burst
         private void Process(GetAtomDocumentRequest request)
         {
             GetCurrentAtomDocument();
+        }
+
+        protected void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
+        {
+            this.Author = documentCreated.Author;
+            this.DocumentId = documentCreated.DocumentId;
+            this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
+            this.Title = documentCreated.Title;
+            this.FeedId = documentCreated.FeedId;
         }
 
         protected override bool ReceiveCommand(object message)

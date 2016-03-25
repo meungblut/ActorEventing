@@ -1,36 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Akka.Actor;
 using Akka.Cluster;
-using Akka.Persistence;
 using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors;
-using Euventing.Core;
 
-namespace Euventing.Atom.Burst
+namespace Euventing.Atom.Burst.Feed
 {
     public class FeedActor : AtomFeedActorBase
     {
         private readonly Cluster cluster;
+        private IAtomDocumentSettings atomDocumentSettings;
 
-        public FeedActor()
+        public FeedActor(IAtomDocumentSettings settings)
         {
+            atomDocumentSettings = settings;
             cluster = Cluster.Get(Context.System);
         }
 
         protected override bool ReceiveRecover(object message)
         {
-            ((dynamic) this).MutateInternalState((dynamic) message);
+            var sender = Context.Sender;
+
+            ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
         }
 
         protected override bool ReceiveCommand(object message)
         {
-            ((dynamic) this).Process((dynamic) message);
+            ((dynamic)this).Process((dynamic)message);
 
             return true;
         }
@@ -40,13 +38,11 @@ namespace Euventing.Atom.Burst
             if (CurrentFeedHeadDocument != null)
                 throw new FeedAlreadyCreatedException(CurrentFeedHeadDocument.Id);
 
-            var documentId = new DocumentId(creationCommand.FeedId.Id + "|0");
+            var documentId = new DocumentId(creationCommand.FeedId.Id + "_0");
             var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author,
                 creationCommand.FeedId);
 
             Persist(atomFeedCreated, MutateInternalState);
-
-            CreateSubscriptionOnEachNode();
 
             CreateAtomDocument(documentId);
         }
@@ -54,37 +50,37 @@ namespace Euventing.Atom.Burst
         private void CreateAtomDocument(DocumentId documentId)
         {
             var memberToDeployFirstDocumentOn = cluster.ReadView.Members.First();
+
+            var props = Props.Create(() => new WorkPullingDocumentActor(new ConfigurableAtomDocumentSettings(10)));
+
             var atomDocument =
                 Context.System.ActorOf(
-                 Props.Create<SubscriptionQueueActor>()
+                 props
                  .WithDeploy(
                      new Deploy(
-                         new RemoteScope(memberToDeployFirstDocumentOn.Address))), "atomDocument|" + documentId.Id);
+                         new RemoteScope(memberToDeployFirstDocumentOn.Address))), "atomDocument_" + documentId.Id);
 
             atomDocument.Tell(
                 new CreateAtomDocumentCommand(
-                    FeedTitle, FeedAuthor, AtomFeedId, documentId, null));
+                    FeedTitle, FeedAuthor, AtomFeedId, documentId, null), Self);
         }
-
-        private void CreateSubscriptionOnEachNode()
-        {
-            foreach (var member in cluster.ReadView.Members)
-            {
-                var subscriptionActor =
-             Context.System.ActorOf(
-                 Props.Create<SubscriptionQueueActor>()
-                 .WithDeploy(
-                     new Deploy(
-                         new RemoteScope(member.Address))), "subscription|" + AtomFeedId.Id);
-            }
-        }
-
+        
         private void MutateInternalState(AtomFeedCreated atomFeedCreated)
         {
             AtomFeedId = atomFeedCreated.FeedId;
             CurrentFeedHeadDocument = atomFeedCreated.DocumentId;
             FeedTitle = atomFeedCreated.FeedTitle;
             FeedAuthor = atomFeedCreated.FeedAuthor;
+        }
+
+        private void MutateInternalState(object unhandledMessage)
+        {
+            LoggingAdapter.Error("Received unhandled persistence command " + unhandledMessage.GetType().ToString());
+        }
+
+        private void Process(object unhandledMessage)
+        {
+            LoggingAdapter.Error("Received unhandled command " + unhandledMessage.GetType().ToString());
         }
     }
 }
