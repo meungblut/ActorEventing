@@ -74,18 +74,19 @@
     <Compile Include="ActorLocations.cs" />
     <Compile Include="AllLocalSubscriptionsActor.cs" />
     <Compile Include="BurstableEventPublisher.cs" />
+    <Compile Include="BurstAtomDocumentRetriever.cs" />
     <Compile Include="Feed\FeedActorMessageExtractor.cs" />
     <Compile Include="Feed\ShardedAtomFeedFactory.cs" />
     <Compile Include="NewSubscription.cs" />
     <Compile Include="QueuedEvent.cs" />
-    <Compile Include="Subscritpion\BurstSubscriptionManager.cs" />
-    <Compile Include="Subscritpion\BurstSubscriptionActor.cs" />
-    <Compile Include="Subscritpion\BurstSubscriptionMessageExtractor.cs" />
+    <Compile Include="Subscription\BurstSubscriptionManager.cs" />
+    <Compile Include="Subscription\BurstSubscriptionActor.cs" />
+    <Compile Include="Subscription\BurstSubscriptionMessageExtractor.cs" />
     <Compile Include="WorkPullingDocumentActor.cs" />
     <Compile Include="Feed\FeedActor.cs" />
     <Compile Include="RequestEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Subscritpion\SubscriptionQueueActor.cs" />
+    <Compile Include="Subscription\SubscriptionQueueActor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Euventing.Atom\Euventing.Atom.csproj">

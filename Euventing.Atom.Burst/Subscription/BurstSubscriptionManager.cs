@@ -7,7 +7,7 @@ using Euventing.Atom.Document;
 using Euventing.Core.Messages;
 using Euventing.Core.Subscriptions;
 
-namespace Euventing.Atom.Burst.Subscritpion
+namespace Euventing.Atom.Burst.Subscription
 {
     public class BurstSubscriptionManager : ISubscriptionManager
     {

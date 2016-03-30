@@ -33,7 +33,7 @@ namespace Euventing.Atom.Burst
             {
                 var address = string.Format(addressFormat, member.Address);
                 var actorRef = Context.System.ActorSelection(address);
-                actorRef.Tell(new RequestEvents(5));
+                actorRef.Tell(new RequestEvents(50));
             }
         }
 

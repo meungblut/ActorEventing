@@ -1,1 +1,1 @@
-.\bin\run\Euventing.ConsoleHost.exe portNumber/7674 akkaSystemName/akkaSystem seedNodes/127.0.0.1:7674 subscriptionId/1
+.\bin\run\Euventing.ConsoleHost.exe portNumber/7674 akkaSystemName/akkaSystem seedNodes/127.0.0.1:7674 subscriptionId/1 persistence/sql-server entriesPerDocument/1000

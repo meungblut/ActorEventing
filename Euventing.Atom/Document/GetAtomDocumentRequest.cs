@@ -8,5 +8,9 @@ namespace Euventing.Atom.Document
         {
             this.DocumentId = documentId;
         }
+
+        public GetAtomDocumentRequest()
+        {
+        }
     }
 }

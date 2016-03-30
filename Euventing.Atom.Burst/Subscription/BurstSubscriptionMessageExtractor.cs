@@ -1,10 +1,9 @@
 ﻿using Akka.Cluster.Sharding;
 using Akka.Persistence;
 using Euventing.Atom.Document.Actors.ShardSupport;
-using Euventing.Core;
 using Euventing.Core.Messages;
 
-namespace Euventing.Atom.Burst.Subscritpion
+namespace Euventing.Atom.Burst.Subscription
 {
     public class BurstSubscriptionMessageExtractor : IMessageExtractor
     {

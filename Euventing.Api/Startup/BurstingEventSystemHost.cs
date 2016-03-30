@@ -1,6 +1,6 @@
 ﻿using Euventing.Api.WebApi;
 using Euventing.Atom.Burst;
-using Euventing.Atom.Burst.Subscritpion;
+using Euventing.Atom.Burst.Subscription;
 using Euventing.Core;
 using Euventing.Core.Logging;
 using Euventing.Core.Subscriptions;

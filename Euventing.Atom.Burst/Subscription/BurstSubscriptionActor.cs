@@ -1,12 +1,11 @@
-﻿using System;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.Cluster;
 using Euventing.Atom.Burst.Feed;
 using Euventing.Atom.Document;
 using Euventing.Core;
 using Euventing.Core.Messages;
 
-namespace Euventing.Atom.Burst.Subscritpion
+namespace Euventing.Atom.Burst.Subscription
 {
     public class BurstSubscriptionActor : PersistentActorBase
     {

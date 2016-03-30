@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using Euventing.Atom.Document;
 using Euventing.Core;
 using Euventing.Core.Messages;
 
-namespace Euventing.Atom.Burst.Subscritpion
+namespace Euventing.Atom.Burst.Subscription
 {
     public class SubscriptionQueueActor : PersistentActorBase
     {
@@ -25,7 +24,7 @@ namespace Euventing.Atom.Burst.Subscritpion
         protected override bool ReceiveRecover(object message)
         {
             if (message is DomainEvent)
-                Persist(message, x => Enqueue((DomainEvent)message));
+                Enqueue((DomainEvent)message);
 
             return true;
         }
@@ -36,7 +35,7 @@ namespace Euventing.Atom.Burst.Subscritpion
                 DequeueAndSend((RequestEvents)message);
 
             if (message is DomainEvent && shouldBeInThisStream)
-                Persist(message, x => Enqueue((DomainEvent)x));
+                PersistAsync(message, x => Enqueue((DomainEvent)x));
 
             return true;
         }

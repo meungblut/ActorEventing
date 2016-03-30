@@ -30,7 +30,7 @@ namespace Euventing.ConsoleHost
             eventSystemHost.Start();
 
             Console.Title = string.Join(" ", args);
-            Thread.Sleep(TimeSpan.FromSeconds(10));
+            Thread.Sleep(TimeSpan.FromSeconds(5));
 
             var subscriptionId = new SubscriptionId(GetValueFromCommandLine("subscriptionId", args));
 
@@ -61,7 +61,6 @@ namespace Euventing.ConsoleHost
                 {
                     notifier.PublishMessage(new DummyDomainEvent(akkaPortNumber + ":" + (++i).ToString()));
                     LogManager.GetLogger("").Info("Raising event with id" + i);
-                    Thread.Sleep(TimeSpan.FromMilliseconds(50));
                 }
             }
 
