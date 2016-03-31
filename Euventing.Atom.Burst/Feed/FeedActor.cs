@@ -45,7 +45,7 @@ namespace Euventing.Atom.Burst.Feed
             if (CurrentFeedHeadDocument != null)
                 throw new FeedAlreadyCreatedException(CurrentFeedHeadDocument.Id);
 
-            var documentId = new DocumentId(creationCommand.FeedId.Id + "|" + headDocumentIndex);
+            var documentId = new DocumentId(headDocumentIndex.ToString());
             var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author,
                 creationCommand.FeedId);
 
@@ -70,7 +70,7 @@ namespace Euventing.Atom.Burst.Feed
                  props
                  .WithDeploy(
                      new Deploy(
-                         new RemoteScope(memberToDeployFirstDocumentOn.Address))), feedId.Id + "|" + documentId.Id);
+                         new RemoteScope(memberToDeployFirstDocumentOn.Address))), feedId.Id + "_" + documentId.Id);
 
             atomDocument.Tell(
                 new CreateAtomDocumentCommand(
@@ -90,12 +90,12 @@ namespace Euventing.Atom.Burst.Feed
 
         private void MutateInternalState(object unhandledMessage)
         {
-            LoggingAdapter.Error("Received unhandled persistence command " + unhandledMessage.GetType().ToString());
+            LoggingAdapter.Error("Received unhandled persistence command " + unhandledMessage.GetType());
         }
 
         private void Process(object unhandledMessage)
         {
-            LoggingAdapter.Error("Received unhandled command " + unhandledMessage.GetType().ToString());
+            LoggingAdapter.Error("Received unhandled command " + unhandledMessage.GetType());
         }
     }
 }

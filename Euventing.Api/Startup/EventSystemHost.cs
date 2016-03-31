@@ -34,8 +34,8 @@ namespace Euventing.Api.Startup
             var eventPublisher = new DistributedPubSubEventPublisher(actorSystem);
             var loggingEventPublisher = new LoggingEventPublisherDecorator(eventPublisher);
 
-            ShardedAtomDocumentFactory atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
-            ShardedAtomFeedFactory atomFeedFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory, new ConfigurableAtomDocumentSettings(EntriesPerDocument));
+            var atomDocumentFactory = new ShardedAtomDocumentFactory(actorSystem);
+            var atomFeedFactory = new ShardedAtomFeedFactory(actorSystem, atomDocumentFactory, new ConfigurableAtomDocumentSettings(EntriesPerDocument));
 
             var settings = new AtomNotificationSettings(atomFeedFactory);
 

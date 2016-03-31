@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Akka.Event;
 using Euventing.Atom.Document;
 using Euventing.Core;
 using Euventing.Core.Messages;
@@ -14,6 +15,7 @@ namespace Euventing.Atom.Burst.Subscription
 
         protected override void PreStart()
         {
+            Context.GetLogger().Info("Starting queue actor with id " + Context.Self.Path);
             var actor = Context.ActorSelection("/user/" + ActorLocations.LocalSubscriptionManagerLocation);
 
             actor.Tell(new NewSubscription(Context.Self));

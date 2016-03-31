@@ -27,11 +27,11 @@ namespace Euventing.Atom.Burst
         {
             Cluster = Cluster.Get(Context.System);
 
-            string addressFormat = "{0}/user/subscription_" + id.Id;
+            string addressFormat = "{0}/user/subscription_{1}_" + id.Id;
 
             foreach (var member in Cluster.ReadView.Members)
             {
-                var address = string.Format(addressFormat, member.Address);
+                var address = string.Format(addressFormat, member.Address, member.Address.GetHashCode());
                 var actorRef = Context.System.ActorSelection(address);
                 actorRef.Tell(new RequestEvents(50));
             }

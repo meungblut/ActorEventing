@@ -13,11 +13,11 @@ namespace Euventing.Atom.Burst.Subscription
     {
         private readonly IActorRef burstSubscriptionActorRef;
 
-        public BurstSubscriptionManager(ActorSystem actorSystem)
+        public BurstSubscriptionManager(ActorSystem actorSystem, ShardedAtomFeedFactory shardedAtomFeedFactory)
         {
             var settings = ClusterShardingSettings.Create(actorSystem);
 
-            var props = Props.Create(() => new BurstSubscriptionActor(new ShardedAtomFeedFactory(actorSystem, new ConfigurableAtomDocumentSettings(10))));
+            var props = Props.Create(() => new BurstSubscriptionActor(shardedAtomFeedFactory));
 
             burstSubscriptionActorRef = ClusterSharding.Get(actorSystem).Start(
                 typeName: "BurstSubscriptionActor",

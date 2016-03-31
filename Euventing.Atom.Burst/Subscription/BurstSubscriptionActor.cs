@@ -93,7 +93,7 @@ namespace Euventing.Atom.Burst.Subscription
                          Props.Create<SubscriptionQueueActor>()
                          .WithDeploy(
                              new Deploy(
-                                 new RemoteScope(member.Address))), "subscription_" + message.SubscriptionId.Id);
+                                 new RemoteScope(member.Address))), "subscription_" + member.Address.GetHashCode() + "_" + message.SubscriptionId.Id);
             }
         }
     }

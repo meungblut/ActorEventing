@@ -27,7 +27,7 @@ namespace Euventing.AcceptanceTest
         private SyndicationFeed retrievedFeed;
         private static int eventsPerDocument = 10;
 
-        private static EventSystemHost inProcessHost;
+        private static BurstingEventSystemHost inProcessHost;
         private static OutOfProcessProcessClusterMember outOfProcessClusterMembersHost;
 
 
@@ -41,7 +41,7 @@ namespace Euventing.AcceptanceTest
         [BeforeFeature]
         public static void StartEventHosts()
         {
-            inProcessHost = new EventSystemHost(6483, "akkaSystem", "inmem", "127.0.0.1:6483", 3600, eventsPerDocument);
+            inProcessHost = new BurstingEventSystemHost(6483, "akkaSystem", "inmem", "127.0.0.1:6483", 3600, eventsPerDocument);
             inProcessHost.Start();
             outOfProcessClusterMembersHost = new OutOfProcessProcessClusterMember(eventsPerDocument);
             outOfProcessClusterMembersHost.Start();

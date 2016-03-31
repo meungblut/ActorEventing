@@ -50,6 +50,8 @@ namespace Euventing.ConsoleHost
                         new AllEventMatcher());
 
                     shardedSubscriptionManager.CreateSubscription(_subscriptionMessage);
+                    Thread.Sleep(1000);
+
                 }
 
                 Thread.Sleep(1000);
