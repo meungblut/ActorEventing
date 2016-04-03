@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
@@ -15,8 +17,9 @@ namespace Euventing.Atom.Burst
         private readonly IAtomDocumentSettings atomDocumentSettings;
         private int entriesInCurrentDocument;
         private readonly ShardedAtomFeedFactory shardedAtomFeedFactory;
-
         private DocumentId documentIdToBeUsedAsNextHead;
+
+        private readonly ConcurrentDictionary<Address, IActorRef> subscriptionsCurrentlyPolling = new ConcurrentDictionary<Address, IActorRef>();
 
         public WorkPullingDocumentActor(IAtomDocumentSettings settings, ShardedAtomFeedFactory feedFactory)
         {
@@ -32,13 +35,23 @@ namespace Euventing.Atom.Burst
             {
                 PollSubscriptionQueue(member.Address);
             }
+
+            Context.System.Scheduler.ScheduleTellRepeatedly
+                (TimeSpan.FromMilliseconds(50),
+                TimeSpan.FromMilliseconds(50),
+                Context.Self, new CheckAllClusterMembersAreBeingPolled(), Context.Self);
         }
 
         private void PollSubscriptionQueue(Address member)
         {
             LoggingAdapter.Info($"Asking for events from node {member.ToString()}");
+
             string addressFormat = "{0}/user/subscription_{1}_" + FeedId.Id;
             var address = string.Format(addressFormat, member, member.GetHashCode());
+
+            //string addressFormat = "*/user/subscription_{0}_" + FeedId.Id;
+            //var address = string.Format(addressFormat, member.GetHashCode());
+
             var actorRef = Context.System.ActorSelection(address);
 
             var eventsToRequest = atomDocumentSettings.NumberOfEventsPerDocument - entriesInCurrentDocument;
@@ -59,9 +72,29 @@ namespace Euventing.Atom.Burst
             PollQueues();
         }
 
+        private void Process(CheckAllClusterMembersAreBeingPolled checkMembers)
+        {
+            Cluster = Cluster.Get(Context.System);
+
+            LoggingAdapter.Info($"Checking members to see if being polled");
+
+
+            foreach (var member in Cluster.ReadView.Members)
+            {
+                if (!subscriptionsCurrentlyPolling.ContainsKey(member.Address))
+                {
+                    LoggingAdapter.Info($"Didn't find {member.Address} in poll list. Polling now");
+                    PollSubscriptionQueue(member.Address);
+                }
+            }
+        }
+
         private void Process(RequestedEvents requestedEvents)
         {
             LoggingAdapter.Info($"Received {requestedEvents.Events.Count()} events");
+
+            subscriptionsCurrentlyPolling.AddOrUpdate(requestedEvents.AddressOfSender, Context.Sender,
+                (x, y) => Context.Sender);
 
             foreach (var requestedEvent in requestedEvents.Events)
             {
@@ -151,25 +184,7 @@ namespace Euventing.Atom.Burst
         }
     }
 
-    internal class DocumentFull
+    internal class CheckAllClusterMembersAreBeingPolled
     {
-        public FeedId FeedId { get; private set; }
-        public DocumentId DocumentId { get; private set; }
-
-        public DocumentFull(FeedId feedId, DocumentId documentId)
-        {
-            FeedId = feedId;
-            DocumentId = documentId;
-        }
-    }
-
-    public class PollForEvents
-    {
-        public PollForEvents(Address addressToPoll)
-        {
-            AddressToPoll = addressToPoll;
-        }
-
-        public Address AddressToPoll { get; private set; }
     }
 }

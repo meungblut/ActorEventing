@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System.Collections.Concurrent;
+using Akka.Actor;
 using Akka.Cluster;
 using Euventing.Atom.Burst.Feed;
 using Euventing.Atom.Document;
@@ -12,6 +13,7 @@ namespace Euventing.Atom.Burst.Subscription
         private SubscriptionMessage subscriptionMessage;
         private readonly Cluster cluster;
         private readonly ShardedAtomFeedFactory shardedAtomFeedFactory;
+        private readonly ConcurrentDictionary<Address, IActorRef> subscriptionQueues = new ConcurrentDictionary<Address, IActorRef>(); 
 
         public BurstSubscriptionActor(ShardedAtomFeedFactory atomFeedFactory)
         {
@@ -57,6 +59,7 @@ namespace Euventing.Atom.Burst.Subscription
         private void CreateFeedActor(SubscriptionMessage subscription)
         {
             var actor = shardedAtomFeedFactory.GetActorRef();
+
             actor.Tell(new AtomFeedCreationCommand("", "", new FeedId(subscription.SubscriptionId.Id), null));
         }
 
@@ -71,7 +74,7 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void Process(object unhandledObject)
         {
-            LoggingAdapter.Debug("Subscription Actor. Unhandled command " + unhandledObject.GetType());
+            LoggingAdapter.Info("Subscription Actor. Unhandled command " + unhandledObject.GetType());
         }
 
         private void MutateInternalState(SubscriptionMessage message)
@@ -81,7 +84,7 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void MutateInternalState(object unhandledObject)
         {
-            LoggingAdapter.Debug("Subscription Actor. Unhandled persistence command " + unhandledObject.GetType());
+            LoggingAdapter.Info("Subscription Actor. Unhandled persistence command " + unhandledObject.GetType());
         }
 
         private void CreateSubscriptionOnEachNode(SubscriptionMessage message)
@@ -94,6 +97,10 @@ namespace Euventing.Atom.Burst.Subscription
                          .WithDeploy(
                              new Deploy(
                                  new RemoteScope(member.Address))), "subscription_" + member.Address.GetHashCode() + "_" + message.SubscriptionId.Id);
+
+                subscriptionQueues.AddOrUpdate(member.Address, subscriptionActor, (x, y) => subscriptionActor);
+
+                LoggingAdapter.Info($"Subscription Actor deployed with address {subscriptionActor.Path} ");
             }
         }
     }

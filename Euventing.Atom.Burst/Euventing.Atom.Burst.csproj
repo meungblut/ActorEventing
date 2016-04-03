@@ -75,13 +75,16 @@
     <Compile Include="AllLocalSubscriptionsActor.cs" />
     <Compile Include="BurstableEventPublisher.cs" />
     <Compile Include="BurstAtomDocumentRetriever.cs" />
+    <Compile Include="DocumentFull.cs" />
     <Compile Include="Feed\FeedActorMessageExtractor.cs" />
     <Compile Include="Feed\ShardedAtomFeedFactory.cs" />
     <Compile Include="NewLocalSubscriptionCreated.cs" />
+    <Compile Include="PollForEvents.cs" />
     <Compile Include="QueuedEvent.cs" />
     <Compile Include="Subscription\BurstSubscriptionManager.cs" />
     <Compile Include="Subscription\BurstSubscriptionActor.cs" />
     <Compile Include="Subscription\BurstSubscriptionMessageExtractor.cs" />
+    <Compile Include="Subscription\RequestedEvents.cs" />
     <Compile Include="WorkPullingDocumentActor.cs" />
     <Compile Include="Feed\FeedActor.cs" />
     <Compile Include="RequestEvents.cs" />

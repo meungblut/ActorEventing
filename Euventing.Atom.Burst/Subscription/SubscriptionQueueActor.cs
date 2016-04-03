@@ -14,18 +14,16 @@ namespace Euventing.Atom.Burst.Subscription
         readonly Queue<AtomEntry> queuedItems = new Queue<AtomEntry>();
         private bool shouldBeInThisStream = true;
         private int queueLength;
-        private FeedId feedId;
         private Address queueAddress;
 
         protected override void PreStart()
         {
-            Context.GetLogger().Info("Starting queue actor with id " + Context.Self.Path);
-            var actor = Context.ActorSelection("/user/" + ActorLocations.LocalSubscriptionManagerLocation);
+            Context.GetLogger().Info("Starting subscription queue actor with id " + Context.Self.Path);
 
+            var actor = Context.ActorSelection("/user/" + ActorLocations.LocalSubscriptionManagerLocation);
             actor.Tell(new NewLocalSubscriptionCreated(Context.Self));
 
             queueAddress = Cluster.Get(Context.System).SelfAddress;
-
             base.PreStart();
         }
 
@@ -74,21 +72,10 @@ namespace Euventing.Atom.Burst.Subscription
 
             Context.Sender.Tell(new RequestedEvents(events, queueLength, queueAddress), Context.Self);
         }
-    }
 
-    internal class RequestedEvents
-    {
-        public RequestedEvents(IEnumerable<QueuedEvent> events, int messagesRemaining, Address addressOfSender)
+        private void MutateInternalState(RecoveryCompleted complete)
         {
-            Events = events;
-            MessagesRemaining = messagesRemaining;
-            AddressOfSender = addressOfSender;
+            this.UnstashAll();
         }
-
-        public int MessagesRemaining { get; private set; }
-
-        public IEnumerable<QueuedEvent> Events { get; private set; } 
-
-        public Address AddressOfSender { get; private set; }
     }
 }
