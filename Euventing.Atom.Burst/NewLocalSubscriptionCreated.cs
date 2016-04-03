@@ -2,9 +2,9 @@
 
 namespace Euventing.Atom.Burst
 {
-    public class NewSubscription
+    public class NewLocalSubscriptionCreated
     {
-        public NewSubscription(IActorRef subscriber)
+        public NewLocalSubscriptionCreated(IActorRef subscriber)
         {
             SubscriptionQueue = subscriber;
         }

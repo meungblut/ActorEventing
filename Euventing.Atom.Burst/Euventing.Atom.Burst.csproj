@@ -77,7 +77,7 @@
     <Compile Include="BurstAtomDocumentRetriever.cs" />
     <Compile Include="Feed\FeedActorMessageExtractor.cs" />
     <Compile Include="Feed\ShardedAtomFeedFactory.cs" />
-    <Compile Include="NewSubscription.cs" />
+    <Compile Include="NewLocalSubscriptionCreated.cs" />
     <Compile Include="QueuedEvent.cs" />
     <Compile Include="Subscription\BurstSubscriptionManager.cs" />
     <Compile Include="Subscription\BurstSubscriptionActor.cs" />

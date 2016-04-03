@@ -16,15 +16,15 @@ namespace Euventing.Atom.Burst
             }
         }
 
-        private void CreateSubscription(NewSubscription s)
+        private void CreateSubscription(NewLocalSubscriptionCreated s)
         {
             Subscribers.Add(s.SubscriptionQueue);
         }
 
         protected override void OnReceive(object message)
         {
-            if (message is NewSubscription)
-                CreateSubscription((NewSubscription)message);
+            if (message is NewLocalSubscriptionCreated)
+                CreateSubscription((NewLocalSubscriptionCreated)message);
 
             string s = Context.Self.Path.Name.ToString();
 

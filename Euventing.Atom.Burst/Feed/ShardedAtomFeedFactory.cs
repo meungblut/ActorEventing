@@ -20,7 +20,7 @@ namespace Euventing.Atom.Burst.Feed
             this.atomDocumentSettings = atomDocumentSettings;
             this.actorSystem = actorSystem;
 
-            var props = Props.Create(() => new FeedActor(this.atomDocumentSettings));
+            var props = Props.Create(() => new FeedActor(this.atomDocumentSettings, this));
 
             var settings = ClusterShardingSettings.Create(actorSystem);
             ClusterSharding.Get(actorSystem).Start(

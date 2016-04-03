@@ -31,12 +31,14 @@ namespace Euventing.Atom.Logging
             }
         }
 
-        public Task<AtomDocument> GetHeadDocument(SubscriptionId subscriptionId)
+        public async Task<AtomDocument> GetHeadDocument(SubscriptionId subscriptionId)
         {
             logger.Info("GetHeadDocument " + subscriptionId.Id);
             try
             {
-                return decoratedRetriever.GetHeadDocument(subscriptionId);
+                var document = await decoratedRetriever.GetHeadDocument(subscriptionId);
+                logger.Info($"GetHeadDocument: Returning id {document.DocumentId.Id} with {document.Entries.Count} events in");
+                return document;
             }
             catch (System.Exception e)
             {

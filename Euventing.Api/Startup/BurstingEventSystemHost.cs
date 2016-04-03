@@ -4,6 +4,7 @@ using Euventing.Atom.Burst;
 using Euventing.Atom.Burst.Feed;
 using Euventing.Atom.Burst.Subscription;
 using Euventing.Atom.Document;
+using Euventing.Atom.Logging;
 using Euventing.Core;
 using Euventing.Core.Logging;
 using Euventing.Core.Subscriptions;
@@ -21,7 +22,7 @@ namespace Euventing.Api.Startup
         {
             var actorSystemFactory = new ShardedActorSystemFactory(AkkaHostingPort, ActorSystemName, PersistenceSectionName, AkkaSeedNodes);
             var actorSystem = actorSystemFactory.GetActorSystem();
-            var factory = new ShardedAtomFeedFactory(actorSystem, new ConfigurableAtomDocumentSettings(1000));
+            var factory = new ShardedAtomFeedFactory(actorSystem, new ConfigurableAtomDocumentSettings(EntriesPerDocument));
 
             var subscriptionManager = new BurstSubscriptionManager(actorSystem, factory);
             var eventPublisher = new BurstableEventPublisher(actorSystem);
@@ -30,7 +31,7 @@ namespace Euventing.Api.Startup
             IocContainer.Register<ISubscriptionManager>(subscriptionManager);
             IocContainer.Register<IEventPublisher>(loggingEventPublisher);
 
-            var documentRetriever = new BurstAtomDocumentRetriever(factory);
+            var documentRetriever = new LoggingAtomDocumentRetrieverDecorator(new BurstAtomDocumentRetriever(factory));
             IocContainer.Register<IAtomDocumentRetriever>(documentRetriever);
 
             IocContainer.RegisterMultiple<IOwinConfiguration, WebApiOwinConfiguration>(IocLifecycle.PerRequest);

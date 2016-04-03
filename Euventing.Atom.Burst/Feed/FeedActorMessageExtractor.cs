@@ -27,6 +27,9 @@ namespace Euventing.Atom.Burst.Feed
             if (message is AtomFeedCreationCommand)
                 return ((AtomFeedCreationCommand)message).FeedId.Id;
 
+            if (message is DocumentFull)
+                return ((DocumentFull) message).FeedId.Id;
+
             throw new CouldNotRouteMessageToShardException(this, message);
         }
 
@@ -46,6 +49,9 @@ namespace Euventing.Atom.Burst.Feed
 
             if (message is SaveSnapshotSuccess)
                 return ((SaveSnapshotSuccess)message);
+
+            if (message is DocumentFull)
+                return ((DocumentFull)message);
 
             throw new CouldNotRouteMessageToShardException(this, message);
         }
@@ -69,6 +75,9 @@ namespace Euventing.Atom.Burst.Feed
 
             if (message is SaveSnapshotSuccess)
                 return ((SaveSnapshotSuccess)message).Metadata.PersistenceId.GetHashCode().ToString();
+
+            if (message is DocumentFull)
+                return ((DocumentFull)message).FeedId.Id.GetHashCode().ToString();
 
             throw new CouldNotRouteMessageToShardException(this, message);
         }

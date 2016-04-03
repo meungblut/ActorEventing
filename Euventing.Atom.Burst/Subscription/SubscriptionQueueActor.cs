@@ -1,24 +1,30 @@
 ﻿using System.Collections.Generic;
+using Akka.Actor;
+using Akka.Cluster;
 using Akka.Event;
+using Akka.Persistence;
 using Euventing.Atom.Document;
 using Euventing.Core;
 using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst.Subscription
 {
-    public class SubscriptionQueueActor : PersistentActorBase
+    public class SubscriptionQueueActor : PersistentActorBase, IWithUnboundedStash
     {
         readonly Queue<AtomEntry> queuedItems = new Queue<AtomEntry>();
         private bool shouldBeInThisStream = true;
         private int queueLength;
         private FeedId feedId;
+        private Address queueAddress;
 
         protected override void PreStart()
         {
             Context.GetLogger().Info("Starting queue actor with id " + Context.Self.Path);
             var actor = Context.ActorSelection("/user/" + ActorLocations.LocalSubscriptionManagerLocation);
 
-            actor.Tell(new NewSubscription(Context.Self));
+            actor.Tell(new NewLocalSubscriptionCreated(Context.Self));
+
+            queueAddress = Cluster.Get(Context.System).SelfAddress;
 
             base.PreStart();
         }
@@ -27,6 +33,9 @@ namespace Euventing.Atom.Burst.Subscription
         {
             if (message is DomainEvent)
                 Enqueue((DomainEvent)message);
+
+            if (message is RecoveryCompleted)
+                this.UnstashAll();
 
             return true;
         }
@@ -58,11 +67,28 @@ namespace Euventing.Atom.Burst.Subscription
             while (i < eventRequest.MaxEventsToSend && queueLength > 0)
             {
                 queueLength--;
-                events.Add(new QueuedEvent(queuedItems.Dequeue(), queueLength));
+                events.Add(new QueuedEvent(queuedItems.Dequeue()));
                 DeleteMessages(1, true);
+                i++;
             }
 
-            Context.Sender.Tell(events, Context.Self);
+            Context.Sender.Tell(new RequestedEvents(events, queueLength, queueAddress), Context.Self);
         }
+    }
+
+    internal class RequestedEvents
+    {
+        public RequestedEvents(IEnumerable<QueuedEvent> events, int messagesRemaining, Address addressOfSender)
+        {
+            Events = events;
+            MessagesRemaining = messagesRemaining;
+            AddressOfSender = addressOfSender;
+        }
+
+        public int MessagesRemaining { get; private set; }
+
+        public IEnumerable<QueuedEvent> Events { get; private set; } 
+
+        public Address AddressOfSender { get; private set; }
     }
 }

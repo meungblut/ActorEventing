@@ -3,17 +3,33 @@ namespace Euventing.Atom.Document
     public class CreateAtomDocumentCommand
     {
         public CreateAtomDocumentCommand(
-            string title, 
-            string author, 
+            string title,
+            string author,
             FeedId feedId,
-            DocumentId documentId, 
-            DocumentId earlierEventsDocumentId)
+            DocumentId documentId,
+            DocumentId previousHeadDocumentId)
         {
             Title = title;
             Author = author;
             FeedId = feedId;
             DocumentId = documentId;
-            EarlierEventsDocumentId = earlierEventsDocumentId;
+            PreviousHeadDocumentId = previousHeadDocumentId;
+        }
+
+        public CreateAtomDocumentCommand(
+            string title,
+            string author,
+            FeedId feedId,
+            DocumentId documentId,
+            DocumentId previousHeadDocumentId,
+            DocumentId nextHeadDocumentId)
+        {
+            Title = title;
+            Author = author;
+            FeedId = feedId;
+            DocumentId = documentId;
+            PreviousHeadDocumentId = previousHeadDocumentId;
+            NextHeadDocumentId = nextHeadDocumentId;
         }
 
         public string Title { get; }
@@ -24,6 +40,8 @@ namespace Euventing.Atom.Document
 
         public DocumentId DocumentId { get; }
 
-        public DocumentId EarlierEventsDocumentId { get; }
+        public DocumentId PreviousHeadDocumentId { get; }
+
+        public DocumentId NextHeadDocumentId { get; }
     }
 }

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System.Linq;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
+using Euventing.Atom.Burst.Feed;
+using Euventing.Atom.Burst.Subscription;
 using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors;
-using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst
 {
@@ -15,73 +13,85 @@ namespace Euventing.Atom.Burst
     {
         protected Cluster Cluster;
         private readonly IAtomDocumentSettings atomDocumentSettings;
-
         private int entriesInCurrentDocument;
+        private readonly ShardedAtomFeedFactory shardedAtomFeedFactory;
 
-        public WorkPullingDocumentActor(IAtomDocumentSettings settings)
+        private DocumentId documentIdToBeUsedAsNextHead;
+
+        public WorkPullingDocumentActor(IAtomDocumentSettings settings, ShardedAtomFeedFactory feedFactory)
         {
+            shardedAtomFeedFactory = feedFactory;
             atomDocumentSettings = settings;
         }
 
-        private void PollQueues(FeedId id)
+        private void PollQueues()
         {
             Cluster = Cluster.Get(Context.System);
 
-            string addressFormat = "{0}/user/subscription_{1}_" + id.Id;
-
             foreach (var member in Cluster.ReadView.Members)
             {
-                var address = string.Format(addressFormat, member.Address, member.Address.GetHashCode());
-                var actorRef = Context.System.ActorSelection(address);
-                actorRef.Tell(new RequestEvents(50));
+                PollSubscriptionQueue(member.Address);
             }
+        }
+
+        private void PollSubscriptionQueue(Address member)
+        {
+            LoggingAdapter.Info($"Asking for events from node {member.ToString()}");
+            string addressFormat = "{0}/user/subscription_{1}_" + FeedId.Id;
+            var address = string.Format(addressFormat, member, member.GetHashCode());
+            var actorRef = Context.System.ActorSelection(address);
+
+            var eventsToRequest = atomDocumentSettings.NumberOfEventsPerDocument - entriesInCurrentDocument;
+
+            actorRef.Tell(new RequestEvents(eventsToRequest));
         }
 
         protected void Process(CreateAtomDocumentCommand creationRequest)
         {
+            LoggingAdapter.Info($"Created atom document with id {creationRequest.DocumentId.Id}");
+
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
-                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
+                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.PreviousHeadDocumentId);
 
             MutateInternalState(atomDocumentCreatedEvent);
             Persist(atomDocumentCreatedEvent, MutateInternalState);
 
-            PollQueues(creationRequest.FeedId);
+            PollQueues();
         }
 
-        private void Process(List<QueuedEvent> requestedEvents)
+        private void Process(RequestedEvents requestedEvents)
         {
-            int outstandingEvents = 0;
-            foreach (var requestedEvent in requestedEvents)
+            LoggingAdapter.Info($"Received {requestedEvents.Events.Count()} events");
+
+            foreach (var requestedEvent in requestedEvents.Events)
             {
+                //TODO: something with this.
+                entriesInCurrentDocument++;
+
                 Persist(requestedEvent.Message, MutateInternalState);
-                outstandingEvents = requestedEvent.QueueLength;
             }
 
-            if (outstandingEvents > 0)
-                LoggingAdapter.Info($"{outstandingEvents} remain in queue");
+            if (requestedEvents.MessagesRemaining > 0)
+                LoggingAdapter.Info($"{requestedEvents.MessagesRemaining} remain in queue");
+
+            LoggingAdapter.Info($"{entriesInCurrentDocument} in document against {atomDocumentSettings.NumberOfEventsPerDocument}");
 
             if (entriesInCurrentDocument >= atomDocumentSettings.NumberOfEventsPerDocument)
             {
+                LoggingAdapter.Info($"Document is full");
+
                 DocumentIsFull();
             }
             else
             {
-                Self.Tell(new PollForEvents());
+                Self.Tell(new PollForEvents(requestedEvents.AddressOfSender));
             }
         }
 
         private void DocumentIsFull()
         {
-            var documentId = new DocumentId((int.Parse(DocumentId.Id) + 1).ToString());
-            var addressToDeployOn = GetDifferentNodeIfPossible();
-
-            var props = Props.Create(() => new WorkPullingDocumentActor(atomDocumentSettings));
-
-            var newActor =
-                Context.System.ActorOf(
-                    props.
-                    WithDeploy(new Deploy(new RemoteScope(addressToDeployOn))));
-            newActor.Tell(new CreateAtomDocumentCommand(this.Title, this.Author, this.FeedId, documentId, this.DocumentId));
+            shardedAtomFeedFactory.GetActorRef().Tell(new DocumentFull(FeedId, DocumentId));
+            LaterEventsDocumentId = documentIdToBeUsedAsNextHead;
         }
 
         private Address GetDifferentNodeIfPossible()
@@ -96,7 +106,6 @@ namespace Euventing.Atom.Burst
         {
             Entries.Add(entry);
             LoggingAdapter.Info($"Added event {entry.Id} to feed {FeedId.Id} document {DocumentId.Id}");
-            entriesInCurrentDocument++;
         }
 
         private void Process(GetAtomDocumentRequest request)
@@ -106,7 +115,7 @@ namespace Euventing.Atom.Burst
 
         private void Process(PollForEvents request)
         {
-            PollQueues(FeedId);
+            PollSubscriptionQueue(request.AddressToPoll);
         }
 
         protected void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
@@ -116,6 +125,7 @@ namespace Euventing.Atom.Burst
             this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.Title = documentCreated.Title;
             this.FeedId = documentCreated.FeedId;
+            this.documentIdToBeUsedAsNextHead = documentCreated.NextEventsDocumentId;
         }
 
         private void MutateInternalState(RecoveryCompleted complete)
@@ -141,7 +151,25 @@ namespace Euventing.Atom.Burst
         }
     }
 
+    internal class DocumentFull
+    {
+        public FeedId FeedId { get; private set; }
+        public DocumentId DocumentId { get; private set; }
+
+        public DocumentFull(FeedId feedId, DocumentId documentId)
+        {
+            FeedId = feedId;
+            DocumentId = documentId;
+        }
+    }
+
     public class PollForEvents
     {
+        public PollForEvents(Address addressToPoll)
+        {
+            AddressToPoll = addressToPoll;
+        }
+
+        public Address AddressToPoll { get; private set; }
     }
 }

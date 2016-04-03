@@ -38,7 +38,7 @@ namespace Euventing.Atom.Document.Actors
         {
             LoggingAdapter.Debug("Creating document " + creationRequest.DocumentId.Id + " on node " + Cluster.Get(Context.System).SelfAddress);
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
-                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.EarlierEventsDocumentId);
+                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.PreviousHeadDocumentId);
 
             MutateInternalState(atomDocumentCreatedEvent);
             Persist(atomDocumentCreatedEvent, MutateInternalState);
