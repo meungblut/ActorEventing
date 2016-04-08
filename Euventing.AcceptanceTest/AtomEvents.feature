@@ -50,6 +50,13 @@ Scenario: No event subscription yet
 	Then I should receive a response with the http status code 'NotFound'
 
 @atomEvents
+Scenario: Get an atom document
+	Given I have subscribed to an atom feed with a subscription Id of '11111'
+	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
+	When I get the feed from 'http://localhost:3600/events/atom/feed/'
+	Then I should have an atom document with '0' events
+
+@atomEvents
 Scenario: Get an atom document with events in it
 	Given I have subscribed to an atom feed with a subscription Id of '11111'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'

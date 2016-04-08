@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections.Generic;
 using Akka.Actor;
 using Akka.Cluster;
 using Euventing.Atom.Burst.Feed;
@@ -12,12 +12,13 @@ namespace Euventing.Atom.Burst.Subscription
     {
         private SubscriptionMessage subscriptionMessage;
         private readonly Cluster cluster;
-        private readonly ShardedAtomFeedFactory shardedAtomFeedFactory;
-        private readonly ConcurrentDictionary<Address, IActorRef> subscriptionQueues = new ConcurrentDictionary<Address, IActorRef>(); 
+        private readonly List<IActorRef> subscriptionQueues = new List<IActorRef>();
+        private readonly IAtomDocumentSettings atomDocumentSettings;
+        private IActorRef atomFeedActor;
 
-        public BurstSubscriptionActor(ShardedAtomFeedFactory atomFeedFactory)
+        public BurstSubscriptionActor(IAtomDocumentSettings settings)
         {
-            shardedAtomFeedFactory = atomFeedFactory;
+            atomDocumentSettings = settings;
             cluster = Cluster.Get(Context.System);
         }
 
@@ -41,10 +42,14 @@ namespace Euventing.Atom.Burst.Subscription
             return true;
         }
 
-
         private void Process(DeleteSubscriptionMessage deleteSubscription)
         {
             LoggingAdapter.Debug("Received delete subscription message " + subscriptionMessage.SubscriptionId.Id);
+        }
+
+        private async void Process(GetHeadDocumentForFeedRequest getHeadDocumentForFeedRequest)
+        {
+            atomFeedActor.Forward(getHeadDocumentForFeedRequest);
         }
 
         private void Process(SubscriptionMessage subscription)
@@ -58,11 +63,11 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void CreateFeedActor(SubscriptionMessage subscription)
         {
-            var actor = shardedAtomFeedFactory.GetActorRef();
-
-            actor.Tell(new AtomFeedCreationCommand("", "", new FeedId(subscription.SubscriptionId.Id), null));
+            var props = Props.Create(() => new FeedActor(this.atomDocumentSettings));
+            atomFeedActor = Context.ActorOf(props);
+            atomFeedActor.Tell(new SubscriptionsAtomFeedShouldPoll(subscriptionQueues));
+            atomFeedActor.Tell(new AtomFeedCreationCommand("", "", new FeedId(subscription.SubscriptionId.Id), null));
         }
-
 
         private void Process(SubscriptionQuery query)
         {
@@ -98,7 +103,7 @@ namespace Euventing.Atom.Burst.Subscription
                              new Deploy(
                                  new RemoteScope(member.Address))), "subscription_" + member.Address.GetHashCode() + "_" + message.SubscriptionId.Id);
 
-                subscriptionQueues.AddOrUpdate(member.Address, subscriptionActor, (x, y) => subscriptionActor);
+                subscriptionQueues.Add(subscriptionActor);
 
                 LoggingAdapter.Info($"Subscription Actor deployed with address {subscriptionActor.Path} ");
             }

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Akka.Actor;
 using Euventing.Atom.Burst.Feed;
+using Euventing.Atom.Burst.Subscription;
 using Euventing.Atom.Document;
 using Euventing.Core.Messages;
 using Euventing.Atom.Serialization;
@@ -10,26 +11,26 @@ namespace Euventing.Atom.Burst
 {
     public class BurstAtomDocumentRetriever : IAtomDocumentRetriever
     {
-        private readonly ShardedAtomFeedFactory shardedAtomFeedFactory;
+        private readonly BurstSubscriptionManager burstManager;
         private readonly AtomDocumentSerialiser atomDocumentSerialiser;
 
-        public BurstAtomDocumentRetriever(ShardedAtomFeedFactory feedFactory)
+        public BurstAtomDocumentRetriever(BurstSubscriptionManager burstManager)
         {
             atomDocumentSerialiser = new AtomDocumentSerialiser();
-            shardedAtomFeedFactory = feedFactory;
+            this.burstManager = burstManager;
         }
 
         public async Task<DocumentId> GetHeadDocumentId(SubscriptionId subscriptionId)
         {
-            var documentId = await shardedAtomFeedFactory.GetActorRef().Ask<DocumentId>(new GetHeadDocumentIdForFeedRequest(subscriptionId));
-            return documentId;
+            return null;
+            //var documentId = await shardedAtomFeedFactory.GetActorRef(null).Ask<DocumentId>(new GetHeadDocumentIdForFeedRequest(subscriptionId));
+            //return documentId;
         }
 
         public async Task<AtomDocument> GetHeadDocument(SubscriptionId subscriptionId)
         {
-            var documentId = await shardedAtomFeedFactory.GetActorRef().Ask<IActorRef>(new GetHeadDocumentIdForFeedRequest(subscriptionId));
-            var atomDocument = await documentId.Ask<AtomDocument>(new GetAtomDocumentRequest());
-            return atomDocument;
+            var document = await burstManager.BurstSubscriptionActorRef.Ask<AtomDocument>(new GetHeadDocumentForFeedRequest(subscriptionId));
+            return document;
         }
 
         public async Task<AtomDocument> GetDocument(DocumentId documentId)

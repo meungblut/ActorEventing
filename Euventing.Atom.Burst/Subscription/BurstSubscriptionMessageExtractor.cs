@@ -11,7 +11,7 @@ namespace Euventing.Atom.Burst.Subscription
         {
             if (message is SaveSnapshotSuccess)
                 return ((SaveSnapshotSuccess)message).Metadata.PersistenceId;
-            
+
             if (message is SubscriptionQuery)
                 return ((SubscriptionQuery)message).SubscriptionId.Id;
 
@@ -19,7 +19,10 @@ namespace Euventing.Atom.Burst.Subscription
                 return ((DeleteSubscriptionMessage)message).SubscriptionId.Id;
 
             if (message is SubscriptionMessage)
-               return ((SubscriptionMessage)message).SubscriptionId.Id;
+                return ((SubscriptionMessage)message).SubscriptionId.Id;
+
+            if (message is GetHeadDocumentForFeedRequest)
+                return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id;
 
             throw new CouldNotRouteMessageToShardException(null, message);
         }
@@ -27,16 +30,19 @@ namespace Euventing.Atom.Burst.Subscription
         public object EntityMessage(object message)
         {
             if (message is SubscriptionMessage)
-                return (SubscriptionMessage) message;
+                return (SubscriptionMessage)message;
 
             if (message is SubscriptionQuery)
-                return (SubscriptionQuery) message;
+                return (SubscriptionQuery)message;
 
             if (message is SaveSnapshotSuccess)
                 return (SaveSnapshotSuccess)message;
 
             if (message is DeleteSubscriptionMessage)
                 return (DeleteSubscriptionMessage)message;
+
+            if (message is GetHeadDocumentForFeedRequest)
+                return ((GetHeadDocumentForFeedRequest)message);
 
             throw new CouldNotRouteMessageToShardException(null, message);
 
@@ -55,6 +61,9 @@ namespace Euventing.Atom.Burst.Subscription
 
             if (message is SubscriptionMessage)
                 return ((SubscriptionMessage)message).SubscriptionId.Id.GetHashCode().ToString();
+
+            if (message is GetHeadDocumentForFeedRequest)
+                return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id.GetHashCode().ToString();
 
             throw new CouldNotRouteMessageToShardException(null, message);
         }

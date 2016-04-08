@@ -22,16 +22,16 @@ namespace Euventing.Api.Startup
         {
             var actorSystemFactory = new ShardedActorSystemFactory(AkkaHostingPort, ActorSystemName, PersistenceSectionName, AkkaSeedNodes);
             var actorSystem = actorSystemFactory.GetActorSystem();
-            var factory = new ShardedAtomFeedFactory(actorSystem, new ConfigurableAtomDocumentSettings(EntriesPerDocument));
+            var atomSettings = new ConfigurableAtomDocumentSettings(EntriesPerDocument);
 
-            var subscriptionManager = new BurstSubscriptionManager(actorSystem, factory);
+            var subscriptionManager = new BurstSubscriptionManager(actorSystem, atomSettings);
             var eventPublisher = new BurstableEventPublisher(actorSystem);
             var loggingEventPublisher = new LoggingEventPublisherDecorator(eventPublisher);
 
             IocContainer.Register<ISubscriptionManager>(subscriptionManager);
             IocContainer.Register<IEventPublisher>(loggingEventPublisher);
 
-            var documentRetriever = new LoggingAtomDocumentRetrieverDecorator(new BurstAtomDocumentRetriever(factory));
+            var documentRetriever = new LoggingAtomDocumentRetrieverDecorator(new BurstAtomDocumentRetriever(subscriptionManager));
             IocContainer.Register<IAtomDocumentRetriever>(documentRetriever);
 
             IocContainer.RegisterMultiple<IOwinConfiguration, WebApiOwinConfiguration>(IocLifecycle.PerRequest);

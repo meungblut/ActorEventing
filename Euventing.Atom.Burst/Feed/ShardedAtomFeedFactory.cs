@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Euventing.Atom.Document;
-using Euventing.Atom.Document.Actors;
 
 namespace Euventing.Atom.Burst.Feed
 {
-    public class ShardedAtomFeedFactory
+    public class ShardedAtomFeedFactory : IAtomFeedActorRefFactory
     {
         private readonly ActorSystem actorSystem;
         private readonly IAtomDocumentSettings atomDocumentSettings;
@@ -20,7 +14,7 @@ namespace Euventing.Atom.Burst.Feed
             this.atomDocumentSettings = atomDocumentSettings;
             this.actorSystem = actorSystem;
 
-            var props = Props.Create(() => new FeedActor(this.atomDocumentSettings, this));
+            var props = Props.Create(() => new FeedActor(this.atomDocumentSettings));
 
             var settings = ClusterShardingSettings.Create(actorSystem);
             ClusterSharding.Get(actorSystem).Start(
@@ -30,7 +24,7 @@ namespace Euventing.Atom.Burst.Feed
                 messageExtractor: new FeedActorMessageExtractor());
         }
 
-        public IActorRef GetActorRef()
+        public IActorRef GetActorRef(IActorContext context)
         {
             return ClusterSharding.Get(actorSystem).ShardRegion("FeedActor");
         }

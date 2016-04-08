@@ -11,15 +11,15 @@ namespace Euventing.Atom.Burst.Subscription
 {
     public class BurstSubscriptionManager : ISubscriptionManager
     {
-        private readonly IActorRef burstSubscriptionActorRef;
+        public IActorRef BurstSubscriptionActorRef { get; private set; }
 
-        public BurstSubscriptionManager(ActorSystem actorSystem, ShardedAtomFeedFactory shardedAtomFeedFactory)
+        public BurstSubscriptionManager(ActorSystem actorSystem, IAtomDocumentSettings atomDocumentSettings)
         {
             var settings = ClusterShardingSettings.Create(actorSystem);
 
-            var props = Props.Create(() => new BurstSubscriptionActor(shardedAtomFeedFactory));
+            var props = Props.Create(() => new BurstSubscriptionActor(atomDocumentSettings));
 
-            burstSubscriptionActorRef = ClusterSharding.Get(actorSystem).Start(
+            BurstSubscriptionActorRef = ClusterSharding.Get(actorSystem).Start(
                 typeName: "BurstSubscriptionActor",
                 entityProps: props,
                 settings: settings,
@@ -28,17 +28,17 @@ namespace Euventing.Atom.Burst.Subscription
 
         public void CreateSubscription(SubscriptionMessage subscriptionMessage)
         {
-            burstSubscriptionActorRef.Tell(subscriptionMessage);
+            BurstSubscriptionActorRef.Tell(subscriptionMessage);
         }
 
         public void DeleteSubscription(DeleteSubscriptionMessage subscriptionMessage)
         {
-            burstSubscriptionActorRef.Tell(subscriptionMessage);
+            BurstSubscriptionActorRef.Tell(subscriptionMessage);
         }
 
         public async Task<SubscriptionMessage> GetSubscriptionDetails(SubscriptionQuery query)
         {
-            return await burstSubscriptionActorRef.Ask<SubscriptionMessage>(query, TimeSpan.FromSeconds(3));
+            return await BurstSubscriptionActorRef.Ask<SubscriptionMessage>(query, TimeSpan.FromSeconds(3));
         }
     }
 }

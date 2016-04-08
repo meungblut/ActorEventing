@@ -22,8 +22,7 @@ namespace Euventing.Atom.Document.Actors
 
         protected void GetCurrentAtomDocument()
         {
-            var atomDocument = new AtomDocument(Title, Author, FeedId, DocumentId, EarlierEventsDocumentId,
-    LaterEventsDocumentId, Entries);
+            var atomDocument = new AtomDocument(Title, Author, FeedId, DocumentId, EarlierEventsDocumentId, LaterEventsDocumentId, Entries);
             atomDocument.AddDocumentInformation(Cluster.Get(Context.System).SelfAddress.ToString());
             Sender.Tell(atomDocument, Self);
         }

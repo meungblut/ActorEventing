@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.ServiceModel.Syndication;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -9,9 +10,9 @@ namespace Euventing.AcceptanceTest.Client
 {
     public class AtomClient
     {
-        public async Task<SyndicationFeed> GetFeed(string url)
+        public async Task<SyndicationFeed> GetFeed(string url, TimeSpan timeout)
         {
-            var atomDocument = await GetDocumentStream(url);
+            var atomDocument = await GetDocumentStream(url, timeout);
 
             using (var xmlReader = XmlReader.Create(atomDocument))
             {
@@ -19,16 +20,18 @@ namespace Euventing.AcceptanceTest.Client
             }
         }
 
-        public async Task<string> GetFeedAsString(string url)
-        {
-            HttpClient client = new HttpClient();
-            var response = await client.GetStringAsync(new Uri(url));
-            return response;
-        }
+        //public async Task<string> GetFeedAsString(string url, TimeSpan timeout)
+        //{
+        //    HttpClient client = new HttpClient();
+        //    client.Timeout = timeout;
+        //    var response = await client.GetStringAsync(new Uri(url));
+        //    return response;
+        //}
 
-        private async Task<Stream> GetDocumentStream(string atomFeedUrl)
+        private async Task<Stream> GetDocumentStream(string atomFeedUrl, TimeSpan timeout)
         {
             HttpClient client = new HttpClient();
+            client.Timeout = timeout;
             Stream response = await client.GetStreamAsync(new Uri(atomFeedUrl));
             return response;
         }

@@ -63,6 +63,7 @@ namespace Euventing.ConsoleHost
                 {
                     notifier.PublishMessage(new DummyDomainEvent(akkaPortNumber + ":" + (++i).ToString()));
                     LogManager.GetLogger("").Info("Raising event with id" + i);
+                    Thread.Sleep(1000);
                 }
             }
 

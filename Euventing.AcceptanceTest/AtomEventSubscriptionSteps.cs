@@ -5,12 +5,10 @@ using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Euventing.AcceptanceTest.Hosting;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Euventing.Core;
-using System.IO;
 using Euventing.AcceptanceTest.Client;
 using Euventing.Api.Startup;
 using Euventing.Test.Shared;
@@ -187,7 +185,6 @@ namespace Euventing.AcceptanceTest
             Assert.AreEqual(numberOfEventsExpected, retrievedFeed.Items.Count());
         }
 
-
         [When(@"I get the feed from '(.*)'")]
         public void WhenIGetTheFeedFrom(string atomUrl)
         {
@@ -196,12 +193,14 @@ namespace Euventing.AcceptanceTest
             GetFeed(atomUrl);
         }
 
-        private void GetFeed(string atomUrl)
+        private SyndicationFeed GetFeed(string atomUrl)
         {
             var atomClient = new AtomClient();
-            retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;
+            retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId, TimeSpan.FromSeconds(50)).Result;
 
-            Console.WriteLine(atomClient.GetFeedAsString(atomUrl + subscriptionId).Result);
+            //Console.WriteLine(atomClient.GetFeedAsString(atomUrl + subscriptionId, TimeSpan.FromSeconds(1)).Result);
+
+            return retrievedFeed;
         }
 
 
@@ -210,7 +209,7 @@ namespace Euventing.AcceptanceTest
         {
             var atomClient = new AtomClient();
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString();
-            retrievedFeed = atomClient.GetFeed(url).Result;
+            retrievedFeed = GetFeed(url);
             Assert.AreEqual(eventsPerDocument, retrievedFeed.Items.Count());
         }
 
@@ -219,14 +218,7 @@ namespace Euventing.AcceptanceTest
         {
             var atomClient = new AtomClient();
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "next-archive").Uri.ToString();
-            retrievedFeed = atomClient.GetFeed(url).Result;
-        }
-
-        public async Task<Stream> GetDocumentStream(string atomFeedUrl)
-        {
-            HttpClient client = new HttpClient();
-            Stream response = await client.GetStreamAsync(new Uri(atomFeedUrl));
-            return response;
+            retrievedFeed = GetFeed(url);
         }
 
         [Then(@"I should receive an atom document with a link to the next document in the stream from '(.*)'")]
@@ -234,8 +226,7 @@ namespace Euventing.AcceptanceTest
         {
             Thread.Sleep(TimeSpan.FromMilliseconds(500));
 
-            var atomClient = new AtomClient();
-            retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId).Result;
+            retrievedFeed = GetFeed(atomUrl + subscriptionId);
 
             Assert.IsTrue(retrievedFeed.Links.Any(x => x.RelationshipType == "prev-archive"));
         }

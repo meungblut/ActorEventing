@@ -4,11 +4,11 @@ namespace Euventing.Atom.Burst
 {
     public class PollForEvents
     {
-        public PollForEvents(Address addressToPoll)
+        public PollForEvents(IActorRef addressToPoll)
         {
             AddressToPoll = addressToPoll;
         }
 
-        public Address AddressToPoll { get; private set; }
+        public IActorRef AddressToPoll { get; private set; }
     }
 }

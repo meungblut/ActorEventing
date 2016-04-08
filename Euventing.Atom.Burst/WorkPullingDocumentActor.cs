@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
-using Euventing.Atom.Burst.Feed;
 using Euventing.Atom.Burst.Subscription;
 using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors;
@@ -16,43 +16,27 @@ namespace Euventing.Atom.Burst
         protected Cluster Cluster;
         private readonly IAtomDocumentSettings atomDocumentSettings;
         private int entriesInCurrentDocument;
-        private readonly ShardedAtomFeedFactory shardedAtomFeedFactory;
         private DocumentId documentIdToBeUsedAsNextHead;
 
         private readonly ConcurrentDictionary<Address, IActorRef> subscriptionsCurrentlyPolling = new ConcurrentDictionary<Address, IActorRef>();
+        private SubscriptionsAtomFeedShouldPoll subscriptionsAtomFeedShouldPoll;
 
-        public WorkPullingDocumentActor(IAtomDocumentSettings settings, ShardedAtomFeedFactory feedFactory)
+        public WorkPullingDocumentActor(IAtomDocumentSettings settings)
         {
-            shardedAtomFeedFactory = feedFactory;
             atomDocumentSettings = settings;
         }
 
         private void PollQueues()
         {
-            Cluster = Cluster.Get(Context.System);
-
-            foreach (var member in Cluster.ReadView.Members)
+            foreach (var member in subscriptionsAtomFeedShouldPoll.SubscriptionQueues)
             {
-                PollSubscriptionQueue(member.Address);
+                PollSubscriptionQueue(member);
             }
-
-            Context.System.Scheduler.ScheduleTellRepeatedly
-                (TimeSpan.FromMilliseconds(50),
-                TimeSpan.FromMilliseconds(50),
-                Context.Self, new CheckAllClusterMembersAreBeingPolled(), Context.Self);
         }
 
-        private void PollSubscriptionQueue(Address member)
+        private void PollSubscriptionQueue(IActorRef actorRef)
         {
-            LoggingAdapter.Info($"Asking for events from node {member.ToString()}");
-
-            string addressFormat = "{0}/user/subscription_{1}_" + FeedId.Id;
-            var address = string.Format(addressFormat, member, member.GetHashCode());
-
-            //string addressFormat = "*/user/subscription_{0}_" + FeedId.Id;
-            //var address = string.Format(addressFormat, member.GetHashCode());
-
-            var actorRef = Context.System.ActorSelection(address);
+            LoggingAdapter.Info($"Asking for events from node {actorRef.Path}");
 
             var eventsToRequest = atomDocumentSettings.NumberOfEventsPerDocument - entriesInCurrentDocument;
 
@@ -68,25 +52,14 @@ namespace Euventing.Atom.Burst
 
             MutateInternalState(atomDocumentCreatedEvent);
             Persist(atomDocumentCreatedEvent, MutateInternalState);
-
-            PollQueues();
         }
 
-        private void Process(CheckAllClusterMembersAreBeingPolled checkMembers)
+        private void Process(SubscriptionsAtomFeedShouldPoll subscriptions)
         {
-            Cluster = Cluster.Get(Context.System);
+            LoggingAdapter.Info($"********Setting the subscriptions to poll");
 
-            LoggingAdapter.Info($"Checking members to see if being polled");
-
-
-            foreach (var member in Cluster.ReadView.Members)
-            {
-                if (!subscriptionsCurrentlyPolling.ContainsKey(member.Address))
-                {
-                    LoggingAdapter.Info($"Didn't find {member.Address} in poll list. Polling now");
-                    PollSubscriptionQueue(member.Address);
-                }
-            }
+            subscriptionsAtomFeedShouldPoll = subscriptions;
+            PollQueues();
         }
 
         private void Process(RequestedEvents requestedEvents)
@@ -117,13 +90,14 @@ namespace Euventing.Atom.Burst
             }
             else
             {
-                Self.Tell(new PollForEvents(requestedEvents.AddressOfSender));
+                Self.Tell(new PollForEvents(Context.Sender));
+                LoggingAdapter.Info($"Requesting events");
             }
         }
 
         private void DocumentIsFull()
         {
-            shardedAtomFeedFactory.GetActorRef().Tell(new DocumentFull(FeedId, DocumentId));
+            Context.Parent.Tell(new DocumentFull(FeedId, DocumentId));
             LaterEventsDocumentId = documentIdToBeUsedAsNextHead;
         }
 
