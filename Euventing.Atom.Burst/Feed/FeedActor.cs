@@ -8,6 +8,7 @@ using Akka.Event;
 using Euventing.Atom.Burst.Subscription;
 using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors;
+using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst.Feed
 {
@@ -120,6 +121,14 @@ namespace Euventing.Atom.Burst.Feed
             currentActorRefs.AddOrUpdate(CurrentFeedHeadDocument, newActor, (x, y) => newActor);
 
             Context.GetLogger().Info($"Deployed new actor on {addressToDeployOn.Port}");
+        }
+
+        private void Process(DeleteSubscriptionMessage deleteSubscription)
+        {
+            foreach (var currentActorRef in currentActorRefs.Values)
+            {
+                currentActorRef.Tell(deleteSubscription);
+            }
         }
 
         private void MutateInternalState(AtomFeedCreated atomFeedCreated)

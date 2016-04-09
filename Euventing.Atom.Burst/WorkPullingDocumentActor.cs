@@ -8,6 +8,7 @@ using Akka.Persistence;
 using Euventing.Atom.Burst.Subscription;
 using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors;
+using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst
 {
@@ -20,7 +21,7 @@ namespace Euventing.Atom.Burst
 
         private readonly ConcurrentDictionary<Address, IActorRef> subscriptionsCurrentlyPolling = new ConcurrentDictionary<Address, IActorRef>();
         private SubscriptionsAtomFeedShouldPoll subscriptionsAtomFeedShouldPoll;
-
+        private bool feedCancelled = false;
         public WorkPullingDocumentActor(IAtomDocumentSettings settings)
         {
             atomDocumentSettings = settings;
@@ -41,6 +42,11 @@ namespace Euventing.Atom.Burst
             var eventsToRequest = atomDocumentSettings.NumberOfEventsPerDocument - entriesInCurrentDocument;
 
             actorRef.Tell(new RequestEvents(eventsToRequest));
+        }
+
+        private void Process(DeleteSubscriptionMessage deleteSubscription)
+        {
+            feedCancelled = true;
         }
 
         protected void Process(CreateAtomDocumentCommand creationRequest)
@@ -90,8 +96,8 @@ namespace Euventing.Atom.Burst
             }
             else
             {
-                Self.Tell(new PollForEvents(Context.Sender));
-                LoggingAdapter.Info($"Requesting events");
+                if (!feedCancelled)
+                    Self.Tell(new PollForEvents(Context.Sender));
             }
         }
 

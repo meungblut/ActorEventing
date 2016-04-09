@@ -44,10 +44,11 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void Process(DeleteSubscriptionMessage deleteSubscription)
         {
+            atomFeedActor.Forward(deleteSubscription);
             LoggingAdapter.Debug("Received delete subscription message " + subscriptionMessage.SubscriptionId.Id);
         }
 
-        private async void Process(GetHeadDocumentForFeedRequest getHeadDocumentForFeedRequest)
+        private void Process(GetHeadDocumentForFeedRequest getHeadDocumentForFeedRequest)
         {
             atomFeedActor.Forward(getHeadDocumentForFeedRequest);
         }
