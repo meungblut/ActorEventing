@@ -186,7 +186,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 16
 this.FeatureBackground();
 #line 61
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'11111\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'222\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 62
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");

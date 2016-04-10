@@ -58,7 +58,7 @@ Scenario: Get an atom document
 
 @atomEvents
 Scenario: Get an atom document with events in it
-	Given I have subscribed to an atom feed with a subscription Id of '11111'
+	Given I have subscribed to an atom feed with a subscription Id of '222'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When '8' events are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
