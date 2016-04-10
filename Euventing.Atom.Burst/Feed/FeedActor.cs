@@ -66,7 +66,7 @@ namespace Euventing.Atom.Burst.Feed
             Sender.Tell(currentActorRefs[CurrentFeedHeadDocument]);
         }
 
-        private async void Process(GetHeadDocumentForFeedRequest getHeadDocumentIdForFeedRequest)
+        private void Process(GetHeadDocumentForFeedRequest getHeadDocumentIdForFeedRequest)
         {
             LogInfo("Getting atom document in feed actor");
             currentActorRefs[CurrentFeedHeadDocument].Forward(new GetAtomDocumentRequest());

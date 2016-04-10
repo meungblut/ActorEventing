@@ -93,7 +93,7 @@ Scenario: Cancel an event subscription
 
 @multinode
 Scenario: Retrieve documents from a second node
-	Given I have subscribed to an atom feed with a subscription Id of '55555'
+	Given I have subscribed to an atom feed with a generated subscription Id
 	And I wait for the subscription to be created at'http://localhost:3601/subscriptions/'
 	When '2' events are raised within my domain
 	And I get the feed from 'http://localhost:3601/events/atom/feed/'
