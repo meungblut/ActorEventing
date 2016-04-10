@@ -64,8 +64,7 @@ namespace Euventing.AcceptanceTest
         {
             eventsPerDocument = events;
         }
-
-
+        
         [Given(@"I PUT a message to '(.*)' with the body")]
         public void GivenIputaMessageToWithTheBody(string url, string requestBody)
         {
@@ -156,8 +155,7 @@ namespace Euventing.AcceptanceTest
             var client = new SubscriptionClient(url);
             client.Unsubscribe(subscriptionId).Wait();
         }
-
-
+        
         [When(@"'(.*)' events are raised on a different node")]
         public void WhenEventsAreRaisedOnADifferentNode(int numberOfEventsToRaise)
         {
@@ -196,18 +194,16 @@ namespace Euventing.AcceptanceTest
         private SyndicationFeed GetFeed(string atomUrl)
         {
             var atomClient = new AtomClient();
-            retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId, TimeSpan.FromSeconds(50)).Result;
+            retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId, TimeSpan.FromSeconds(3)).Result;
 
-            //Console.WriteLine(atomClient.GetFeedAsString(atomUrl + subscriptionId, TimeSpan.FromSeconds(1)).Result);
+            Console.WriteLine(atomClient.GetFeedAsString(atomUrl + subscriptionId, TimeSpan.FromSeconds(3)).Result);
 
             return retrievedFeed;
         }
-
-
+        
         [Then(@"I should be able to retrieve the earlier document by issuing a GET to its url")]
         public void ThenIShouldBeAbleToRetrieveTheEarlierDocumentByIssuingAGETToItsUrl()
         {
-            var atomClient = new AtomClient();
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString();
             retrievedFeed = GetFeed(url);
             Assert.AreEqual(eventsPerDocument, retrievedFeed.Items.Count());
@@ -226,7 +222,7 @@ namespace Euventing.AcceptanceTest
         {
             Thread.Sleep(TimeSpan.FromMilliseconds(500));
 
-            retrievedFeed = GetFeed(atomUrl + subscriptionId);
+            retrievedFeed = GetFeed(atomUrl);
 
             Assert.IsTrue(retrievedFeed.Links.Any(x => x.RelationshipType == "prev-archive"));
         }

@@ -68,12 +68,14 @@ namespace Euventing.Atom.Burst.Feed
 
         private async void Process(GetHeadDocumentForFeedRequest getHeadDocumentIdForFeedRequest)
         {
-            Context.GetLogger().Info("Getting atom document");
+            LogInfo("Getting atom document in feed actor");
             currentActorRefs[CurrentFeedHeadDocument].Forward(new GetAtomDocumentRequest());
         }
 
         private void Process(DocumentFull documentFull)
         {
+            LogInfo("Received document full");
+
             DocumentIsFull();
         }
 
@@ -102,7 +104,7 @@ namespace Euventing.Atom.Burst.Feed
 
         private void DocumentIsFull()
         {
-            var headDocument = new DocumentId((headDocumentIndex++).ToString());
+            var headDocument = new DocumentId((++headDocumentIndex).ToString());
             var nextHeadDocumentId = new DocumentId((headDocumentIndex + 1).ToString());
             var addressToDeployOn = cluster.ReadView.Members.First().Address;
 
@@ -113,18 +115,20 @@ namespace Euventing.Atom.Burst.Feed
                     props.
                     WithDeploy(new Deploy(new RemoteScope(addressToDeployOn))));
 
-            newActor.Tell(new CreateAtomDocumentCommand("", "", AtomFeedId, CurrentFeedHeadDocument, headDocument, nextHeadDocumentId));
+            newActor.Tell(new CreateAtomDocumentCommand("", "", AtomFeedId, headDocument, CurrentFeedHeadDocument, nextHeadDocumentId));
             newActor.Tell(subscriptionsAtomFeedShouldPoll);
 
             CurrentFeedHeadDocument = headDocument;
 
             currentActorRefs.AddOrUpdate(CurrentFeedHeadDocument, newActor, (x, y) => newActor);
 
-            Context.GetLogger().Info($"Deployed new actor on {addressToDeployOn.Port}");
+            LogInfo($"Deployed new document actor with id {headDocument.Id} on {addressToDeployOn.Port}");
         }
 
         private void Process(DeleteSubscriptionMessage deleteSubscription)
         {
+            LogInfo("Received delete subscription message");
+
             foreach (var currentActorRef in currentActorRefs.Values)
             {
                 currentActorRef.Tell(deleteSubscription);

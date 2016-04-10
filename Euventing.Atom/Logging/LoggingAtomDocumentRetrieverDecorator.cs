@@ -33,11 +33,14 @@ namespace Euventing.Atom.Logging
 
         public async Task<AtomDocument> GetHeadDocument(SubscriptionId subscriptionId)
         {
-            logger.Info("GetHeadDocument " + subscriptionId.Id);
+            if (subscriptionId.Id == "6985769857")
+                logger.Info("Double down");
+
+            logger.Info("LoggingAtomDocumentRetrieverDecorator.GetHeadDocument " + subscriptionId.Id);
             try
             {
                 var document = await decoratedRetriever.GetHeadDocument(subscriptionId);
-                logger.Info($"GetHeadDocument: Returning id {document.DocumentId.Id} with {document.Entries.Count} events in");
+                logger.Info($"LoggingAtomDocumentRetrieverDecorator.GetHeadDocument: Returning id {document.DocumentId.Id} with {document.Entries.Count} events in");
                 return document;
             }
             catch (System.Exception e)
@@ -49,7 +52,7 @@ namespace Euventing.Atom.Logging
 
         public Task<DocumentId> GetHeadDocumentId(SubscriptionId subscriptionId)
         {
-            logger.Info("GetHeadDocumentId " + subscriptionId.Id);
+            logger.Info("LoggingAtomDocumentRetrieverDecorator.GetHeadDocumentId " + subscriptionId.Id);
 
             try
             {
@@ -64,7 +67,7 @@ namespace Euventing.Atom.Logging
 
         public Task<string> GetSerialisedDocument(DocumentId documentId)
         {
-            logger.Info("GetSerialisedDocument " + documentId.Id);
+            logger.Info("LoggingAtomDocumentRetrieverDecorator.GetSerialisedDocument " + documentId.Id);
 
             try
             {
@@ -79,7 +82,7 @@ namespace Euventing.Atom.Logging
 
         public Task<string> GetSerialisedHeadDocument(SubscriptionId documentId)
         {
-            logger.Info("GetSerialisedHeadDocument " + documentId.Id);
+            logger.Info("LoggingAtomDocumentRetrieverDecorator.GetSerialisedHeadDocument " + documentId.Id);
 
             try
             {

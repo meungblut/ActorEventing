@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Event;
 using Euventing.Atom.Burst.Feed;
 using Euventing.Atom.Burst.Subscription;
 using Euventing.Atom.Document;
@@ -13,9 +14,11 @@ namespace Euventing.Atom.Burst
     {
         private readonly BurstSubscriptionManager burstManager;
         private readonly AtomDocumentSerialiser atomDocumentSerialiser;
+        private ILoggingAdapter _adapter;
 
-        public BurstAtomDocumentRetriever(BurstSubscriptionManager burstManager)
+        public BurstAtomDocumentRetriever(BurstSubscriptionManager burstManager, ILoggingAdapter adapter)
         {
+            _adapter = adapter;
             atomDocumentSerialiser = new AtomDocumentSerialiser();
             this.burstManager = burstManager;
         }
@@ -29,6 +32,7 @@ namespace Euventing.Atom.Burst
 
         public async Task<AtomDocument> GetHeadDocument(SubscriptionId subscriptionId)
         {
+            _adapter.Info($"requesting head document for id {subscriptionId}");
             var document = await burstManager.BurstSubscriptionActorRef.Ask<AtomDocument>(new GetHeadDocumentForFeedRequest(subscriptionId));
             return document;
         }

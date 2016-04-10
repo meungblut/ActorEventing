@@ -18,7 +18,7 @@ namespace Euventing.Atom.Burst.Subscription
 
         protected override void PreStart()
         {
-            Context.GetLogger().Info("Starting subscription queue actor with id " + Context.Self.Path);
+            LogInfo("Starting subscription queue actor");
 
             var actor = Context.ActorSelection("/user/" + ActorLocations.LocalSubscriptionManagerLocation);
             actor.Tell(new NewLocalSubscriptionCreated(Context.Self));

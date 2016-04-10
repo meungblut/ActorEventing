@@ -6,6 +6,22 @@ namespace Euventing.Atom.Document
             string title,
             string author,
             FeedId feedId,
+            DocumentId currentHeadDocumentId,
+            DocumentId previousHeadDocumentId,
+            DocumentId nextHeadDocumentId)
+        {
+            Title = title;
+            Author = author;
+            FeedId = feedId;
+            DocumentId = currentHeadDocumentId;
+            PreviousHeadDocumentId = previousHeadDocumentId;
+            NextHeadDocumentId = nextHeadDocumentId;
+        }
+
+        public CreateAtomDocumentCommand(
+            string title,
+            string author,
+            FeedId feedId,
             DocumentId documentId,
             DocumentId previousHeadDocumentId)
         {
@@ -14,22 +30,6 @@ namespace Euventing.Atom.Document
             FeedId = feedId;
             DocumentId = documentId;
             PreviousHeadDocumentId = previousHeadDocumentId;
-        }
-
-        public CreateAtomDocumentCommand(
-            string title,
-            string author,
-            FeedId feedId,
-            DocumentId documentId,
-            DocumentId previousHeadDocumentId,
-            DocumentId nextHeadDocumentId)
-        {
-            Title = title;
-            Author = author;
-            FeedId = feedId;
-            DocumentId = documentId;
-            PreviousHeadDocumentId = previousHeadDocumentId;
-            NextHeadDocumentId = nextHeadDocumentId;
         }
 
         public string Title { get; }

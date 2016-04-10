@@ -15,8 +15,8 @@ namespace Euventing.Atom.Burst.Feed
     {
         public string EntityId(object message)
         {
-            if (message is SaveSnapshotSuccess)
-                return ((SaveSnapshotSuccess)message).Metadata.PersistenceId;
+            //if (message is SaveSnapshotSuccess)
+            //    return ((SaveSnapshotSuccess)message).Metadata.PersistenceId;
 
             if (message is GetHeadDocumentIdForFeedRequest)
                 return ((GetHeadDocumentIdForFeedRequest)message).SubscriptionId.Id;
@@ -30,7 +30,8 @@ namespace Euventing.Atom.Burst.Feed
             if (message is DocumentFull)
                 return ((DocumentFull) message).FeedId.Id;
 
-            throw new CouldNotRouteMessageToShardException(this, message);
+            return null;
+            //throw new CouldNotRouteMessageToShardException(this, message);
         }
 
         public object EntityMessage(object message)
@@ -47,13 +48,14 @@ namespace Euventing.Atom.Burst.Feed
             if (message is AtomFeedCreationCommand)
                 return ((AtomFeedCreationCommand)message);
 
-            if (message is SaveSnapshotSuccess)
-                return ((SaveSnapshotSuccess)message);
+            //if (message is SaveSnapshotSuccess)
+                //return ((SaveSnapshotSuccess)message);
 
             if (message is DocumentFull)
                 return ((DocumentFull)message);
 
-            throw new CouldNotRouteMessageToShardException(this, message);
+            return null;
+            //throw new CouldNotRouteMessageToShardException(this, message);
         }
 
         public string ShardId(object message)
@@ -73,13 +75,14 @@ namespace Euventing.Atom.Burst.Feed
             if (message is AtomFeedCreationCommand)
                 return ((AtomFeedCreationCommand)message).FeedId.Id.GetHashCode().ToString();
 
-            if (message is SaveSnapshotSuccess)
-                return ((SaveSnapshotSuccess)message).Metadata.PersistenceId.GetHashCode().ToString();
+            //if (message is SaveSnapshotSuccess)
+            //    return ((SaveSnapshotSuccess)message).Metadata.PersistenceId.GetHashCode().ToString();
 
             if (message is DocumentFull)
                 return ((DocumentFull)message).FeedId.Id.GetHashCode().ToString();
 
-            throw new CouldNotRouteMessageToShardException(this, message);
+            return null;
+            //throw new CouldNotRouteMessageToShardException(this, message);
         }
     }
 }

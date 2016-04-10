@@ -19,6 +19,8 @@ namespace Euventing.Atom.Burst
         private int entriesInCurrentDocument;
         private DocumentId documentIdToBeUsedAsNextHead;
 
+        private DocumentId nextDocumentId;
+        
         private readonly ConcurrentDictionary<Address, IActorRef> subscriptionsCurrentlyPolling = new ConcurrentDictionary<Address, IActorRef>();
         private SubscriptionsAtomFeedShouldPoll subscriptionsAtomFeedShouldPoll;
         private bool feedCancelled = false;
@@ -37,7 +39,7 @@ namespace Euventing.Atom.Burst
 
         private void PollSubscriptionQueue(IActorRef actorRef)
         {
-            LoggingAdapter.Info($"Asking for events from node {actorRef.Path}");
+            LogInfo($"Asking for events from node {actorRef.Path}");
 
             var eventsToRequest = atomDocumentSettings.NumberOfEventsPerDocument - entriesInCurrentDocument;
 
@@ -51,7 +53,7 @@ namespace Euventing.Atom.Burst
 
         protected void Process(CreateAtomDocumentCommand creationRequest)
         {
-            LoggingAdapter.Info($"Created atom document with id {creationRequest.DocumentId.Id}");
+            LogInfo($"Created atom document with id {creationRequest.DocumentId.Id}");
 
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
                 creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.PreviousHeadDocumentId);
@@ -62,7 +64,7 @@ namespace Euventing.Atom.Burst
 
         private void Process(SubscriptionsAtomFeedShouldPoll subscriptions)
         {
-            LoggingAdapter.Info($"********Setting the subscriptions to poll");
+            LogInfo($"********Received the subscriptions to poll");
 
             subscriptionsAtomFeedShouldPoll = subscriptions;
             PollQueues();
@@ -70,7 +72,7 @@ namespace Euventing.Atom.Burst
 
         private void Process(RequestedEvents requestedEvents)
         {
-            LoggingAdapter.Info($"Received {requestedEvents.Events.Count()} events");
+            LogInfo($"Received {requestedEvents.Events.Count()} events");
 
             subscriptionsCurrentlyPolling.AddOrUpdate(requestedEvents.AddressOfSender, Context.Sender,
                 (x, y) => Context.Sender);
@@ -84,20 +86,23 @@ namespace Euventing.Atom.Burst
             }
 
             if (requestedEvents.MessagesRemaining > 0)
-                LoggingAdapter.Info($"{requestedEvents.MessagesRemaining} remain in queue");
+                LogInfo($"{requestedEvents.MessagesRemaining} remain in queue");
 
-            LoggingAdapter.Info($"{entriesInCurrentDocument} in document against {atomDocumentSettings.NumberOfEventsPerDocument}");
+            LogInfo($"{entriesInCurrentDocument} in document against {atomDocumentSettings.NumberOfEventsPerDocument}");
 
             if (entriesInCurrentDocument >= atomDocumentSettings.NumberOfEventsPerDocument)
             {
-                LoggingAdapter.Info($"Document is full");
+                LogInfo($"Document is full");
 
                 DocumentIsFull();
             }
             else
             {
                 if (!feedCancelled)
+                {
+                    Thread.Sleep(TimeSpan.FromMilliseconds(100));
                     Self.Tell(new PollForEvents(Context.Sender));
+                }
             }
         }
 
@@ -118,7 +123,7 @@ namespace Euventing.Atom.Burst
         private void MutateInternalState(AtomEntry entry)
         {
             Entries.Add(entry);
-            LoggingAdapter.Info($"Added event {entry.Id} to feed {FeedId.Id} document {DocumentId.Id}");
+            LogInfo($"Added event {entry.Id} to feed {FeedId.Id} document {DocumentId.Id}");
         }
 
         private void Process(GetAtomDocumentRequest request)

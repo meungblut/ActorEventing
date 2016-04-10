@@ -66,9 +66,9 @@ Scenario: Get an atom document with events in it
 
 @atomEvents
 Scenario: Create a new head document when the maximum number of events per document is breached
-	Given I have subscribed to an atom feed with a subscription Id of '22222'
+	Given I have subscribed to an atom feed with a subscription Id of '69857'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
-	When '52' events are raised within my domain
+	When '12' events are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 

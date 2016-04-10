@@ -31,7 +31,7 @@ namespace Euventing.Api.Startup
             IocContainer.Register<ISubscriptionManager>(subscriptionManager);
             IocContainer.Register<IEventPublisher>(loggingEventPublisher);
 
-            var documentRetriever = new LoggingAtomDocumentRetrieverDecorator(new BurstAtomDocumentRetriever(subscriptionManager));
+            var documentRetriever = new LoggingAtomDocumentRetrieverDecorator(new BurstAtomDocumentRetriever(subscriptionManager, actorSystem.Log));
             IocContainer.Register<IAtomDocumentRetriever>(documentRetriever);
 
             IocContainer.RegisterMultiple<IOwinConfiguration, WebApiOwinConfiguration>(IocLifecycle.PerRequest);

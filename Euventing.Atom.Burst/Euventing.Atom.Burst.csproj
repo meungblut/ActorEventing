@@ -86,6 +86,7 @@
     <Compile Include="Subscription\BurstSubscriptionManager.cs" />
     <Compile Include="Subscription\BurstSubscriptionActor.cs" />
     <Compile Include="Subscription\BurstSubscriptionMessageExtractor.cs" />
+    <Compile Include="Subscription\LoggingMessageExtractorDecorator.cs" />
     <Compile Include="Subscription\RequestedEvents.cs" />
     <Compile Include="Subscription\SubscriptionsAtomFeedShouldPoll.cs" />
     <Compile Include="WorkPullingDocumentActor.cs" />

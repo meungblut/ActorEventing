@@ -214,12 +214,12 @@ this.ScenarioSetup(scenarioInfo);
 #line 16
 this.FeatureBackground();
 #line 69
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'22222\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'69857\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 70
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 71
- testRunner.When("\'52\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("\'12\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 72
  testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 73

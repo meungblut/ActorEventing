@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net.Http;
 using System.ServiceModel.Syndication;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -20,19 +19,19 @@ namespace Euventing.AcceptanceTest.Client
             }
         }
 
-        //public async Task<string> GetFeedAsString(string url, TimeSpan timeout)
-        //{
-        //    HttpClient client = new HttpClient();
-        //    client.Timeout = timeout;
-        //    var response = await client.GetStringAsync(new Uri(url));
-        //    return response;
-        //}
+        public async Task<string> GetFeedAsString(string url, TimeSpan timeout)
+        {
+            var client = new HttpClient();
+            client.Timeout = timeout;
+            var response = await client.GetStringAsync(new Uri(url));
+            return response;
+        }
 
         private async Task<Stream> GetDocumentStream(string atomFeedUrl, TimeSpan timeout)
         {
-            HttpClient client = new HttpClient();
+            var client = new HttpClient();
             client.Timeout = timeout;
-            Stream response = await client.GetStreamAsync(new Uri(atomFeedUrl));
+            var response = await client.GetStreamAsync(new Uri(atomFeedUrl));
             return response;
         }
     }

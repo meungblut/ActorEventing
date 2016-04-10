@@ -11,7 +11,23 @@ namespace Euventing.Core
         protected PersistentActorBase()
         {
             LoggingAdapter = Context.GetLogger();
-            PersistenceId = Context.Parent.Path.Name + "|" + Self.Path.Name;
+            PersistenceId = this.GetType() + "|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
+            LogInfo("Constructed");
+        }
+
+        protected void LogInfo(string dataToLog)
+        {
+            LoggingAdapter.Info(GetFullInfoString(dataToLog));
+        }
+
+        protected void LogError(string dataToLog)
+        {
+            LoggingAdapter.Error(GetFullInfoString(dataToLog));
+        }
+
+        private string GetFullInfoString(string dataToLog)
+        {
+            return $"PersistId: {PersistenceId}, in type {this.GetType()} in instance {this.GetHashCode()} : {dataToLog}";
         }
     }
 }

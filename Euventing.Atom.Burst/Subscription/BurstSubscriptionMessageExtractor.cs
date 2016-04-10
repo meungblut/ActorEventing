@@ -9,8 +9,8 @@ namespace Euventing.Atom.Burst.Subscription
     {
         public string EntityId(object message)
         {
-            if (message is SaveSnapshotSuccess)
-                return ((SaveSnapshotSuccess)message).Metadata.PersistenceId;
+            //if (message is SaveSnapshotSuccess)
+            //    return ((SaveSnapshotSuccess)message).Metadata.PersistenceId;
 
             if (message is SubscriptionQuery)
                 return ((SubscriptionQuery)message).SubscriptionId.Id;
@@ -24,7 +24,8 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is GetHeadDocumentForFeedRequest)
                 return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id;
 
-            throw new CouldNotRouteMessageToShardException(null, message);
+            return null;
+            //throw new CouldNotRouteMessageToShardException(null, message);
         }
 
         public object EntityMessage(object message)
@@ -35,8 +36,8 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is SubscriptionQuery)
                 return (SubscriptionQuery)message;
 
-            if (message is SaveSnapshotSuccess)
-                return (SaveSnapshotSuccess)message;
+            //if (message is SaveSnapshotSuccess)
+            //    return (SaveSnapshotSuccess)message;
 
             if (message is DeleteSubscriptionMessage)
                 return (DeleteSubscriptionMessage)message;
@@ -44,14 +45,15 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is GetHeadDocumentForFeedRequest)
                 return ((GetHeadDocumentForFeedRequest)message);
 
-            throw new CouldNotRouteMessageToShardException(null, message);
+            return null;
+            //throw new CouldNotRouteMessageToShardException(null, message);
 
         }
 
         public string ShardId(object message)
         {
-            if (message is SaveSnapshotSuccess)
-                return ((SaveSnapshotSuccess)message).Metadata.PersistenceId.GetHashCode().ToString();
+            //if (message is SaveSnapshotSuccess)
+            //    return ((SaveSnapshotSuccess)message).Metadata.PersistenceId.GetHashCode().ToString();
 
             if (message is SubscriptionQuery)
                 return ((SubscriptionQuery)message).SubscriptionId.Id.GetHashCode().ToString();
@@ -65,7 +67,8 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is GetHeadDocumentForFeedRequest)
                 return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id.GetHashCode().ToString();
 
-            throw new CouldNotRouteMessageToShardException(null, message);
+            return null;
+            //throw new CouldNotRouteMessageToShardException(null, message);
         }
     }
 }
