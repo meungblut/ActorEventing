@@ -16,7 +16,7 @@ namespace Euventing.Atom.Burst.Feed
     {
         private readonly Cluster cluster;
         private readonly IAtomDocumentSettings atomDocumentSettings;
-        private readonly ConcurrentDictionary<DocumentId, IActorRef> currentActorRefs;
+        private readonly ConcurrentDictionary<DocumentId, IActorRef> currentAtomDocumentActorRefs;
         private int headDocumentIndex = 0;
         private SubscriptionsAtomFeedShouldPoll subscriptionsAtomFeedShouldPoll;
 
@@ -24,7 +24,7 @@ namespace Euventing.Atom.Burst.Feed
         {
             atomDocumentSettings = settings;
             cluster = Cluster.Get(Context.System);
-            currentActorRefs = new ConcurrentDictionary<DocumentId, IActorRef>();
+            currentAtomDocumentActorRefs = new ConcurrentDictionary<DocumentId, IActorRef>();
         }
 
         protected override bool ReceiveRecover(object message)
@@ -51,8 +51,8 @@ namespace Euventing.Atom.Burst.Feed
             if (CurrentFeedHeadDocument != null)
                 throw new FeedAlreadyCreatedException(CurrentFeedHeadDocument.Id);
 
-            var documentId = new DocumentId(headDocumentIndex.ToString());
-            var nextDocumentId = new DocumentId((headDocumentIndex + 1).ToString());
+            var documentId = new DocumentId(creationCommand.FeedId.Id + "_" + headDocumentIndex.ToString());
+            var nextDocumentId = new DocumentId(creationCommand.FeedId.Id + "_" + (headDocumentIndex + 1).ToString());
             var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author,
                 creationCommand.FeedId);
 
@@ -63,20 +63,28 @@ namespace Euventing.Atom.Burst.Feed
 
         private void Process(GetHeadDocumentIdForFeedRequest getHeadDocumentIdForFeedRequest)
         {
-            Sender.Tell(currentActorRefs[CurrentFeedHeadDocument]);
+            Sender.Tell(currentAtomDocumentActorRefs[CurrentFeedHeadDocument]);
+        }
+
+        private void Process(GetDocumentFromFeedRequest getDocumentRequest)
+        {
+            LogInfo($"Asking for document with id {getDocumentRequest.DocumentId.Id}");
+
+            var actor = currentAtomDocumentActorRefs[getDocumentRequest.DocumentId];
+            actor.Forward(new GetAtomDocumentRequest());
         }
 
         private void Process(GetHeadDocumentForFeedRequest getHeadDocumentIdForFeedRequest)
         {
-            LogInfo("Getting atom document in feed actor");
-            currentActorRefs[CurrentFeedHeadDocument].Forward(new GetAtomDocumentRequest());
+            LogInfo($"Getting atom document {getHeadDocumentIdForFeedRequest} feed actor");
+            currentAtomDocumentActorRefs[CurrentFeedHeadDocument].Forward(new GetAtomDocumentRequest());
         }
 
         private void Process(DocumentFull documentFull)
         {
-            LogInfo("Received document full");
+            LogInfo($"Received document full {documentFull.DocumentId.Id}");
 
-            DocumentIsFull();
+            DocumentIsFull(documentFull);
         }
 
         private void CreateAtomDocument(DocumentId documentId, FeedId feedId, DocumentId nextDocument)
@@ -98,14 +106,21 @@ namespace Euventing.Atom.Burst.Feed
 
             atomDocument.Tell(subscriptionsAtomFeedShouldPoll);
 
-            currentActorRefs.AddOrUpdate(documentId, atomDocument, (x, y) => atomDocument);
+            currentAtomDocumentActorRefs.AddOrUpdate(documentId, atomDocument, (x, y) => atomDocument);
             CurrentFeedHeadDocument = documentId;
         }
 
-        private void DocumentIsFull()
+        private void DocumentIsFull(DocumentFull documentFull)
         {
-            var headDocument = new DocumentId((++headDocumentIndex).ToString());
-            var nextHeadDocumentId = new DocumentId((headDocumentIndex + 1).ToString());
+            if (CurrentFeedHeadDocument != documentFull.DocumentId)
+            {
+                LogInfo($"Received document full for non-head document {documentFull.DocumentId}");
+            }
+
+            var outgoingHeadDocument = CurrentFeedHeadDocument;
+            var incomingHeadDocument = new DocumentId(AtomFeedId.Id + "_" + (++headDocumentIndex));
+            var headAfterIncomingHEadDocumentId = new DocumentId(AtomFeedId.Id + "_" + (headDocumentIndex + 1));
+
             var addressToDeployOn = cluster.ReadView.Members.First().Address;
 
             var props = Props.Create(() => new WorkPullingDocumentActor(atomDocumentSettings));
@@ -113,23 +128,25 @@ namespace Euventing.Atom.Burst.Feed
             var newActor =
                 Context.ActorOf(
                     props.
-                    WithDeploy(new Deploy(new RemoteScope(addressToDeployOn))));
+                    WithDeploy(new Deploy(new RemoteScope(addressToDeployOn))), incomingHeadDocument.Id);
 
-            newActor.Tell(new CreateAtomDocumentCommand("", "", AtomFeedId, headDocument, CurrentFeedHeadDocument, nextHeadDocumentId));
+            newActor.Tell(new CreateAtomDocumentCommand("", "", AtomFeedId, incomingHeadDocument, outgoingHeadDocument, headAfterIncomingHEadDocumentId));
             newActor.Tell(subscriptionsAtomFeedShouldPoll);
 
-            CurrentFeedHeadDocument = headDocument;
+            CurrentFeedHeadDocument = incomingHeadDocument;
 
-            currentActorRefs.AddOrUpdate(CurrentFeedHeadDocument, newActor, (x, y) => newActor);
+            currentAtomDocumentActorRefs.AddOrUpdate(CurrentFeedHeadDocument, newActor, (x, y) => newActor);
 
-            LogInfo($"Deployed new document actor with id {headDocument.Id} on {addressToDeployOn.Port}");
+            LogInfo($"Deployed new document actor with id {incomingHeadDocument.Id} on {addressToDeployOn.Port}");
+
+            LogInfo($"Head document is now {CurrentFeedHeadDocument.Id}");
         }
 
         private void Process(DeleteSubscriptionMessage deleteSubscription)
         {
             LogInfo("Received delete subscription message");
 
-            foreach (var currentActorRef in currentActorRefs.Values)
+            foreach (var currentActorRef in currentAtomDocumentActorRefs.Values)
             {
                 currentActorRef.Tell(deleteSubscription);
             }
@@ -145,12 +162,12 @@ namespace Euventing.Atom.Burst.Feed
 
         private void MutateInternalState(object unhandledMessage)
         {
-            Context.GetLogger().Error("Received unhandled persistence command " + unhandledMessage.GetType());
+            LogInfo("Received unhandled persistence command " + unhandledMessage.GetType());
         }
 
         private void Process(object unhandledMessage)
         {
-            Context.GetLogger().Error("Feed Actor Received unhandled command " + unhandledMessage.GetType());
+            LogInfo("Feed Actor Received unhandled command " + unhandledMessage.GetType());
         }
     }
 }

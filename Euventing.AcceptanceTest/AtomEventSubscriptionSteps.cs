@@ -43,6 +43,7 @@ namespace Euventing.AcceptanceTest
             inProcessHost.Start();
             outOfProcessClusterMembersHost = new OutOfProcessProcessClusterMember(eventsPerDocument);
             outOfProcessClusterMembersHost.Start();
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         [AfterFeature]
@@ -64,7 +65,7 @@ namespace Euventing.AcceptanceTest
         {
             eventsPerDocument = events;
         }
-        
+
         [Given(@"I PUT a message to '(.*)' with the body")]
         public void GivenIputaMessageToWithTheBody(string url, string requestBody)
         {
@@ -147,6 +148,7 @@ namespace Euventing.AcceptanceTest
                 Console.WriteLine("Raising event " + DateTime.Now.ToString("dd/mm/yy hh:mm:ss ffff"));
                 publisher.PublishMessage(new DummyEvent(i.ToString()));
             }
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         [When(@"I cancel the subscription")]
@@ -154,8 +156,9 @@ namespace Euventing.AcceptanceTest
         {
             var client = new SubscriptionClient(url);
             client.Unsubscribe(subscriptionId).Wait();
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
-        
+
         [When(@"'(.*)' events are raised on a different node")]
         public void WhenEventsAreRaisedOnADifferentNode(int numberOfEventsToRaise)
         {
@@ -191,36 +194,61 @@ namespace Euventing.AcceptanceTest
             GetFeed(atomUrl);
         }
 
+        [When(@"I get the named feed from '(.*)'")]
+        public void WhenIGetTheNamedFeedFrom(string url)
+        {
+            GetDocument(url);
+        }
+
         private SyndicationFeed GetFeed(string atomUrl)
         {
             var atomClient = new AtomClient();
             retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId, TimeSpan.FromSeconds(3)).Result;
-
-            Console.WriteLine(atomClient.GetFeedAsString(atomUrl + subscriptionId, TimeSpan.FromSeconds(3)).Result);
-
             return retrievedFeed;
         }
-        
+
+        private SyndicationFeed GetDocument(string atomUrl)
+        {
+            var atomClient = new AtomClient();
+            retrievedFeed = atomClient.GetFeed(atomUrl, TimeSpan.FromSeconds(3)).Result;
+            return retrievedFeed;
+        }
+
         [Then(@"I should be able to retrieve the earlier document by issuing a GET to its url")]
         public void ThenIShouldBeAbleToRetrieveTheEarlierDocumentByIssuingAGETToItsUrl()
         {
             var url = retrievedFeed.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString();
-            retrievedFeed = GetFeed(url);
-            Assert.AreEqual(eventsPerDocument, retrievedFeed.Items.Count());
+            retrievedFeed = GetDocument(url);
         }
 
         [Then(@"the earlier document should have a link to the new head document")]
         public void ThenTheEarlierDocumentShouldHaveALinkToTheNewHeadDocument()
         {
-            var atomClient = new AtomClient();
-            var url = retrievedFeed.Links.First(x => x.RelationshipType == "next-archive").Uri.ToString();
-            retrievedFeed = GetFeed(url);
+            Assert.IsTrue(retrievedFeed.Links.Any(x => x.RelationshipType == "next-archive"));
         }
+
+        [Then(@"it should have a previous reference of '(.*)'")]
+        public void ThenItShouldHaveAPreviousReferenceOf(string previousReferenceAddress)
+        {
+            var url = retrievedFeed.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString();
+
+            Assert.AreEqual(previousReferenceAddress, url);
+        }
+
+
+        [Then(@"it should have a self reference of '(.*)'")]
+        public void ThenItShouldHaveASelfReferenceOf(string selfReferenceAddress)
+        {
+            var url = retrievedFeed.Links.First(x => x.RelationshipType == "self").Uri.ToString();
+
+            Assert.AreEqual(selfReferenceAddress, url);
+        }
+
 
         [Then(@"I should receive an atom document with a link to the next document in the stream from '(.*)'")]
         public void ThenIShouldReceiveAnAtomDocumentWithALinkToTheNextDocumentInTheStreamFrom(string atomUrl)
         {
-            Thread.Sleep(TimeSpan.FromMilliseconds(500));
+            Thread.Sleep(TimeSpan.FromMilliseconds(2000));
 
             retrievedFeed = GetFeed(atomUrl);
 

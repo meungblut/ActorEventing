@@ -12,6 +12,9 @@ namespace Euventing.Atom.Burst.Subscription
             //if (message is SaveSnapshotSuccess)
             //    return ((SaveSnapshotSuccess)message).Metadata.PersistenceId;
 
+            if (message is GetDocumentFromFeedRequest)
+                return ((GetDocumentFromFeedRequest)message).SubscriptionId.Id;
+            
             if (message is SubscriptionQuery)
                 return ((SubscriptionQuery)message).SubscriptionId.Id;
 
@@ -30,6 +33,9 @@ namespace Euventing.Atom.Burst.Subscription
 
         public object EntityMessage(object message)
         {
+            if (message is GetDocumentFromFeedRequest)
+                return ((GetDocumentFromFeedRequest)message);
+
             if (message is SubscriptionMessage)
                 return (SubscriptionMessage)message;
 
@@ -54,6 +60,9 @@ namespace Euventing.Atom.Burst.Subscription
         {
             //if (message is SaveSnapshotSuccess)
             //    return ((SaveSnapshotSuccess)message).Metadata.PersistenceId.GetHashCode().ToString();
+
+            if (message is GetDocumentFromFeedRequest)
+                return ((GetDocumentFromFeedRequest)message).SubscriptionId.Id.GetHashCode().ToString();
 
             if (message is SubscriptionQuery)
                 return ((SubscriptionQuery)message).SubscriptionId.Id.GetHashCode().ToString();

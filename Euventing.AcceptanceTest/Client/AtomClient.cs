@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.ServiceModel.Syndication;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -18,14 +19,8 @@ namespace Euventing.AcceptanceTest.Client
                 return SyndicationFeed.Load(xmlReader);
             }
         }
+      
 
-        public async Task<string> GetFeedAsString(string url, TimeSpan timeout)
-        {
-            var client = new HttpClient();
-            client.Timeout = timeout;
-            var response = await client.GetStringAsync(new Uri(url));
-            return response;
-        }
 
         private async Task<Stream> GetDocumentStream(string atomFeedUrl, TimeSpan timeout)
         {

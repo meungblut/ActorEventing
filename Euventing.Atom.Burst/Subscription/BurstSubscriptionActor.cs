@@ -112,9 +112,16 @@ namespace Euventing.Atom.Burst.Subscription
                 Sender.Tell(subscriptionMessage, Context.Self);
         }
 
+        private void Process(GetDocumentFromFeedRequest getDocumentRequest)
+        {
+            LogInfo($"Asking for document with id {getDocumentRequest.DocumentId.Id}");
+
+            atomFeedActor.Forward(getDocumentRequest);
+        }
+
         private void Process(object unhandledObject)
         {
-            LogInfo("Unhandled command " + unhandledObject.GetType());
+            LogInfo($"Unhandled command {unhandledObject.GetType()} {unhandledObject} from {Context.Sender.Path}");
         }
 
         private void MutateInternalState(SubscriptionMessage message)

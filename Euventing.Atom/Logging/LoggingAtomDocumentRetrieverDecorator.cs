@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Euventing.Atom.Document;
+using Euventing.Atom.Serialization;
 using Euventing.Core.Messages;
 using NLog;
 
@@ -16,13 +17,15 @@ namespace Euventing.Atom.Logging
             this.decoratedRetriever = decoratedRetriever;
         }
 
-        public Task<AtomDocument> GetDocument(DocumentId documentId)
+        public async Task<AtomDocument> GetDocument(DocumentId documentId)
         {
             logger.Info("GetDocument " + documentId.Id);
 
             try
             {
-                return decoratedRetriever.GetDocument(documentId);
+                var document = await decoratedRetriever.GetDocument(documentId);
+                logger.Info(new AtomDocumentSerialiser().Serialise(document, "http://localhost:3600/events/atom/document/"));
+                return document;
             }
             catch (System.Exception e)
             {
@@ -33,14 +36,14 @@ namespace Euventing.Atom.Logging
 
         public async Task<AtomDocument> GetHeadDocument(SubscriptionId subscriptionId)
         {
-            if (subscriptionId.Id == "6985769857")
-                logger.Info("Double down");
-
             logger.Info("LoggingAtomDocumentRetrieverDecorator.GetHeadDocument " + subscriptionId.Id);
             try
             {
                 var document = await decoratedRetriever.GetHeadDocument(subscriptionId);
                 logger.Info($"LoggingAtomDocumentRetrieverDecorator.GetHeadDocument: Returning id {document.DocumentId.Id} with {document.Entries.Count} events in");
+
+                logger.Info(new AtomDocumentSerialiser().Serialise(document, "http://localhost:3600/events/atom/document/"));
+
                 return document;
             }
             catch (System.Exception e)

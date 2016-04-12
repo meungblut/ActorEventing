@@ -19,11 +19,12 @@ namespace Euventing.Atom.Burst
         private int entriesInCurrentDocument;
         private DocumentId documentIdToBeUsedAsNextHead;
 
-        private DocumentId nextDocumentId;
-        
         private readonly ConcurrentDictionary<Address, IActorRef> subscriptionsCurrentlyPolling = new ConcurrentDictionary<Address, IActorRef>();
         private SubscriptionsAtomFeedShouldPoll subscriptionsAtomFeedShouldPoll;
         private bool feedCancelled = false;
+
+        private bool haveInformedParentIAmFull = false;
+
         public WorkPullingDocumentActor(IAtomDocumentSettings settings)
         {
             atomDocumentSettings = settings;
@@ -48,6 +49,8 @@ namespace Euventing.Atom.Burst
 
         private void Process(DeleteSubscriptionMessage deleteSubscription)
         {
+            LogInfo($"Cancelling document");
+
             feedCancelled = true;
         }
 
@@ -56,7 +59,7 @@ namespace Euventing.Atom.Burst
             LogInfo($"Created atom document with id {creationRequest.DocumentId.Id}");
 
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
-                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.PreviousHeadDocumentId);
+                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.PreviousHeadDocumentId, creationRequest.NextHeadDocumentId);
 
             MutateInternalState(atomDocumentCreatedEvent);
             Persist(atomDocumentCreatedEvent, MutateInternalState);
@@ -108,8 +111,13 @@ namespace Euventing.Atom.Burst
 
         private void DocumentIsFull()
         {
+            if (haveInformedParentIAmFull)
+                return;
+
             Context.Parent.Tell(new DocumentFull(FeedId, DocumentId));
+            haveInformedParentIAmFull = true;
             LaterEventsDocumentId = documentIdToBeUsedAsNextHead;
+            LogInfo($"Set later events to {LaterEventsDocumentId.Id}");
         }
 
         private Address GetDifferentNodeIfPossible()
@@ -128,6 +136,7 @@ namespace Euventing.Atom.Burst
 
         private void Process(GetAtomDocumentRequest request)
         {
+            LogInfo($"Returning document {DocumentId.Id}");
             GetCurrentAtomDocument();
         }
 

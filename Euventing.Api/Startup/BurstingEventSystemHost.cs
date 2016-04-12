@@ -27,9 +27,9 @@ namespace Euventing.Api.Startup
             var subscriptionManager = new BurstSubscriptionManager(actorSystem, atomSettings);
             var eventPublisher = new BurstableEventPublisher(actorSystem);
             var loggingEventPublisher = new LoggingEventPublisherDecorator(eventPublisher);
+            IocContainer.Register<IEventPublisher>(loggingEventPublisher);
 
             IocContainer.Register<ISubscriptionManager>(subscriptionManager);
-            IocContainer.Register<IEventPublisher>(loggingEventPublisher);
 
             var documentRetriever = new LoggingAtomDocumentRetrieverDecorator(new BurstAtomDocumentRetriever(subscriptionManager, actorSystem.Log));
             IocContainer.Register<IAtomDocumentRetriever>(documentRetriever);

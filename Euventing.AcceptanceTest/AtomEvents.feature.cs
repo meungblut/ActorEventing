@@ -246,13 +246,18 @@ this.FeatureBackground();
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 79
- testRunner.When("\'52\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("\'12\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 80
- testRunner.Then("I should receive an atom document with a link to the next document in the stream " +
-                    "from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("I get the named feed from \'http://localhost:3600/events/atom/feed/33333\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 81
- testRunner.Then("I should be able to retrieve the earlier document by issuing a GET to its url", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("it should have a self reference of \'http://localhost:3600/events/atom/document/33" +
+                    "333_1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 82
+ testRunner.Then("it should have a previous reference of \'http://localhost:3600/events/atom/documen" +
+                    "t/33333_0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 83
+ testRunner.Then("I should be able to retrieve the earlier document by issuing a GET to its url", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 84
  testRunner.And("the earlier document should have a link to the new head document", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -265,24 +270,24 @@ this.FeatureBackground();
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Cancel an event subscription", new string[] {
                         "atomEvents"});
-#line 85
+#line 87
 this.ScenarioSetup(scenarioInfo);
 #line 16
 this.FeatureBackground();
-#line 86
+#line 88
  testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'44444\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 87
+#line 89
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3601/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 88
- testRunner.And("\'1\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 89
- testRunner.When("I cancel the subscription", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 90
- testRunner.And("\'2\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("\'1\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 91
- testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I cancel the subscription", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 92
+ testRunner.And("\'2\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 93
+ testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 94
  testRunner.Then("I should have an atom document with \'1\' events", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -295,20 +300,20 @@ this.FeatureBackground();
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retrieve documents from a second node", new string[] {
                         "multinode"});
-#line 95
+#line 97
 this.ScenarioSetup(scenarioInfo);
 #line 16
 this.FeatureBackground();
-#line 96
+#line 98
  testRunner.Given("I have subscribed to an atom feed with a generated subscription Id", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 97
+#line 99
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3601/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 98
- testRunner.When("\'2\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 99
- testRunner.And("I get the feed from \'http://localhost:3601/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 100
+ testRunner.When("\'2\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 101
+ testRunner.And("I get the feed from \'http://localhost:3601/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 102
  testRunner.Then("I should have an atom document with \'2\' events", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -321,22 +326,22 @@ this.FeatureBackground();
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Raise events on two nodes", new string[] {
                         "multinode"});
-#line 103
+#line 105
 this.ScenarioSetup(scenarioInfo);
 #line 16
 this.FeatureBackground();
-#line 104
+#line 106
  testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'66666\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 105
+#line 107
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 106
- testRunner.When("\'2\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 107
- testRunner.And("\'2\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 108
-    testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("\'2\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 109
+ testRunner.And("\'2\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 110
+    testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 111
  testRunner.Then("I should have an atom document with \'4\' events", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
