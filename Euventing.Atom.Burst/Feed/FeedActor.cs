@@ -5,6 +5,7 @@ using System.Threading;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
+using Akka.Persistence;
 using Euventing.Atom.Burst.Subscription;
 using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors;
@@ -158,6 +159,11 @@ namespace Euventing.Atom.Burst.Feed
             CurrentFeedHeadDocument = atomFeedCreated.DocumentId;
             FeedTitle = atomFeedCreated.FeedTitle;
             FeedAuthor = atomFeedCreated.FeedAuthor;
+        }
+
+        private void MutateInternalState(RecoveryCompleted recoveryCompleted)
+        {
+            UnstashAll();
         }
 
         private void MutateInternalState(object unhandledMessage)

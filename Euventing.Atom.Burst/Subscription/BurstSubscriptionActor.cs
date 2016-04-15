@@ -24,27 +24,6 @@ namespace Euventing.Atom.Burst.Subscription
             cluster = Cluster.Get(Context.System);
         }
 
-        public override void AroundPreStart()
-        {
-            LogInfo($"PRE START");
-
-            base.AroundPreStart();
-        }
-
-        public override void AroundPostStop()
-        {
-            LogInfo($"STOP");
-
-            base.AroundPostStop();
-        }
-
-        public override void AroundPreRestart(Exception cause, object message)
-        {
-            LogInfo($"PRE");
-
-            base.AroundPreRestart(cause, message);
-        }
-
         protected override bool ReceiveRecover(object message)
         {
             if (message == null)
@@ -87,10 +66,6 @@ namespace Euventing.Atom.Burst.Subscription
         private void Process(SubscriptionMessage subscription)
         {
             Persist(subscription, MutateInternalState);
-
-            CreateSubscriptionOnEachNode(subscription);
-
-            CreateFeedActor(subscription);
         }
 
         private void CreateFeedActor(SubscriptionMessage subscription)
@@ -124,9 +99,13 @@ namespace Euventing.Atom.Burst.Subscription
             LogInfo($"Unhandled command {unhandledObject.GetType()} {unhandledObject} from {Context.Sender.Path}");
         }
 
-        private void MutateInternalState(SubscriptionMessage message)
+        private void MutateInternalState(SubscriptionMessage subscription)
         {
-            this.subscriptionMessage = message;
+            this.subscriptionMessage = subscription;
+
+            CreateSubscriptionOnEachNode(subscription);
+
+            CreateFeedActor(subscription);
         }
 
         private void MutateInternalState(object unhandledObject)
