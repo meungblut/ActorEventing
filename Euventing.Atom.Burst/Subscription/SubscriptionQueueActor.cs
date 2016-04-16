@@ -3,6 +3,7 @@ using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
 using Akka.Persistence;
+using Euventing.Atom.Burst.Subscription.EventQueue;
 using Euventing.Atom.Document;
 using Euventing.Core;
 using Euventing.Core.Messages;
@@ -11,9 +12,8 @@ namespace Euventing.Atom.Burst.Subscription
 {
     public class SubscriptionQueueActor : PersistentActorBase, IWithUnboundedStash
     {
-        readonly Queue<AtomEntry> queuedItems = new Queue<AtomEntry>();
+        readonly SubscriptionEventStore<AtomEntry> queuedItems = new SubscriptionEventStore<AtomEntry>();
         private bool shouldBeInThisStream = true;
-        private int queueLength;
         private Address queueAddress;
         readonly DomainEventToAtomEntryConverter converter = new DomainEventToAtomEntryConverter();
 
@@ -52,24 +52,14 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void Enqueue(DomainEvent message)
         {
-            queueLength++;
             var atomEntry = converter.ConvertDomainEventToAtomEntry(message);
-            queuedItems.Enqueue(atomEntry);
+            queuedItems.Add(atomEntry, LastSequenceNr);
         }
 
         private void DequeueAndSend(RequestEvents eventRequest)
         {
-            int i = 0;
-            var events = new List<QueuedEvent>();
-
-            while (i < eventRequest.MaxEventsToSend && queueLength > 0)
-            {
-                queueLength--;
-                events.Add(new QueuedEvent(queuedItems.Dequeue()));
-                i++;
-            }
-
-            Context.Sender.Tell(new RequestedEvents(events, queueLength, queueAddress), Context.Self);
+            var events = queuedItems.Get(eventRequest.MaxEventsToSend);
+            Context.Sender.Tell(new RequestedEvents(events, events.EventCount, queueAddress), Context.Self);
         }
 
         private void MutateInternalState(RecoveryCompleted complete)

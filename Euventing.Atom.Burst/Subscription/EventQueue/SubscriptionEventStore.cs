@@ -41,7 +41,7 @@ namespace Euventing.Atom.Burst.Subscription.EventQueue
                 EventsInQueue--;
             }
 
-            var eventEnvelope = new EventEnvelope<T>(events, Guid.NewGuid(), entriesReturned);
+            var eventEnvelope = new EventEnvelope<T>(events, Guid.NewGuid(), entriesReturned, EventsInQueue);
             var internalEnvelope = new InternalEventEnvelope<T>(eventEnvelope, highestPersistenceIdInBatch, DateTime.Now);
             unconfirmedBatches.Add(eventEnvelope.EventBatchId, internalEnvelope);
 

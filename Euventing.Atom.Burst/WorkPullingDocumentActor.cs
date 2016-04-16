@@ -75,21 +75,21 @@ namespace Euventing.Atom.Burst
 
         private void Process(RequestedEvents requestedEvents)
         {
-            LogInfo($"Received {requestedEvents.Events.Count()} events");
+            LogInfo($"Received {requestedEvents.Events.EventCount} events");
 
             subscriptionsCurrentlyPolling.AddOrUpdate(requestedEvents.AddressOfSender, Context.Sender,
                 (x, y) => Context.Sender);
 
-            foreach (var requestedEvent in requestedEvents.Events)
+            foreach (var requestedEvent in requestedEvents.Events.Events)
             {
                 //TODO: something with this.
                 entriesInCurrentDocument++;
 
-                Persist(requestedEvent.Message, MutateInternalState);
+                Persist(requestedEvent, MutateInternalState);
             }
 
-            if (requestedEvents.MessagesRemaining > 0)
-                LogInfo($"{requestedEvents.MessagesRemaining} remain in queue");
+            if (requestedEvents.Events.EventsRemaining > 0)
+                LogInfo($"{requestedEvents.Events.EventsRemaining} remain in queue");
 
             LogInfo($"{entriesInCurrentDocument} in document against {atomDocumentSettings.NumberOfEventsPerDocument}");
 
