@@ -28,7 +28,9 @@ namespace Euventing.Atom.Burst.Subscription.EventQueue
         {
             long highestPersistenceIdInBatch = 0;
             List<T> events = new List<T>(entriesToGet);
-            for (int i = 0; i < entriesToGet; i++)
+
+            int entriesReturned;
+            for (entriesReturned = 0; entriesReturned < entriesToGet; entriesReturned++)
             {
                 if (queuedEntries.Count == 0)
                     break;
@@ -39,7 +41,7 @@ namespace Euventing.Atom.Burst.Subscription.EventQueue
                 EventsInQueue--;
             }
 
-            var eventEnvelope = new EventEnvelope<T>(events, Guid.NewGuid());
+            var eventEnvelope = new EventEnvelope<T>(events, Guid.NewGuid(), entriesReturned);
             var internalEnvelope = new InternalEventEnvelope<T>(eventEnvelope, highestPersistenceIdInBatch, DateTime.Now);
             unconfirmedBatches.Add(eventEnvelope.EventBatchId, internalEnvelope);
 

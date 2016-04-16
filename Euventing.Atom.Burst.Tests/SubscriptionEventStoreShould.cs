@@ -46,6 +46,15 @@ namespace Euventing.Atom.Burst.Tests
         }
 
         [Test]
+        public void ReturnCorrectNumberOfEventsInBatch()
+        {
+            AddEntries(4);
+            var retrievedItems = _queue.Get(2);
+
+            Assert.AreEqual(2, retrievedItems.EventCount);
+        }
+
+        [Test]
         public void WaitUntilLowestBatchIsConfirmedBeforeUpdatingMinimumPersistenceIdHeld()
         {
             AddEntries(10);
