@@ -86,6 +86,10 @@
     <Compile Include="Subscription\BurstSubscriptionManager.cs" />
     <Compile Include="Subscription\BurstSubscriptionActor.cs" />
     <Compile Include="Subscription\BurstSubscriptionMessageExtractor.cs" />
+    <Compile Include="Subscription\EventQueue\EventEnvelope.cs" />
+    <Compile Include="Subscription\EventQueue\InternalEventEnvelope.cs" />
+    <Compile Include="Subscription\EventQueue\PersistenceIdAlreadyAddedException.cs" />
+    <Compile Include="Subscription\EventQueue\SubscriptionEventStore.cs" />
     <Compile Include="Subscription\LoggingMessageExtractorDecorator.cs" />
     <Compile Include="Subscription\RequestedEvents.cs" />
     <Compile Include="Subscription\SubscriptionsAtomFeedShouldPoll.cs" />

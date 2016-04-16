@@ -15,6 +15,7 @@ namespace Euventing.Atom.Burst.Subscription
         private bool shouldBeInThisStream = true;
         private int queueLength;
         private Address queueAddress;
+        readonly DomainEventToAtomEntryConverter converter = new DomainEventToAtomEntryConverter();
 
         protected override void PreStart()
         {
@@ -52,7 +53,6 @@ namespace Euventing.Atom.Burst.Subscription
         private void Enqueue(DomainEvent message)
         {
             queueLength++;
-            var converter = new DomainEventToAtomEntryConverter();
             var atomEntry = converter.ConvertDomainEventToAtomEntry(message);
             queuedItems.Enqueue(atomEntry);
         }
@@ -66,7 +66,6 @@ namespace Euventing.Atom.Burst.Subscription
             {
                 queueLength--;
                 events.Add(new QueuedEvent(queuedItems.Dequeue()));
-                DeleteMessages(1, true);
                 i++;
             }
 

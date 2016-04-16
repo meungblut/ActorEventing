@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Test.Shared", "Eu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Atom.Burst", "Euventing.Atom.Burst\Euventing.Atom.Burst.csproj", "{CB575587-DC7D-4B99-98B8-2D39261F86AC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Atom.Burst.Tests", "Euventing.Atom.Burst.Tests\Euventing.Atom.Burst.Tests.csproj", "{B997F72F-2EC2-4163-AF1C-726A4D8A7645}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{CB575587-DC7D-4B99-98B8-2D39261F86AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB575587-DC7D-4B99-98B8-2D39261F86AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB575587-DC7D-4B99-98B8-2D39261F86AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B997F72F-2EC2-4163-AF1C-726A4D8A7645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B997F72F-2EC2-4163-AF1C-726A4D8A7645}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B997F72F-2EC2-4163-AF1C-726A4D8A7645}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B997F72F-2EC2-4163-AF1C-726A4D8A7645}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,5 +86,6 @@ Global
 		{A3E02354-1A28-4351-AD6A-CAA6603B7502} = {A8494E4B-ED9B-422C-A951-C8B368A6DFEB}
 		{8D801709-582D-40AB-A0E8-85CCCB36EE8F} = {A8494E4B-ED9B-422C-A951-C8B368A6DFEB}
 		{09D4DC80-2ED7-4D1D-8542-57D9596400F0} = {A8494E4B-ED9B-422C-A951-C8B368A6DFEB}
+		{B997F72F-2EC2-4163-AF1C-726A4D8A7645} = {A8494E4B-ED9B-422C-A951-C8B368A6DFEB}
 	EndGlobalSection
 EndGlobal
