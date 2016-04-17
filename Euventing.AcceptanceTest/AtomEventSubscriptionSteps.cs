@@ -27,8 +27,7 @@ namespace Euventing.AcceptanceTest
 
         private static BurstingEventSystemHost inProcessHost;
         private static OutOfProcessProcessClusterMember outOfProcessClusterMembersHost;
-
-
+        
         [Given(@"I have an eventing url at '(.*)'")]
         public void GivenIHaveAnEventingUrlAt(string url)
         {
@@ -88,6 +87,13 @@ namespace Euventing.AcceptanceTest
                 throw new TimeoutException("Subscription was not created within expected time");
         }
 
+        [When(@"'(.*)' more events then the maximum per document are raised within my domain")]
+        public void WhenMoreEventsThenTheMaximumPerDocumentAreRaisedWithinMyDomain(int extraEvents)
+        {
+            RaiseEvents(eventsPerDocument + extraEvents);
+        }
+
+
         private bool WaitForSubscriptionToBeCreated(string resourceLocation)
         {
             HttpClient client = new HttpClient();
@@ -142,6 +148,11 @@ namespace Euventing.AcceptanceTest
         [When(@"'(.*)' events are raised within my domain")]
         public void WhenEventsAreRaisedWithinMyDomain(int numberOfEventsToRaise)
         {
+            RaiseEvents(numberOfEventsToRaise);
+        }
+
+        private void RaiseEvents(int numberOfEventsToRaise)
+        {
             Thread.Sleep(TimeSpan.FromMilliseconds(100));
             for (int i = 0; i < numberOfEventsToRaise; i++)
             {
@@ -164,12 +175,16 @@ namespace Euventing.AcceptanceTest
         {
             HttpClient client = new HttpClient();
 
-            for (int i = 0; i < numberOfEventsToRaise; i++)
-            {
-                HttpContent content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
-                var result = this.httpResponseMessage = client.PutAsync("http://localhost:3601/events/" + i, content).Result;
-                Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
-            }
+            HttpContent content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+            var result = this.httpResponseMessage = client.PutAsync("http://localhost:3601/events/multi/" + numberOfEventsToRaise, content).Result;
+            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+
+            //for (int i = 0; i < numberOfEventsToRaise; i++)
+            //{
+            //    HttpContent content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+            //    var result = this.httpResponseMessage = client.PutAsync("http://localhost:3601/events/" + i, content).Result;
+            //    Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+            //}
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 

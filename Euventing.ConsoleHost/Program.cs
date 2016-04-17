@@ -34,7 +34,7 @@ namespace Euventing.ConsoleHost
 
             var subscriptionId = new SubscriptionId(GetValueFromCommandLine("subscriptionId", args));
 
-            if (! string.IsNullOrEmpty(subscriptionId.Id))
+            if (!string.IsNullOrEmpty(subscriptionId.Id))
             {
                 Console.WriteLine("Getting subscriptionId");
                 ISubscriptionManager shardedSubscriptionManager = eventSystemHost.Get<ISubscriptionManager>();
@@ -63,7 +63,6 @@ namespace Euventing.ConsoleHost
                 {
                     notifier.PublishMessage(new DummyDomainEvent(akkaPortNumber + ":" + (++i).ToString()));
                     LogManager.GetLogger("").Info("Raising event with id" + i);
-                    Thread.Sleep(1000);
                 }
             }
 

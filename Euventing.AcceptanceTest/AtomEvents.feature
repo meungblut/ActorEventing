@@ -16,7 +16,6 @@ The subscriber will SUBSCRIBE to an api url and be sent a subscription URL. Once
 Background: Create Url
 	And I have an eventing url at 'http://localhost:3600/subscriptions'
 
-@subscription
 Scenario: Create an event subscription
 	And I PUT a message to 'http://localhost:3600/subscriptions' with the body
 	"""
@@ -27,7 +26,6 @@ Scenario: Create an event subscription
 	"""
 	Then I should receive a response with the http status code 'Accepted'
 
-@subscription
 Scenario: Get event subscription details
 	Given I PUT a message to 'http://localhost:3600/subscriptions' with the body
 	"""
@@ -44,19 +42,16 @@ Scenario: Get event subscription details
 	"""
 	And a content type of 'application/vnd.tesco.eventSubscription+json'
 
-@subscription
 Scenario: No event subscription yet
 	When I request the subscription from url 'http://localhost:3600/subscriptions/63635463'
 	Then I should receive a response with the http status code 'NotFound'
 
-@atomEvents
 Scenario: Get an atom document
 	Given I have subscribed to an atom feed with a subscription Id of '11111'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '0' events
 
-@atomEvents
 Scenario: Get an atom document with events in it
 	Given I have subscribed to an atom feed with a subscription Id of '222'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
@@ -64,26 +59,23 @@ Scenario: Get an atom document with events in it
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '8' events
 
-@atomEvents
 Scenario: Create a new head document when the maximum number of events per document is breached
 	Given I have subscribed to an atom feed with a subscription Id of '69857'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
-	When '12' events are raised within my domain
+	When '2' more events then the maximum per document are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 
-@atomEvents
 Scenario: Retrieve documents by document id
 	Given I have subscribed to an atom feed with a subscription Id of '33333'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
-	When '12' events are raised within my domain
+	When '2' more events then the maximum per document are raised within my domain
 	And I get the named feed from 'http://localhost:3600/events/atom/feed/33333'
 	Then it should have a self reference of 'http://localhost:3600/events/atom/document/33333_1'
 	Then it should have a previous reference of 'http://localhost:3600/events/atom/document/33333_0'
 	Then I should be able to retrieve the earlier document by issuing a GET to its url
 	And the earlier document should have a link to the new head document
 
-@atomEvents
 Scenario: Cancel an event subscription
 	Given I have subscribed to an atom feed with a subscription Id of '44444'
 	And I wait for the subscription to be created at'http://localhost:3601/subscriptions/'
@@ -93,7 +85,6 @@ Scenario: Cancel an event subscription
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '1' events
 
-@multinode
 Scenario: Retrieve documents from a second node
 	Given I have subscribed to an atom feed with a generated subscription Id
 	And I wait for the subscription to be created at'http://localhost:3601/subscriptions/'
@@ -101,7 +92,6 @@ Scenario: Retrieve documents from a second node
 	And I get the feed from 'http://localhost:3601/events/atom/feed/'
 	Then I should have an atom document with '2' events
 
-@multinode
 Scenario: Raise events on two nodes
 	Given I have subscribed to an atom feed with a subscription Id of '66666'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
@@ -109,3 +99,25 @@ Scenario: Raise events on two nodes
 	And '2' events are raised on a different node
     And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '4' events
+
+	@ignore
+Scenario: Raise events and read at the same time
+	Given I have subscribed to an atom feed with a subscription Id of '987654321'
+	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
+	When '1000' events are raised within my domain
+    And I get the feed from 'http://localhost:3600/events/atom/feed/'
+	And '1000' events are raised on a different node
+    And I get the feed from 'http://localhost:3601/events/atom/feed/'
+	And '1000' events are raised within my domain
+    And I get the feed from 'http://localhost:3600/events/atom/feed/'
+	And '1000' events are raised on a different node
+    And I get the feed from 'http://localhost:3601/events/atom/feed/'
+	When '1000' events are raised within my domain
+    And I get the feed from 'http://localhost:3600/events/atom/feed/'
+	And '1000' events are raised on a different node
+    And I get the feed from 'http://localhost:3601/events/atom/feed/'
+	And '1000' events are raised within my domain
+    And I get the feed from 'http://localhost:3600/events/atom/feed/'
+	And '1000' events are raised on a different node
+    And I get the feed from 'http://localhost:3601/events/atom/feed/'
+

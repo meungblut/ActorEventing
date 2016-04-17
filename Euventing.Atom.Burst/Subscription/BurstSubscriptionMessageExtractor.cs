@@ -9,8 +9,10 @@ namespace Euventing.Atom.Burst.Subscription
     {
         public string EntityId(object message)
         {
-            //if (message is SaveSnapshotSuccess)
-            //    return ((SaveSnapshotSuccess)message).Metadata.PersistenceId;
+            if (message is SaveSnapshotSuccess)
+            {
+                return ((SaveSnapshotSuccess) message).Metadata.PersistenceId;
+            }
 
             if (message is GetDocumentFromFeedRequest)
                 return ((GetDocumentFromFeedRequest)message).SubscriptionId.Id;
@@ -27,7 +29,7 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is GetHeadDocumentForFeedRequest)
                 return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id;
 
-            return null;
+            return string.Empty;
             //throw new CouldNotRouteMessageToShardException(null, message);
         }
 
@@ -42,8 +44,8 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is SubscriptionQuery)
                 return (SubscriptionQuery)message;
 
-            //if (message is SaveSnapshotSuccess)
-            //    return (SaveSnapshotSuccess)message;
+            if (message is SaveSnapshotSuccess)
+                return (SaveSnapshotSuccess)message;
 
             if (message is DeleteSubscriptionMessage)
                 return (DeleteSubscriptionMessage)message;
@@ -58,8 +60,8 @@ namespace Euventing.Atom.Burst.Subscription
 
         public string ShardId(object message)
         {
-            //if (message is SaveSnapshotSuccess)
-            //    return ((SaveSnapshotSuccess)message).Metadata.PersistenceId.GetHashCode().ToString();
+            if (message is SaveSnapshotSuccess)
+                return ((SaveSnapshotSuccess)message).Metadata.PersistenceId.GetHashCode().ToString();
 
             if (message is GetDocumentFromFeedRequest)
                 return ((GetDocumentFromFeedRequest)message).SubscriptionId.Id.GetHashCode().ToString();

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading;
 using Akka.Actor;
 using Akka.Cluster;
-using Akka.Event;
 using Akka.Persistence;
 using Euventing.Atom.Burst.Subscription;
 using Euventing.Atom.Document;
@@ -49,9 +46,6 @@ namespace Euventing.Atom.Burst.Feed
 
         private void Process(AtomFeedCreationCommand creationCommand)
         {
-            if (CurrentFeedHeadDocument != null)
-                throw new FeedAlreadyCreatedException(CurrentFeedHeadDocument.Id);
-
             var documentId = new DocumentId(creationCommand.FeedId.Id + "_" + headDocumentIndex.ToString());
             var nextDocumentId = new DocumentId(creationCommand.FeedId.Id + "_" + (headDocumentIndex + 1).ToString());
             var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author,

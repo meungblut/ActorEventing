@@ -25,5 +25,20 @@ namespace Euventing.Test.Shared
             var response = new HttpResponseMessage(HttpStatusCode.NoContent);
             return response;
         }
+
+        [HttpPut]
+        [Route("events/multi/{numberOfEvents}")]
+        public HttpResponseMessage PutMany([FromUri] string numberOfEvents)
+        {
+            for (int i = 0; i < int.Parse(numberOfEvents); i++)
+            {
+                LogManager.GetLogger("Log").Info("EventRaisingController publishing event " + i);
+                publisher.PublishMessage(new DummyEvent(i.ToString()));
+            }
+
+
+            var response = new HttpResponseMessage(HttpStatusCode.NoContent);
+            return response;
+        }
     }
 }
