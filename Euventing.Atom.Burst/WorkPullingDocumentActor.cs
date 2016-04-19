@@ -23,7 +23,7 @@ namespace Euventing.Atom.Burst
         private SubscriptionsAtomFeedShouldPoll subscriptionsAtomFeedShouldPoll;
         private bool feedCancelled = false;
 
-        private bool haveInformedParentIAmFull = false;
+        private bool documentIsFull = false;
 
         public WorkPullingDocumentActor(IAtomDocumentSettings settings)
         {
@@ -40,7 +40,7 @@ namespace Euventing.Atom.Burst
 
         private void PollSubscriptionQueue(IActorRef actorRef)
         {
-            LogInfo($"Asking for events from node {actorRef.Path}");
+            LogTraceInfo($"Asking for events from node {actorRef.Path}");
 
             var eventsToRequest = atomDocumentSettings.NumberOfEventsPerDocument - entriesInCurrentDocument;
 
@@ -49,14 +49,14 @@ namespace Euventing.Atom.Burst
 
         private void Process(DeleteSubscriptionMessage deleteSubscription)
         {
-            LogInfo($"Cancelling document");
+            LogTraceInfo($"Cancelling document");
 
             feedCancelled = true;
         }
 
         protected void Process(CreateAtomDocumentCommand creationRequest)
         {
-            LogInfo($"Created atom document with id {creationRequest.DocumentId.Id}");
+            LogTraceInfo($"Created atom document with id {creationRequest.DocumentId.Id}");
 
             var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
                 creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.PreviousHeadDocumentId, creationRequest.NextHeadDocumentId);
@@ -67,7 +67,7 @@ namespace Euventing.Atom.Burst
 
         private void Process(SubscriptionsAtomFeedShouldPoll subscriptions)
         {
-            LogInfo($"********Received the subscriptions to poll");
+            LogTraceInfo($"********Received the subscriptions to poll");
 
             subscriptionsAtomFeedShouldPoll = subscriptions;
             PollQueues();
@@ -75,49 +75,53 @@ namespace Euventing.Atom.Burst
 
         private void Process(RequestedEvents requestedEvents)
         {
-            LogInfo($"Received {requestedEvents.Events.EventCount} events");
+            LogTraceInfo($"Received {requestedEvents.Events.EventCount} events");
 
-            subscriptionsCurrentlyPolling.AddOrUpdate(requestedEvents.AddressOfSender, Context.Sender,
-                (x, y) => Context.Sender);
+            //subscriptionsCurrentlyPolling.AddOrUpdate(requestedEvents.AddressOfSender, Context.Sender,
+            //    (x, y) => Context.Sender);
 
-            foreach (var requestedEvent in requestedEvents.Events.Events)
-            {
-                //TODO: something with this.
-                entriesInCurrentDocument++;
+            AddEventsToDocument(requestedEvents);
 
-                Persist(requestedEvent, MutateInternalState);
-            }
-
-            if (requestedEvents.Events.EventsRemaining > 0)
-                LogInfo($"{requestedEvents.Events.EventsRemaining} remain in queue");
-
-            LogInfo($"{entriesInCurrentDocument} in document against {atomDocumentSettings.NumberOfEventsPerDocument}");
+            LogTraceInfo($"{entriesInCurrentDocument} in document against {atomDocumentSettings.NumberOfEventsPerDocument}");
 
             if (entriesInCurrentDocument >= atomDocumentSettings.NumberOfEventsPerDocument)
             {
-                LogInfo($"Document is full");
+                LogTraceInfo($"Document is full");
 
                 DocumentIsFull();
             }
-            else
-            {
-                if (!feedCancelled)
-                {
-                    Thread.Sleep(TimeSpan.FromMilliseconds(100));
-                    Self.Tell(new PollForEvents(Context.Sender));
-                }
-            }
+
+            if (feedCancelled || documentIsFull)
+                return;
+
+            Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            Self.Tell(new PollForEvents(Context.Sender));
+
+        }
+
+        private void AddEventsToDocument(RequestedEvents requestedEvents)
+        {
+            PersistAsync(requestedEvents.Events.Events, MutateInternalState);
+            entriesInCurrentDocument += requestedEvents.Events.EventCount;
+
+            //foreach (var requestedEvent in requestedEvents.Events.Events)
+            //{
+            //    //TODO: something with this.
+            //    entriesInCurrentDocument++;
+
+            //    PersistAsync(requestedEvent, MutateInternalState);
+            //}
         }
 
         private void DocumentIsFull()
         {
-            if (haveInformedParentIAmFull)
+            if (documentIsFull)
                 return;
 
             Context.Parent.Tell(new DocumentFull(FeedId, DocumentId));
-            haveInformedParentIAmFull = true;
+            documentIsFull = true;
             LaterEventsDocumentId = documentIdToBeUsedAsNextHead;
-            LogInfo($"Set later events to {LaterEventsDocumentId.Id}");
+            LogTraceInfo($"Set later events to {LaterEventsDocumentId.Id}");
         }
 
         private Address GetDifferentNodeIfPossible()
@@ -131,12 +135,12 @@ namespace Euventing.Atom.Burst
         private void MutateInternalState(AtomEntry entry)
         {
             Entries.Add(entry);
-            LogInfo($"Added event {entry.Id} to feed {FeedId.Id} document {DocumentId.Id}");
+            LogTraceInfo($"Added event {entry.Id} to feed {FeedId.Id} document {DocumentId.Id}");
         }
 
         private void Process(GetAtomDocumentRequest request)
         {
-            LogInfo($"Returning document {DocumentId.Id}");
+            LogTraceInfo($"Returning document {DocumentId.Id}");
             GetCurrentAtomDocument();
         }
 

@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.Cluster;
-using Akka.Event;
 using Akka.Persistence;
 using Euventing.Atom.Burst.Subscription.EventQueue;
 using Euventing.Atom.Document;
@@ -19,7 +17,7 @@ namespace Euventing.Atom.Burst.Subscription
 
         protected override void PreStart()
         {
-            LogInfo("Starting subscription queue actor");
+            LogTraceInfo("Starting subscription queue actor");
 
             var actor = Context.ActorSelection("/user/" + ActorLocations.LocalSubscriptionManagerLocation);
             actor.Tell(new NewLocalSubscriptionCreated(Context.Self));
@@ -42,7 +40,7 @@ namespace Euventing.Atom.Burst.Subscription
         protected override bool ReceiveCommand(object message)
         {
             if (message is RequestEvents)
-                DequeueAndSend((RequestEvents)message);
+                GetEvents((RequestEvents)message);
 
             if (message is DomainEvent && shouldBeInThisStream)
                 PersistAsync(message, x => Enqueue((DomainEvent)x));
@@ -56,10 +54,10 @@ namespace Euventing.Atom.Burst.Subscription
             queuedItems.Add(atomEntry, LastSequenceNr);
         }
 
-        private void DequeueAndSend(RequestEvents eventRequest)
+        private void GetEvents(RequestEvents eventRequest)
         {
-            var events = queuedItems.Get(eventRequest.MaxEventsToSend);
-            Context.Sender.Tell(new RequestedEvents(events, events.EventCount, queueAddress), Context.Self);
+            var eventEnvelope = queuedItems.Get(eventRequest.MaxEventsToSend);
+            Context.Sender.Tell(new RequestedEvents(eventEnvelope, eventEnvelope.EventCount, queueAddress), Context.Self);
         }
 
         private void MutateInternalState(RecoveryCompleted complete)

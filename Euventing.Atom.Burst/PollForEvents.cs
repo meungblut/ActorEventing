@@ -1,3 +1,4 @@
+using System;
 using Akka.Actor;
 
 namespace Euventing.Atom.Burst
@@ -9,6 +10,13 @@ namespace Euventing.Atom.Burst
             AddressToPoll = addressToPoll;
         }
 
+        public PollForEvents(IActorRef addressToPoll, Guid lastBatchProcessed)
+        {
+            AddressToPoll = addressToPoll;
+        }
+
         public IActorRef AddressToPoll { get; private set; }
+
+        public Guid LastBatchProcessed { get; private set; }
     }
 }

@@ -23,7 +23,7 @@ namespace Euventing.AcceptanceTest
         private IEventPublisher publisher;
         private string subscriptionId;
         private SyndicationFeed retrievedFeed;
-        private static int eventsPerDocument = 10;
+        private static int eventsPerDocument = 500;
 
         private static BurstingEventSystemHost inProcessHost;
         private static OutOfProcessProcessClusterMember outOfProcessClusterMembersHost;
@@ -179,12 +179,6 @@ namespace Euventing.AcceptanceTest
             var result = this.httpResponseMessage = client.PutAsync("http://localhost:3601/events/multi/" + numberOfEventsToRaise, content).Result;
             Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
 
-            //for (int i = 0; i < numberOfEventsToRaise; i++)
-            //{
-            //    HttpContent content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
-            //    var result = this.httpResponseMessage = client.PutAsync("http://localhost:3601/events/" + i, content).Result;
-            //    Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
-            //}
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 

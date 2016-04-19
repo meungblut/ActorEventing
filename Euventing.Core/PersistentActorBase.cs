@@ -12,12 +12,13 @@ namespace Euventing.Core
         {
             LoggingAdapter = Context.GetLogger();
             PersistenceId = this.GetType() + "|" + Context.Parent.Path.Name + "|" + Self.Path.Name;
-            LogInfo("Constructed");
+            LogTraceInfo("Constructed");
         }
 
-        protected void LogInfo(string dataToLog)
+        protected void LogTraceInfo(string dataToLog)
         {
-            LoggingAdapter.Info(GetFullInfoString(dataToLog));
+            if (LoggingAdapter.IsDebugEnabled)
+                LoggingAdapter.Debug(GetFullInfoString(dataToLog));
         }
 
         protected void LogError(string dataToLog)

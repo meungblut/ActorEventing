@@ -63,7 +63,7 @@ namespace Euventing.Atom.Burst.Feed
 
         private void Process(GetDocumentFromFeedRequest getDocumentRequest)
         {
-            LogInfo($"Asking for document with id {getDocumentRequest.DocumentId.Id}");
+            LogTraceInfo($"Asking for document with id {getDocumentRequest.DocumentId.Id}");
 
             var actor = currentAtomDocumentActorRefs[getDocumentRequest.DocumentId];
             actor.Forward(new GetAtomDocumentRequest());
@@ -71,13 +71,13 @@ namespace Euventing.Atom.Burst.Feed
 
         private void Process(GetHeadDocumentForFeedRequest getHeadDocumentIdForFeedRequest)
         {
-            LogInfo($"Getting atom document {getHeadDocumentIdForFeedRequest} feed actor");
+            LogTraceInfo($"Getting atom document {getHeadDocumentIdForFeedRequest} feed actor");
             currentAtomDocumentActorRefs[CurrentFeedHeadDocument].Forward(new GetAtomDocumentRequest());
         }
 
         private void Process(DocumentFull documentFull)
         {
-            LogInfo($"Received document full {documentFull.DocumentId.Id}");
+            LogTraceInfo($"Received document full {documentFull.DocumentId.Id}");
 
             DocumentIsFull(documentFull);
         }
@@ -109,7 +109,7 @@ namespace Euventing.Atom.Burst.Feed
         {
             if (CurrentFeedHeadDocument != documentFull.DocumentId)
             {
-                LogInfo($"Received document full for non-head document {documentFull.DocumentId}");
+                LogTraceInfo($"Received document full for non-head document {documentFull.DocumentId}");
             }
 
             var outgoingHeadDocument = CurrentFeedHeadDocument;
@@ -132,14 +132,14 @@ namespace Euventing.Atom.Burst.Feed
 
             currentAtomDocumentActorRefs.AddOrUpdate(CurrentFeedHeadDocument, newActor, (x, y) => newActor);
 
-            LogInfo($"Deployed new document actor with id {incomingHeadDocument.Id} on {addressToDeployOn.Port}");
+            LogTraceInfo($"Deployed new document actor with id {incomingHeadDocument.Id} on {addressToDeployOn.Port}");
 
-            LogInfo($"Head document is now {CurrentFeedHeadDocument.Id}");
+            LogTraceInfo($"Head document is now {CurrentFeedHeadDocument.Id}");
         }
 
         private void Process(DeleteSubscriptionMessage deleteSubscription)
         {
-            LogInfo("Received delete subscription message");
+            LogTraceInfo("Received delete subscription message");
 
             foreach (var currentActorRef in currentAtomDocumentActorRefs.Values)
             {
@@ -162,12 +162,12 @@ namespace Euventing.Atom.Burst.Feed
 
         private void MutateInternalState(object unhandledMessage)
         {
-            LogInfo("Received unhandled persistence command " + unhandledMessage.GetType());
+            LogTraceInfo("Received unhandled persistence command " + unhandledMessage.GetType());
         }
 
         private void Process(object unhandledMessage)
         {
-            LogInfo("Feed Actor Received unhandled command " + unhandledMessage.GetType());
+            LogTraceInfo("Feed Actor Received unhandled command " + unhandledMessage.GetType());
         }
     }
 }
