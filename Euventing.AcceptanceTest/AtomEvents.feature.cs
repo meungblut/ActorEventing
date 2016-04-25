@@ -342,35 +342,35 @@ this.FeatureBackground();
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 106
- testRunner.When("\'10\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("\'10000\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 107
     testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 108
- testRunner.And("\'10\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("\'10000\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 109
     testRunner.And("I get the feed from \'http://localhost:3601/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 110
- testRunner.And("\'10\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("\'10000\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 111
     testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 112
- testRunner.And("\'10\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("\'10000\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 113
     testRunner.And("I get the feed from \'http://localhost:3601/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 114
- testRunner.When("\'10\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("\'10000\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 115
     testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 116
- testRunner.And("\'10\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("\'10000\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 117
     testRunner.And("I get the feed from \'http://localhost:3601/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 118
- testRunner.And("\'10\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("\'10000\' events are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 119
     testRunner.And("I get the feed from \'http://localhost:3600/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 120
- testRunner.And("\'10\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("\'10000\' events are raised on a different node", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 121
     testRunner.And("I get the feed from \'http://localhost:3601/events/atom/feed/\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden

@@ -2,11 +2,13 @@
 {
     public class RequestEvents
     {
-        public int MaxEventsToSend { get; }
-    
-        public RequestEvents(int maxEventsToSend)
+        public int EventsToSend { get; }
+        public long LastProcessedId { get; }
+
+        public RequestEvents(int eventsToSend, long lastProcessedId)
         {
-            MaxEventsToSend = maxEventsToSend;
+            EventsToSend = eventsToSend;
+            LastProcessedId = lastProcessedId;
         }
     }
 }

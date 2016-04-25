@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Cluster.Sharding;
 using Akka.Dispatch.SysMsg;
-using Akka.Event;
 using Akka.Persistence;
-using Euventing.Atom.Serialization;
-using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Document.Actors
 {

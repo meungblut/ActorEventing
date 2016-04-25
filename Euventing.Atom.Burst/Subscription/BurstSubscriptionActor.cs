@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Akka.Actor;
 using Akka.Cluster;
-using Akka.Event;
 using Euventing.Atom.Burst.Feed;
 using Euventing.Atom.Document;
 using Euventing.Core;
@@ -73,7 +72,6 @@ namespace Euventing.Atom.Burst.Subscription
             LogTraceInfo($"Creating atom feed actor");
             var props = Props.Create(() => new FeedActor(this.atomDocumentSettings));
             atomFeedActor = Context.ActorOf(props, "Feed_" + subscription.SubscriptionId.Id);
-            atomFeedActor.Tell(new SubscriptionsAtomFeedShouldPoll(subscriptionQueues));
             atomFeedActor.Tell(new AtomFeedCreationCommand("", "", new FeedId(subscription.SubscriptionId.Id), null));
             LogTraceInfo("Created atom feed actor");
 
@@ -103,31 +101,12 @@ namespace Euventing.Atom.Burst.Subscription
         {
             this.subscriptionMessage = subscription;
 
-            CreateSubscriptionOnEachNode(subscription);
-
             CreateFeedActor(subscription);
         }
 
         private void MutateInternalState(object unhandledObject)
         {
             LogTraceInfo($"Unhandled persistence command");
-        }
-
-        private void CreateSubscriptionOnEachNode(SubscriptionMessage message)
-        {
-            foreach (var member in cluster.ReadView.Members)
-            {
-                var subscriptionActor =
-                     Context.System.ActorOf(
-                         Props.Create<SubscriptionQueueActor>()
-                         .WithDeploy(
-                             new Deploy(
-                                 new RemoteScope(member.Address))), "subscription_" + member.Address.GetHashCode() + "_" + message.SubscriptionId.Id);
-
-                subscriptionQueues.Add(subscriptionActor);
-
-                LogTraceInfo($"Subscription Actor deployed with address {subscriptionActor.Path} ");
-            }
         }
     }
 }

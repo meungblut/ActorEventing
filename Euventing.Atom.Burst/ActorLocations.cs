@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Akka.Actor;
 
 namespace Euventing.Atom.Burst
 {
-    internal class ActorLocations
+    internal static class ActorLocations
     {
-        internal static string LocalSubscriptionManagerLocation = "user_allLocalSubscriptionsActor";
+        internal static string LocalQueueLocation =  $"user_localEventQueue";
+
+        internal static IActorRef LocalQueueActor { get; set; }
+
     }
 }

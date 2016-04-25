@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using Akka.Actor;
-using Akka.Cluster;
-using Akka.Dispatch.SysMsg;
-using Akka.Event;
 using Akka.Persistence;
 using Euventing.Core;
 
@@ -15,7 +12,6 @@ namespace Euventing.Atom.Document.Actors
         private readonly IAtomDocumentSettings settings;
         private int numberOfEventsInCurrentHeadDocument;
         private int currentDocumentId;
-        private Stopwatch stopwatch = new Stopwatch();
 
         public AtomFeedActor(IAtomDocumentActorFactory builder, IAtomDocumentSettings settings)
         {

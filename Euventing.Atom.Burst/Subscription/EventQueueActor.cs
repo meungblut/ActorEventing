@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System.Collections.Generic;
+using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
 using Euventing.Atom.Burst.Subscription.EventQueue;
@@ -8,19 +9,17 @@ using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst.Subscription
 {
-    public class SubscriptionQueueActor : PersistentActorBase, IWithUnboundedStash
+    public class EventQueueActor : PersistentActorBase, IWithUnboundedStash
     {
-        readonly SubscriptionEventStore<AtomEntry> queuedItems = new SubscriptionEventStore<AtomEntry>();
-        private bool shouldBeInThisStream = true;
+        readonly SubscriptionQueue<AtomEntry> queuedItems = new SubscriptionQueue<AtomEntry>();
         private Address queueAddress;
         readonly DomainEventToAtomEntryConverter converter = new DomainEventToAtomEntryConverter();
+
+        private long currentPersistenceId = 0;
 
         protected override void PreStart()
         {
             LogTraceInfo("Starting subscription queue actor");
-
-            var actor = Context.ActorSelection("/user/" + ActorLocations.LocalSubscriptionManagerLocation);
-            actor.Tell(new NewLocalSubscriptionCreated(Context.Self));
 
             queueAddress = Cluster.Get(Context.System).SelfAddress;
             base.PreStart();
@@ -42,7 +41,7 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is RequestEvents)
                 GetEvents((RequestEvents)message);
 
-            if (message is DomainEvent && shouldBeInThisStream)
+            if (message is DomainEvent)
                 PersistAsync(message, x => Enqueue((DomainEvent)x));
 
             return true;
@@ -56,8 +55,9 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void GetEvents(RequestEvents eventRequest)
         {
-            var eventEnvelope = queuedItems.Get(eventRequest.MaxEventsToSend);
-            Context.Sender.Tell(new RequestedEvents(eventEnvelope, eventEnvelope.EventCount, queueAddress), Context.Self);
+            List<ItemEnvelope<AtomEntry>> eventEnvelope = queuedItems.Get(eventRequest.EventsToSend, eventRequest.LastProcessedId);
+            RequestedEvents<AtomEntry> events = new RequestedEvents<AtomEntry>(eventEnvelope, queueAddress);
+            Context.Sender.Tell(events, Context.Self);
         }
 
         private void MutateInternalState(RecoveryCompleted complete)
