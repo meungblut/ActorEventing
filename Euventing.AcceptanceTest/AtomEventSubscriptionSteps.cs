@@ -23,7 +23,7 @@ namespace Euventing.AcceptanceTest
         private IEventPublisher publisher;
         private string subscriptionId;
         private SyndicationFeed retrievedFeed;
-        private static int eventsPerDocument = 500;
+        private static int eventsPerDocument = 12;
 
         private static BurstingEventSystemHost inProcessHost;
         private static OutOfProcessProcessClusterMember outOfProcessClusterMembersHost;

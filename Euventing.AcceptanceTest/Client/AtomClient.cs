@@ -29,7 +29,9 @@ namespace Euventing.AcceptanceTest.Client
             var response = await client.GetAsync(new Uri(atomFeedUrl));
             if (!response.IsSuccessStatusCode)
                 throw new Exception(response.Content.ReadAsStringAsync().Result);
-            //var response = await client.GetStreamAsync(new Uri(atomFeedUrl));
+
+            Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+
             return await response.Content.ReadAsStreamAsync();
         }
     }

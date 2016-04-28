@@ -16,7 +16,7 @@ namespace Euventing.Atom.Burst.Subscription
         private readonly List<IActorRef> documentActors = new List<IActorRef>();
         private readonly IAtomDocumentSettings atomDocumentSettings;
 
-        private DocumentId documentId;
+        private DocumentId headDocumentIdForFeed;
 
         public SubscriptionActor(IAtomDocumentSettings settings)
         {
@@ -57,7 +57,7 @@ namespace Euventing.Atom.Burst.Subscription
         {
             LogTraceInfo("Getting atom document in subscription actor");
 
-            Sender.Tell(documentId);
+            Sender.Tell(headDocumentIdForFeed);
         }
 
         private void Process(SubscriptionMessage subscription)
@@ -83,7 +83,7 @@ namespace Euventing.Atom.Burst.Subscription
                                 new InMemoryAtomDocumentRepository()));
 
                 var atomDocument =
-                     Context.System.ActorOf(
+                     Context.ActorOf(
                          props
                          .WithDeploy(
                              new Deploy(
@@ -91,7 +91,7 @@ namespace Euventing.Atom.Burst.Subscription
 
                 atomDocument.Tell(
                     new CreateAtomDocumentCommand(
-                        "", "", documentId, Context.Self));
+                        "", "", headDocumentIdForFeed, Context.Self));
 
                 documentActors.Add(atomDocument);
 
@@ -110,7 +110,7 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void Process(DocumentMovedToNewId moved)
         {
-            documentId = moved.DocumentId;
+            headDocumentIdForFeed = moved.DocumentId;
         }
 
         private void Process(object unhandledObject)
@@ -122,7 +122,7 @@ namespace Euventing.Atom.Burst.Subscription
         {
             this.subscriptionMessage = subscription;
 
-            documentId = new DocumentId(subscription.SubscriptionId.Id, 0);
+            headDocumentIdForFeed = new DocumentId(subscription.SubscriptionId.Id, 0);
 
             CreateFeedActor(subscription);
         }

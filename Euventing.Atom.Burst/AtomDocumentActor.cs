@@ -24,7 +24,7 @@ namespace Euventing.Atom.Burst
         private readonly IActorRef eventQueueOnThisNode;
 
         private DocumentId CurrentDocumentId;
-        
+
         public AtomDocumentActor(IAtomDocumentSettings settings, IAtomDocumentRepository repository)
         {
             _repository = repository;
@@ -35,11 +35,11 @@ namespace Euventing.Atom.Burst
 
         private void PollSubscriptionQueue(IActorRef actorRef)
         {
-            LogTraceInfo($"Asking for events from node {actorRef.Path}");
+            var eventsToRequest = atomDocumentSettings.NumberOfEventsPerDocument;
 
-            var eventsToRequest = atomDocumentSettings.NumberOfEventsPerDocument - entriesInCurrentDocument;
+            LogTraceInfo($"Asking for {eventsToRequest} events from node {actorRef.Path}");
 
-            actorRef.Tell(new RequestEvents(eventsToRequest, lastEventIdProcessed));
+            actorRef.Tell(new RequestEvents(eventsToRequest, lastEventIdProcessed, FeedId));
         }
 
         private void Process(DeleteSubscriptionMessage deleteSubscription)
@@ -67,6 +67,7 @@ namespace Euventing.Atom.Burst
                 return;
 
             Thread.Sleep(TimeSpan.FromMilliseconds(100));
+
             Self.Tell(new PollForEvents(Context.Sender));
         }
 
@@ -74,21 +75,29 @@ namespace Euventing.Atom.Burst
         {
             foreach (var itemEnvelope in requestedEvents.Events)
             {
-                LogTraceInfo($"Saving {itemEnvelope.ItemToStore.Id} event to repo");
+                LogTraceInfo($"Saving event with id {itemEnvelope.ItemToStore.Id} " +
+                             $"and sequence number {itemEnvelope.ItemSequenceNumber} to repo with document id {DocumentId.Id}");
 
                 itemEnvelope.ItemToStore.DocumentId = this.CurrentDocumentId;
 
                 _repository.Add((itemEnvelope.ItemToStore));
 
                 lastEventIdProcessed = itemEnvelope.ItemSequenceNumber;
+
+                entriesInCurrentDocument++;
+
+                CheckEventsPerDocument();
             }
+        }
 
-            entriesInCurrentDocument += requestedEvents.Events.Count;
-
+        private void CheckEventsPerDocument()
+        {
             if (entriesInCurrentDocument > atomDocumentSettings.NumberOfEventsPerDocument)
             {
                 DocumentId = DocumentId.Add(1);
+                LogTraceInfo($"Setting new head to {DocumentId} ");
                 Context.Parent.Tell(new DocumentMovedToNewId(DocumentId));
+                entriesInCurrentDocument = 0;
             }
         }
 
@@ -104,7 +113,7 @@ namespace Euventing.Atom.Burst
             this.CurrentDocumentId = documentCreated.DocumentId;
             this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.Title = documentCreated.Title;
-            this.FeedId = documentCreated.FeedId;
+            this.FeedId = documentCreated.DocumentId.FeedId;
 
             PollSubscriptionQueue(eventQueueOnThisNode);
         }

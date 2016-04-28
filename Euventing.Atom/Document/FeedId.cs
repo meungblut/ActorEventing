@@ -8,5 +8,15 @@
         }
 
         public string Id { get; }
+
+        public static implicit operator FeedId(string input)
+        {
+            return new FeedId(input);
+        }
+
+        public static implicit operator string(FeedId input)
+        {
+            return input.Id;
+        }
     }
 }

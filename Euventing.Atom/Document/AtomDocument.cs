@@ -5,15 +5,19 @@ namespace Euventing.Atom.Document
 {
     public class AtomDocument
     {
-        public AtomDocument(string title, string author, FeedId feedId, DocumentId documentId, DocumentId earlierEventsDocumentId, DocumentId laterEventsDocumentId, List<AtomEntry> entries)
+        public AtomDocument(string title, string author, FeedId feedId, DocumentId documentId, DocumentId nextArchiveDocumentId, List<AtomEntry> entries)
         {
-            LaterEventsDocumentId = laterEventsDocumentId;
+            NextArchiveDocumentId = nextArchiveDocumentId;
             Title = title;
             Author = author;
             FeedId = feedId;
             DocumentId = documentId;
-            EarlierEventsDocumentId = earlierEventsDocumentId;
             Entries = entries;
+
+            if (DocumentId.DocumentIndex > 0)
+                PreviousArchiveDocumentId = DocumentId.Subtract(1);
+
+            NextArchiveDocumentId = documentId.Add(1);
         }
 
         public string Title { get; }
@@ -26,9 +30,9 @@ namespace Euventing.Atom.Document
 
         public DocumentId DocumentId { get; }
 
-        public DocumentId LaterEventsDocumentId { get; }
+        public DocumentId NextArchiveDocumentId { get; }
 
-        public DocumentId EarlierEventsDocumentId { get; }
+        public DocumentId PreviousArchiveDocumentId { get; }
 
         public List<AtomEntry> Entries { get; }
 

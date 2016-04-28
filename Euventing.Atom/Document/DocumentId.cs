@@ -83,7 +83,7 @@ namespace Euventing.Atom.Document
         }
 
         public long DocumentIndex { get; }
-        public string FeedId { get; }
+        public FeedId FeedId { get; }
         public string Id { get; }
     }
 }

@@ -5,11 +5,14 @@
 
 1) Notify interested parties about things happening in our domain
 2) Must be interoperable
-3) Must allow security (only those who are allowed to see events may see events)
+3) Must allow per event security (only those who are allowed to see each event may see events)
 4) Allow subscription through a uniform api
 5) Allow criteria to be specified (e.g. tell me about payment events over £1000)
 6) At least once delivery
 7) Be raised as they happen
+8) Require minimal supplementary infrastructure
+9) Allow a shared nothing deployment
+10) Minimal dependencies (utilise existing db & caching, for example)
 
 The subscriber will SUBSCRIBE to an api url and be sent a subscription URL. Once they have connected to that URL, they will be 'sent' events until they unsubscribe.
 

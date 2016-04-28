@@ -81,6 +81,7 @@
     <Compile Include="Feed\UnshardedAtomFeedActorRefFactory.cs" />
     <Compile Include="PollForEvents.cs" />
     <Compile Include="QueuedEvent.cs" />
+    <Compile Include="Subscription\EventQueue\LowestITemTracker.cs" />
     <Compile Include="Subscription\SubscriptionManager.cs" />
     <Compile Include="Subscription\SubscriptionActor.cs" />
     <Compile Include="Subscription\SubscriptionMessageExtractor.cs" />

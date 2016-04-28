@@ -23,7 +23,7 @@ namespace Euventing.Atom.Burst.Feed
         public Task<AtomDocument> GetDocument(string documentId)
         {
             var atomEntries = entries.Where(x => x.DocumentId.Id == documentId).ToList();
-            var document = new AtomDocument("", "", new FeedId(""), new DocumentId(documentId), new DocumentId(documentId), new DocumentId(documentId), atomEntries);
+            var document = new AtomDocument("", "", new FeedId(""), new DocumentId(documentId), new DocumentId(documentId), atomEntries);
             return Task.FromResult(document);
         }
     }

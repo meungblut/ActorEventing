@@ -157,6 +157,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="XMLFile1.xml" />
     <None Include="App.config" />
     <None Include="AtomEvents.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>

@@ -11,9 +11,10 @@ namespace Euventing.Atom.Burst.Subscription
 {
     public class EventQueueActor : PersistentActorBase, IWithUnboundedStash
     {
-        readonly SubscriptionQueue<AtomEntry> queuedItems = new SubscriptionQueue<AtomEntry>();
+        private readonly SubscriptionQueue<AtomEntry> queuedItems = new SubscriptionQueue<AtomEntry>();
+        private readonly LowestItemTracker lowestItemTracker = new LowestItemTracker();
         private Address queueAddress;
-        readonly DomainEventToAtomEntryConverter converter = new DomainEventToAtomEntryConverter();
+        private readonly DomainEventToAtomEntryConverter converter = new DomainEventToAtomEntryConverter();
 
         protected override void PreStart()
         {
@@ -55,9 +56,11 @@ namespace Euventing.Atom.Burst.Subscription
         {
             LogTraceInfo($"Received event request for {eventRequest.EventsToSend} events with {eventRequest.LastProcessedId} last events");
 
-            List<ItemEnvelope<AtomEntry>> eventEnvelope = queuedItems.Get(eventRequest.EventsToSend, eventRequest.LastProcessedId);
+            List<ItemEnvelope<AtomEntry>> eventEnvelope = queuedItems.Get(eventRequest.EventsToSend, eventRequest.LastProcessedId, eventRequest.FeedId);
             RequestedEvents<AtomEntry> events = new RequestedEvents<AtomEntry>(eventEnvelope, queueAddress);
             Context.Sender.Tell(events, Context.Self);
+            lowestItemTracker.AddEntry(eventRequest.LastProcessedId, eventRequest.FeedId.Id);
+            queuedItems.RemoveItemsWithIndexLowerThan(lowestItemTracker.GetLowestValue());
         }
 
         private void MutateInternalState(RecoveryCompleted complete)
