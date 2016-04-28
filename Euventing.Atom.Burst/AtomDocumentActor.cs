@@ -18,21 +18,19 @@ namespace Euventing.Atom.Burst
 
         private bool feedCancelled = false;
 
-        private int currentDocumentIndex;
-
         private long lastEventIdProcessed;
         private readonly IAtomDocumentRepository _repository;
 
-        private IActorRef eventQueueOnThisNode;
+        private readonly IActorRef eventQueueOnThisNode;
 
+        private DocumentId CurrentDocumentId;
+        
         public AtomDocumentActor(IAtomDocumentSettings settings, IAtomDocumentRepository repository)
         {
             _repository = repository;
             atomDocumentSettings = settings;
 
             eventQueueOnThisNode = ActorLocations.LocalQueueActor;
-
-            PollSubscriptionQueue(eventQueueOnThisNode);
         }
 
         private void PollSubscriptionQueue(IActorRef actorRef)
@@ -51,6 +49,16 @@ namespace Euventing.Atom.Burst
             feedCancelled = true;
         }
 
+        private void Process(CreateAtomDocumentCommand createDocument)
+        {
+            var createdEvent = new AtomDocumentCreatedEvent(
+                createDocument.Title,
+                createDocument.Author,
+                createDocument.DocumentId);
+
+            Persist(createdEvent, MutateInternalState);
+        }
+
         private void Process(RequestedEvents<AtomEntry> requestedEvents)
         {
             AddEventsToDocument(requestedEvents);
@@ -66,12 +74,22 @@ namespace Euventing.Atom.Burst
         {
             foreach (var itemEnvelope in requestedEvents.Events)
             {
+                LogTraceInfo($"Saving {itemEnvelope.ItemToStore.Id} event to repo");
+
+                itemEnvelope.ItemToStore.DocumentId = this.CurrentDocumentId;
+
                 _repository.Add((itemEnvelope.ItemToStore));
+
+                lastEventIdProcessed = itemEnvelope.ItemSequenceNumber;
             }
+
             entriesInCurrentDocument += requestedEvents.Events.Count;
 
             if (entriesInCurrentDocument > atomDocumentSettings.NumberOfEventsPerDocument)
-                currentDocumentIndex++;
+            {
+                DocumentId = DocumentId.Add(1);
+                Context.Parent.Tell(new DocumentMovedToNewId(DocumentId));
+            }
         }
 
         private void Process(PollForEvents request)
@@ -83,9 +101,12 @@ namespace Euventing.Atom.Burst
         {
             this.Author = documentCreated.Author;
             this.DocumentId = documentCreated.DocumentId;
+            this.CurrentDocumentId = documentCreated.DocumentId;
             this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.Title = documentCreated.Title;
             this.FeedId = documentCreated.FeedId;
+
+            PollSubscriptionQueue(eventQueueOnThisNode);
         }
 
         private void MutateInternalState(RecoveryCompleted complete)
@@ -108,6 +129,16 @@ namespace Euventing.Atom.Burst
             ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
+        }
+    }
+
+    internal class DocumentMovedToNewId
+    {
+        public DocumentId DocumentId { get; }
+
+        public DocumentMovedToNewId(DocumentId documentId)
+        {
+            DocumentId = documentId;
         }
     }
 }

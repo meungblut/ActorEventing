@@ -5,16 +5,13 @@
         public AtomDocumentCreatedEvent(
             string title,
             string author,
-            FeedId feedId,
-            DocumentId documentId,
-            DocumentId earlierEventsDocumentId)
+            DocumentId documentId)
         {
             Title = title;
             Author = author;
-            FeedId = feedId;
             DocumentId = documentId;
-            EarlierEventsDocumentId = earlierEventsDocumentId;
         }
+
         public AtomDocumentCreatedEvent(
             string title,
             string author,

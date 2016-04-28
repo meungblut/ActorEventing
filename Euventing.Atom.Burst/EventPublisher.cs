@@ -5,11 +5,11 @@ using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst
 {
-    public class BurstableEventPublisher : IEventPublisher
+    public class EventPublisher : IEventPublisher
     {
         private readonly IActorRef actorRef;
 
-        public BurstableEventPublisher(ActorSystem actorSystem)
+        public EventPublisher(ActorSystem actorSystem)
         {
             actorRef = actorSystem.ActorOf
                 (Props.Create<EventQueueActor>(), ActorLocations.LocalQueueLocation);

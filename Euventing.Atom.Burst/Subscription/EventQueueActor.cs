@@ -15,8 +15,6 @@ namespace Euventing.Atom.Burst.Subscription
         private Address queueAddress;
         readonly DomainEventToAtomEntryConverter converter = new DomainEventToAtomEntryConverter();
 
-        private long currentPersistenceId = 0;
-
         protected override void PreStart()
         {
             LogTraceInfo("Starting subscription queue actor");
@@ -55,6 +53,8 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void GetEvents(RequestEvents eventRequest)
         {
+            LogTraceInfo($"Received event request for {eventRequest.EventsToSend} events with {eventRequest.LastProcessedId} last events");
+
             List<ItemEnvelope<AtomEntry>> eventEnvelope = queuedItems.Get(eventRequest.EventsToSend, eventRequest.LastProcessedId);
             RequestedEvents<AtomEntry> events = new RequestedEvents<AtomEntry>(eventEnvelope, queueAddress);
             Context.Sender.Tell(events, Context.Self);

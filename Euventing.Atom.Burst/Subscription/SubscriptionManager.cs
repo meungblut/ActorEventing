@@ -2,27 +2,26 @@
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
-using Euventing.Atom.Burst.Feed;
 using Euventing.Atom.Document;
 using Euventing.Core.Messages;
 using Euventing.Core.Subscriptions;
 
 namespace Euventing.Atom.Burst.Subscription
 {
-    public class BurstSubscriptionManager : ISubscriptionManager
+    public class SubscriptionManager : ISubscriptionManager
     {
-        public IActorRef BurstSubscriptionActorRef { get; private set; }
+        public IActorRef SubscriptionActorRef { get; private set; }
 
-        public BurstSubscriptionManager(ActorSystem actorSystem, IAtomDocumentSettings atomDocumentSettings)
+        public SubscriptionManager(ActorSystem actorSystem, IAtomDocumentSettings atomDocumentSettings)
         {
             var settings = ClusterShardingSettings.Create(actorSystem);
 
             var props = Props.Create(() => new SubscriptionActor(atomDocumentSettings));
 
-            var messageExtractor = new LoggingMessageExtractorDecorator(new BurstSubscriptionMessageExtractor(), actorSystem.Log);
+            var messageExtractor = new LoggingMessageExtractorDecorator(new SubscriptionMessageExtractor(), actorSystem.Log);
 
-            BurstSubscriptionActorRef = ClusterSharding.Get(actorSystem).Start(
-                typeName: "BurstSubscriptionActor",
+            SubscriptionActorRef = ClusterSharding.Get(actorSystem).Start(
+                typeName: "SubscriptionActor",
                 entityProps: props,
                 settings: settings,
                 messageExtractor: messageExtractor);
@@ -30,17 +29,17 @@ namespace Euventing.Atom.Burst.Subscription
 
         public void CreateSubscription(SubscriptionMessage subscriptionMessage)
         {
-            BurstSubscriptionActorRef.Tell(subscriptionMessage);
+            SubscriptionActorRef.Tell(subscriptionMessage);
         }
 
         public void DeleteSubscription(DeleteSubscriptionMessage subscriptionMessage)
         {
-            BurstSubscriptionActorRef.Tell(subscriptionMessage);
+            SubscriptionActorRef.Tell(subscriptionMessage);
         }
 
         public async Task<SubscriptionMessage> GetSubscriptionDetails(SubscriptionQuery query)
         {
-            return await BurstSubscriptionActorRef.Ask<SubscriptionMessage>(query, TimeSpan.FromSeconds(3));
+            return await SubscriptionActorRef.Ask<SubscriptionMessage>(query, TimeSpan.FromSeconds(3));
         }
     }
 }

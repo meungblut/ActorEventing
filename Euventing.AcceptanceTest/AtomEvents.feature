@@ -78,13 +78,14 @@ Scenario: Retrieve documents by document id
 
 Scenario: Cancel an event subscription
 	Given I have subscribed to an atom feed with a subscription Id of '44444'
-	And I wait for the subscription to be created at'http://localhost:3601/subscriptions/'
+	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	And '1' events are raised within my domain
 	When I cancel the subscription
 	And '2' events are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '1' events
 
+	@ignore
 Scenario: Retrieve documents from a second node
 	Given I have subscribed to an atom feed with a generated subscription Id
 	And I wait for the subscription to be created at'http://localhost:3601/subscriptions/'
@@ -92,6 +93,7 @@ Scenario: Retrieve documents from a second node
 	And I get the feed from 'http://localhost:3601/events/atom/feed/'
 	Then I should have an atom document with '2' events
 
+	@ignore
 Scenario: Raise events on two nodes
 	Given I have subscribed to an atom feed with a subscription Id of '66666'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
@@ -100,6 +102,7 @@ Scenario: Raise events on two nodes
     And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '4' events
 
+	@ignore
 Scenario: Raise events and read at the same time
 	Given I have subscribed to an atom feed with a subscription Id of '987654321'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'

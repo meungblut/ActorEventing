@@ -8,6 +8,7 @@ using Euventing.Atom.Logging;
 using Euventing.Core;
 using Euventing.Core.Logging;
 using Euventing.Core.Subscriptions;
+using AtomDocumentRetriever = Euventing.Atom.Burst.AtomDocumentRetriever;
 
 namespace Euventing.Api.Startup
 {
@@ -24,14 +25,14 @@ namespace Euventing.Api.Startup
             var actorSystem = actorSystemFactory.GetActorSystem();
             var atomSettings = new ConfigurableAtomDocumentSettings(EntriesPerDocument);
 
-            var subscriptionManager = new BurstSubscriptionManager(actorSystem, atomSettings);
-            var eventPublisher = new BurstableEventPublisher(actorSystem);
+            var subscriptionManager = new SubscriptionManager(actorSystem, atomSettings);
+            var eventPublisher = new EventPublisher(actorSystem);
             var loggingEventPublisher = new LoggingEventPublisherDecorator(eventPublisher);
             IocContainer.Register<IEventPublisher>(loggingEventPublisher);
 
             IocContainer.Register<ISubscriptionManager>(subscriptionManager);
 
-            var documentRetriever = new LoggingAtomDocumentRetrieverDecorator(new BurstAtomDocumentRetriever(subscriptionManager, actorSystem.Log));
+            var documentRetriever = new LoggingAtomDocumentRetrieverDecorator(new AtomDocumentRetriever(subscriptionManager, actorSystem.Log, new InMemoryAtomDocumentRepository()));
             IocContainer.Register<IAtomDocumentRetriever>(documentRetriever);
 
             IocContainer.RegisterMultiple<IOwinConfiguration, WebApiOwinConfiguration>(IocLifecycle.PerRequest);

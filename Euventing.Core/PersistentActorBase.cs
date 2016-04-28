@@ -17,8 +17,8 @@ namespace Euventing.Core
 
         protected void LogTraceInfo(string dataToLog)
         {
-            if (LoggingAdapter.IsDebugEnabled)
-                LoggingAdapter.Debug(GetFullInfoString(dataToLog));
+            if (LoggingAdapter.IsInfoEnabled)
+                LoggingAdapter.Info(GetFullInfoString(dataToLog));
         }
 
         protected void LogError(string dataToLog)

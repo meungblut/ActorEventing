@@ -72,17 +72,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActorLocations.cs" />
-    <Compile Include="BurstableEventPublisher.cs" />
-    <Compile Include="BurstAtomDocumentRetriever.cs" />
+    <Compile Include="AtomDocumentRetriever.cs" />
+    <Compile Include="EventPublisher.cs" />
+    <Compile Include="GetDocumentFromFeedRequest.cs" />
     <Compile Include="DocumentFull.cs" />
     <Compile Include="Feed\IAtomFeedActorRefFactory.cs" />
     <Compile Include="Feed\InMemoryAtomDocumentRepository.cs" />
     <Compile Include="Feed\UnshardedAtomFeedActorRefFactory.cs" />
     <Compile Include="PollForEvents.cs" />
     <Compile Include="QueuedEvent.cs" />
-    <Compile Include="Subscription\BurstSubscriptionManager.cs" />
+    <Compile Include="Subscription\SubscriptionManager.cs" />
     <Compile Include="Subscription\SubscriptionActor.cs" />
-    <Compile Include="Subscription\BurstSubscriptionMessageExtractor.cs" />
+    <Compile Include="Subscription\SubscriptionMessageExtractor.cs" />
     <Compile Include="Subscription\EventQueue\ItemEnvelope.cs" />
     <Compile Include="Subscription\EventQueue\SubscriptionQueue.cs" />
     <Compile Include="Subscription\IAtomDocumentRepository.cs" />

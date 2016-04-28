@@ -1,3 +1,5 @@
+using Akka.Actor;
+
 namespace Euventing.Atom.Document
 {
     public class CreateAtomDocumentCommand
@@ -5,18 +7,19 @@ namespace Euventing.Atom.Document
         public CreateAtomDocumentCommand(
             string title,
             string author,
-            FeedId feedId)
+            DocumentId documentId, IActorRef actorRef)
         {
             Title = title;
             Author = author;
-            FeedId = feedId;
+            DocumentId = documentId;
         }
 
         public string Title { get; }
 
         public string Author { get; }
 
-        public FeedId FeedId { get; }
         public DocumentId DocumentId { get; set; }
+
+        public IActorRef SubscriptionActorRef { get; set; }
     }
 }

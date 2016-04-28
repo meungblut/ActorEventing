@@ -26,8 +26,11 @@ namespace Euventing.AcceptanceTest.Client
         {
             var client = new HttpClient();
             client.Timeout = timeout;
-            var response = await client.GetStreamAsync(new Uri(atomFeedUrl));
-            return response;
+            var response = await client.GetAsync(new Uri(atomFeedUrl));
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(response.Content.ReadAsStringAsync().Result);
+            //var response = await client.GetStreamAsync(new Uri(atomFeedUrl));
+            return await response.Content.ReadAsStreamAsync();
         }
     }
 }

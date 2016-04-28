@@ -45,16 +45,45 @@ namespace Euventing.Atom.Document
 
         private static readonly IEqualityComparer<DocumentId> IdComparerInstance = new IdEqualityComparer();
 
-        public static IEqualityComparer<DocumentId> IdComparer
+        public static IEqualityComparer<DocumentId> IdComparer => IdComparerInstance;
+
+        public DocumentId(string feedId, long documentIndex)
         {
-            get { return IdComparerInstance; }
+            DocumentIndex = documentIndex;
+            FeedId = feedId;
+            Id = $"documentId:{feedId}:{documentIndex}";
         }
 
-        public DocumentId(string uuid)
+        public DocumentId(string documentId)
         {
-            Id = uuid;
+            Id = documentId;
+            var data = documentId.Split(new[] {':'});
+            FeedId = data[1];
+            DocumentIndex = long.Parse(data[2]);
         }
 
+        public static implicit operator DocumentId(string input)
+        {
+            return new DocumentId(input);
+        }
+
+        public static implicit operator string(DocumentId input)
+        {
+            return input.Id;
+        }
+
+        public DocumentId Subtract(long id)
+        {
+            return new DocumentId(FeedId, DocumentIndex - id);
+        }
+
+        public DocumentId Add(long id)
+        {
+            return new DocumentId(FeedId, DocumentIndex + id);
+        }
+
+        public long DocumentIndex { get; }
+        public string FeedId { get; }
         public string Id { get; }
     }
 }

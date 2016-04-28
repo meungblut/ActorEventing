@@ -5,7 +5,7 @@ using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst.Subscription
 {
-    public class BurstSubscriptionMessageExtractor : IMessageExtractor
+    public class SubscriptionMessageExtractor : IMessageExtractor
     {
         public string EntityId(object message)
         {
@@ -26,8 +26,8 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is SubscriptionMessage)
                 return ((SubscriptionMessage)message).SubscriptionId.Id;
 
-            if (message is GetHeadDocumentForFeedRequest)
-                return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id;
+            if (message is GetHeadDocumentIdForFeedRequest)
+                return ((GetHeadDocumentIdForFeedRequest)message).SubscriptionId.Id;
 
             return string.Empty;
             //throw new CouldNotRouteMessageToShardException(null, message);
@@ -50,8 +50,8 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is DeleteSubscriptionMessage)
                 return (DeleteSubscriptionMessage)message;
 
-            if (message is GetHeadDocumentForFeedRequest)
-                return ((GetHeadDocumentForFeedRequest)message);
+            if (message is GetHeadDocumentIdForFeedRequest)
+                return ((GetHeadDocumentIdForFeedRequest)message);
 
             return null;
             //throw new CouldNotRouteMessageToShardException(null, message);
@@ -75,8 +75,8 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is SubscriptionMessage)
                 return ((SubscriptionMessage)message).SubscriptionId.Id.GetHashCode().ToString();
 
-            if (message is GetHeadDocumentForFeedRequest)
-                return ((GetHeadDocumentForFeedRequest)message).SubscriptionId.Id.GetHashCode().ToString();
+            if (message is GetHeadDocumentIdForFeedRequest)
+                return ((GetHeadDocumentIdForFeedRequest)message).SubscriptionId.Id.GetHashCode().ToString();
 
             return null;
             //throw new CouldNotRouteMessageToShardException(null, message);

@@ -16,7 +16,7 @@ namespace Euventing.Atom.Burst.Subscription
         private readonly List<IActorRef> documentActors = new List<IActorRef>();
         private readonly IAtomDocumentSettings atomDocumentSettings;
 
-        private int CurrentHeadDocumentIndex = 0;
+        private DocumentId documentId;
 
         public SubscriptionActor(IAtomDocumentSettings settings)
         {
@@ -47,13 +47,17 @@ namespace Euventing.Atom.Burst.Subscription
         private void Process(DeleteSubscriptionMessage deleteSubscription)
         {
             LogTraceInfo("Received delete subscription message");
+            foreach (var documentActor in documentActors)
+            {
+                documentActor.Tell(deleteSubscription);
+            }
         }
 
         private void Process(GetHeadDocumentIdForFeedRequest getHeadDocumentForFeedRequest)
         {
             LogTraceInfo("Getting atom document in subscription actor");
 
-            Sender.Tell(new DocumentId(CurrentHeadDocumentIndex.ToString()));
+            Sender.Tell(documentId);
         }
 
         private void Process(SubscriptionMessage subscription)
@@ -87,7 +91,7 @@ namespace Euventing.Atom.Burst.Subscription
 
                 atomDocument.Tell(
                     new CreateAtomDocumentCommand(
-                        "", "", new FeedId(subscription.SubscriptionId.Id)));
+                        "", "", documentId, Context.Self));
 
                 documentActors.Add(atomDocument);
 
@@ -104,6 +108,11 @@ namespace Euventing.Atom.Burst.Subscription
                 Sender.Tell(subscriptionMessage, Context.Self);
         }
 
+        private void Process(DocumentMovedToNewId moved)
+        {
+            documentId = moved.DocumentId;
+        }
+
         private void Process(object unhandledObject)
         {
             LogTraceInfo($"Unhandled command {unhandledObject.GetType()} {unhandledObject} from {Context.Sender.Path}");
@@ -112,6 +121,8 @@ namespace Euventing.Atom.Burst.Subscription
         private void MutateInternalState(SubscriptionMessage subscription)
         {
             this.subscriptionMessage = subscription;
+
+            documentId = new DocumentId(subscription.SubscriptionId.Id, 0);
 
             CreateFeedActor(subscription);
         }
