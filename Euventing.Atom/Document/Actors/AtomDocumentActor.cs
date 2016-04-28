@@ -30,16 +30,6 @@ namespace Euventing.Atom.Document.Actors
             return true;
         }
 
-        private void Process(CreateAtomDocumentCommand creationRequest)
-        {
-            LoggingAdapter.Debug("Creating document " + creationRequest.DocumentId.Id + " on node " + Cluster.Get(Context.System).SelfAddress);
-            var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
-                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.PreviousHeadDocumentId);
-
-            MutateInternalState(atomDocumentCreatedEvent);
-            Persist(atomDocumentCreatedEvent, MutateInternalState);
-        }
-
         protected void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
         {
             this.Author = documentCreated.Author;

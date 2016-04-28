@@ -11,15 +11,15 @@ namespace Euventing.Atom.Burst
 {
     public class BurstAtomDocumentRetriever : IAtomDocumentRetriever
     {
-        private readonly BurstSubscriptionManager burstManager;
         private readonly AtomDocumentSerialiser atomDocumentSerialiser;
         private ILoggingAdapter _adapter;
+        private BurstSubscriptionManager burstManager;
 
         public BurstAtomDocumentRetriever(BurstSubscriptionManager burstManager, ILoggingAdapter adapter)
         {
+            this.burstManager = burstManager;
             _adapter = adapter;
             atomDocumentSerialiser = new AtomDocumentSerialiser();
-            this.burstManager = burstManager;
         }
 
         public async Task<DocumentId> GetHeadDocumentId(SubscriptionId subscriptionId)

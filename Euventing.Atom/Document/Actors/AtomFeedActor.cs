@@ -52,20 +52,7 @@ namespace Euventing.Atom.Document.Actors
 
         }
 
-        private void Process(AtomFeedCreationCommand creationCommand)
-        {
-            if (this.CurrentFeedHeadDocument != null)
-                throw new FeedAlreadyCreatedException(CurrentFeedHeadDocument.Id);
-
-            var documentId = new DocumentId(creationCommand.FeedId.Id + "_0");
-            var atomFeedCreated = new AtomFeedCreated(documentId, creationCommand.Title, creationCommand.Author, creationCommand.FeedId);
-
-            Persist(atomFeedCreated, MutateInternalState);
-
-            var atomDocument = atomDocumentActorFactory.GetActorRef();
-            atomDocument.Tell(new CreateAtomDocumentCommand(
-                creationCommand.Title, creationCommand.Author, creationCommand.FeedId, documentId, creationCommand.EarlierEventsDocumentId), Self);
-        }
+        
 
         private void Process(SaveSnapshotFailure failure)
         {
@@ -78,39 +65,7 @@ namespace Euventing.Atom.Document.Actors
             LoggingAdapter.Debug("Snapshot save succeeded " + success.Metadata.PersistenceId);
         }
 
-        private void Process(EventWithSubscriptionNotificationMessage message)
-        {
-            if (CurrentFeedHeadDocument == null)
-                throw new TryingToRaiseEventToFeedWithNoHeadException(PersistenceId);
-
-            var notificationMessage = new EventWithDocumentIdNotificationMessage(CurrentFeedHeadDocument, message.EventToNotify);
-
-            var atomDocument = atomDocumentActorFactory.GetActorRef();
-
-            atomDocument.Tell(notificationMessage, Self);
-
-            numberOfEventsInCurrentHeadDocument += 1;
-
-            if (numberOfEventsInCurrentHeadDocument % 100 == 0)
-            {
-                var eventAdded = new EventAddedToDocument(numberOfEventsInCurrentHeadDocument);
-                Persist(eventAdded, MutateInternalState);
-            }
-
-            if (numberOfEventsInCurrentHeadDocument >= settings.NumberOfEventsPerDocument)
-            {
-                var documentId = currentDocumentId + 1;
-                var newDocumentId = new DocumentId(AtomFeedId.Id + "_" + documentId);
-
-                Persist(new AtomFeedDocumentHeadChanged(newDocumentId, CurrentFeedHeadDocument, documentId), MutateInternalState);
-
-                atomDocument.Tell(new CreateAtomDocumentCommand(
-                    FeedTitle, FeedAuthor, AtomFeedId, newDocumentId, CurrentFeedHeadDocument), Self);
-
-                atomDocument.Tell(new NewDocumentAddedEvent(CurrentFeedHeadDocument));
-            }
-        }
-
+        
         private void CreateSnapshot()
         {
             var state = new AtomFeedState(this.AtomFeedId, this.CurrentFeedHeadDocument, this.LastHeadDocument,

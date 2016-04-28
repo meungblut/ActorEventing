@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
 using Euventing.Atom.Burst.Subscription;
-using Euventing.Atom.Burst.Subscription.EventQueue;
 using Euventing.Atom.Document;
 using Euventing.Atom.Document.Actors;
 using Euventing.Core.Messages;
@@ -18,9 +15,10 @@ namespace Euventing.Atom.Burst
         protected Cluster Cluster;
         private readonly IAtomDocumentSettings atomDocumentSettings;
         private int entriesInCurrentDocument;
-        private DocumentId documentIdToBeUsedAsNextHead;
 
         private bool feedCancelled = false;
+
+        private int currentDocumentIndex;
 
         private long lastEventIdProcessed;
         private readonly IAtomDocumentRepository _repository;
@@ -53,17 +51,6 @@ namespace Euventing.Atom.Burst
             feedCancelled = true;
         }
 
-        protected void Process(CreateAtomDocumentCommand creationRequest)
-        {
-            LogTraceInfo($"Created atom document with id {creationRequest.DocumentId.Id}");
-
-            var atomDocumentCreatedEvent = new AtomDocumentCreatedEvent(creationRequest.Title,
-                creationRequest.Author, creationRequest.FeedId, creationRequest.DocumentId, creationRequest.PreviousHeadDocumentId, creationRequest.NextHeadDocumentId);
-
-            MutateInternalState(atomDocumentCreatedEvent);
-            Persist(atomDocumentCreatedEvent, MutateInternalState);
-        }
-
         private void Process(RequestedEvents<AtomEntry> requestedEvents)
         {
             AddEventsToDocument(requestedEvents);
@@ -79,8 +66,12 @@ namespace Euventing.Atom.Burst
         {
             foreach (var itemEnvelope in requestedEvents.Events)
             {
-                _repository.Add(new PersistableAtomEntry(itemEnvelope.ItemToStore, string.Empty, string.Empty));
+                _repository.Add((itemEnvelope.ItemToStore));
             }
+            entriesInCurrentDocument += requestedEvents.Events.Count;
+
+            if (entriesInCurrentDocument > atomDocumentSettings.NumberOfEventsPerDocument)
+                currentDocumentIndex++;
         }
 
         private void Process(PollForEvents request)
@@ -95,7 +86,6 @@ namespace Euventing.Atom.Burst
             this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.Title = documentCreated.Title;
             this.FeedId = documentCreated.FeedId;
-            this.documentIdToBeUsedAsNextHead = documentCreated.NextEventsDocumentId;
         }
 
         private void MutateInternalState(RecoveryCompleted complete)

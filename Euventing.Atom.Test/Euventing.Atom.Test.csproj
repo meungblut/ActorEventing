@@ -131,7 +131,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AtomDocumentActorShould.cs" />
     <Compile Include="AtomEventNotifierInMultiNodeClusterShould.cs" />
     <Compile Include="AtomEventNotifierShould.cs" />
     <Compile Include="AtomFeedActorShould.cs" />

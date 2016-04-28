@@ -75,14 +75,13 @@
     <Compile Include="BurstableEventPublisher.cs" />
     <Compile Include="BurstAtomDocumentRetriever.cs" />
     <Compile Include="DocumentFull.cs" />
-    <Compile Include="Feed\FeedActorMessageExtractor.cs" />
     <Compile Include="Feed\IAtomFeedActorRefFactory.cs" />
-    <Compile Include="Feed\ShardedAtomFeedFactory.cs" />
+    <Compile Include="Feed\InMemoryAtomDocumentRepository.cs" />
     <Compile Include="Feed\UnshardedAtomFeedActorRefFactory.cs" />
     <Compile Include="PollForEvents.cs" />
     <Compile Include="QueuedEvent.cs" />
     <Compile Include="Subscription\BurstSubscriptionManager.cs" />
-    <Compile Include="Subscription\BurstSubscriptionActor.cs" />
+    <Compile Include="Subscription\SubscriptionActor.cs" />
     <Compile Include="Subscription\BurstSubscriptionMessageExtractor.cs" />
     <Compile Include="Subscription\EventQueue\ItemEnvelope.cs" />
     <Compile Include="Subscription\EventQueue\SubscriptionQueue.cs" />
@@ -90,7 +89,6 @@
     <Compile Include="Subscription\LoggingMessageExtractorDecorator.cs" />
     <Compile Include="Subscription\RequestedEvents.cs" />
     <Compile Include="AtomDocumentActor.cs" />
-    <Compile Include="Feed\FeedActor.cs" />
     <Compile Include="RequestEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subscription\EventQueueActor.cs" />

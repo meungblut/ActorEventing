@@ -17,7 +17,7 @@ namespace Euventing.Atom.Burst.Subscription
         {
             var settings = ClusterShardingSettings.Create(actorSystem);
 
-            var props = Props.Create(() => new BurstSubscriptionActor(atomDocumentSettings));
+            var props = Props.Create(() => new SubscriptionActor(atomDocumentSettings));
 
             var messageExtractor = new LoggingMessageExtractorDecorator(new BurstSubscriptionMessageExtractor(), actorSystem.Log);
 

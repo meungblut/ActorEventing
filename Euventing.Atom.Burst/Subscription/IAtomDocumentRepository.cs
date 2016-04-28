@@ -4,6 +4,6 @@ namespace Euventing.Atom.Burst.Subscription
 {
     public interface IAtomDocumentRepository
     {
-        void Add(PersistableAtomEntry entry);
+        void Add(AtomEntry entry);
     }
 }
