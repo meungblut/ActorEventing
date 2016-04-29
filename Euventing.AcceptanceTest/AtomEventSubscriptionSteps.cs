@@ -27,7 +27,8 @@ namespace Euventing.AcceptanceTest
 
         private static BurstingEventSystemHost inProcessHost;
         private static OutOfProcessProcessClusterMember outOfProcessClusterMembersHost;
-        
+        private AtomClient _atomClient;
+
         [Given(@"I have an eventing url at '(.*)'")]
         public void GivenIHaveAnEventingUrlAt(string url)
         {
@@ -157,7 +158,7 @@ namespace Euventing.AcceptanceTest
             for (int i = 0; i < numberOfEventsToRaise; i++)
             {
                 Console.WriteLine("Raising event " + DateTime.Now.ToString("dd/mm/yy hh:mm:ss ffff"));
-                publisher.PublishMessage(new DummyEvent(i.ToString()));
+                publisher.PublishMessage(new DummyEvent(this.subscriptionId + ":" + i.ToString()));
             }
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
@@ -192,7 +193,7 @@ namespace Euventing.AcceptanceTest
         [Then(@"I should have an atom document with '(.*)' events")]
         public void ThenIShouldHaveAnAtomDocumentWithEvents(int numberOfEventsExpected)
         {
-            Assert.AreEqual(numberOfEventsExpected, retrievedFeed.Items.Count());
+            Assert.AreEqual(numberOfEventsExpected, retrievedFeed.Items.Count(), _atomClient.RetrievedString);
         }
 
         [When(@"I get the feed from '(.*)'")]
@@ -211,8 +212,8 @@ namespace Euventing.AcceptanceTest
 
         private SyndicationFeed GetFeed(string atomUrl)
         {
-            var atomClient = new AtomClient();
-            retrievedFeed = atomClient.GetFeed(atomUrl + subscriptionId, TimeSpan.FromSeconds(3)).Result;
+            _atomClient = new AtomClient();
+            retrievedFeed = _atomClient.GetFeed(atomUrl + subscriptionId, TimeSpan.FromSeconds(3)).Result;
             return retrievedFeed;
         }
 

@@ -19,7 +19,6 @@ namespace Euventing.Atom.Burst.Subscription
         protected override void PreStart()
         {
             LogTraceInfo("Starting subscription queue actor");
-
             queueAddress = Cluster.Get(Context.System).SelfAddress;
             base.PreStart();
         }
@@ -48,13 +47,14 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void Enqueue(DomainEvent message)
         {
+            LogTraceInfo($"Added event {message.Id} to queue with sequence number {LastSequenceNr}");
             var atomEntry = converter.ConvertDomainEventToAtomEntry(message);
             queuedItems.Add(atomEntry, LastSequenceNr);
         }
 
         private void GetEvents(RequestEvents eventRequest)
         {
-            LogTraceInfo($"Received event request for {eventRequest.EventsToSend} events with {eventRequest.LastProcessedId} last events");
+            LogTraceInfo($"Received event request for {eventRequest.EventsToSend} events with {eventRequest.LastProcessedId} last events from actor {Context.Sender.Path}");
 
             List<ItemEnvelope<AtomEntry>> eventEnvelope = queuedItems.Get(eventRequest.EventsToSend, eventRequest.LastProcessedId, eventRequest.FeedId);
             RequestedEvents<AtomEntry> events = new RequestedEvents<AtomEntry>(eventEnvelope, queueAddress);

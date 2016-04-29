@@ -97,7 +97,7 @@ this.ScenarioSetup(scenarioInfo);
 this.FeatureBackground();
 #line hidden
 #line 23
- testRunner.And("I PUT a message to \'http://localhost:3600/subscriptions\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"10\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I PUT a message to \'http://localhost:3600/subscriptions\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"CreateAnEventSubscription\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 30
  testRunner.Then("I should receive a response with the http status code \'Accepted\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -115,14 +115,15 @@ this.ScenarioSetup(scenarioInfo);
 this.FeatureBackground();
 #line hidden
 #line 33
- testRunner.Given("I PUT a message to \'http://localhost:3600/subscriptions\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"11\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I PUT a message to \'http://localhost:3600/subscriptions\' with the body", "{\r\n\t\"channel\" : \"atom\",\r\n\t\"subscriptionId\" : \"GETEventSubscriptionDetails\"\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 40
- testRunner.When("I request the subscription from url \'http://localhost:3600/subscriptions/11\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I request the subscription from url \'http://localhost:3600/subscriptions/GETEvent" +
+                    "SubscriptionDetails\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 41
  testRunner.Then("I should receive a response with the http status code \'OK\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 42
- testRunner.And("a body", "{\"notificationChannel\":{},\"subscriptionId\":{\"id\":\"11\"}}", ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("a body", "{\"notificationChannel\":{},\"subscriptionId\":{\"id\":\"GETEventSubscriptionDetails\"}}", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 46
  testRunner.And("a content type of \'application/vnd.tesco.eventSubscription+json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -157,7 +158,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 19
 this.FeatureBackground();
 #line 53
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'11111\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'GetAnAtomDocument\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 54
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -179,7 +180,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 19
 this.FeatureBackground();
 #line 59
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'222\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'GetAnAtomDocumentWIt" +
+                    "hEventsInIt\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 60
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -205,7 +207,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 19
 this.FeatureBackground();
 #line 66
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'69857\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'CreateANewHeadDocume" +
+                    "nt\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 67
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -230,20 +233,22 @@ this.ScenarioSetup(scenarioInfo);
 #line 19
 this.FeatureBackground();
 #line 73
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'33333\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'RetrieveDocumentsByD" +
+                    "ocumentId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 74
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 75
  testRunner.When("\'2\' more events then the maximum per document are raised within my domain", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 76
- testRunner.And("I get the named feed from \'http://localhost:3600/events/atom/feed/33333\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I get the named feed from \'http://localhost:3600/events/atom/feed/RetrieveDocumen" +
+                    "tsByDocumentId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 77
- testRunner.Then("it should have a self reference of \'http://localhost:3600/events/atom/document/33" +
-                    "333_1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("it should have a self reference of \'http://localhost:3600/events/atom/document/do" +
+                    "cumentId:RetrieveDocumentsByDocumentId:1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 78
  testRunner.Then("it should have a previous reference of \'http://localhost:3600/events/atom/documen" +
-                    "t/33333_0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "t/documentId:RetrieveDocumentsByDocumentId:0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 79
  testRunner.Then("I should be able to retrieve the earlier document by issuing a GET to its url", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 80
@@ -262,7 +267,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 19
 this.FeatureBackground();
 #line 83
- testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'44444\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have subscribed to an atom feed with a subscription Id of \'CancelAnEventSubscri" +
+                    "ption\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 84
  testRunner.And("I wait for the subscription to be created at\'http://localhost:3600/subscriptions/" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");

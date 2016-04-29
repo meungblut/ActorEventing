@@ -24,7 +24,7 @@ Scenario: Create an event subscription
 	"""
 	{
 		"channel" : "atom",
-		"subscriptionId" : "10"
+		"subscriptionId" : "CreateAnEventSubscription"
 	}
 	"""
 	Then I should receive a response with the http status code 'Accepted'
@@ -34,14 +34,14 @@ Scenario: Get event subscription details
 	"""
 	{
 		"channel" : "atom",
-		"subscriptionId" : "11"
+		"subscriptionId" : "GETEventSubscriptionDetails"
 	}
 	"""
-	When I request the subscription from url 'http://localhost:3600/subscriptions/11'
+	When I request the subscription from url 'http://localhost:3600/subscriptions/GETEventSubscriptionDetails'
 	Then I should receive a response with the http status code 'OK'
 	And a body
 	"""
-{"notificationChannel":{},"subscriptionId":{"id":"11"}}
+{"notificationChannel":{},"subscriptionId":{"id":"GETEventSubscriptionDetails"}}
 	"""
 	And a content type of 'application/vnd.tesco.eventSubscription+json'
 
@@ -50,37 +50,37 @@ Scenario: No event subscription yet
 	Then I should receive a response with the http status code 'NotFound'
 
 Scenario: Get an atom document
-	Given I have subscribed to an atom feed with a subscription Id of '11111'
+	Given I have subscribed to an atom feed with a subscription Id of 'GetAnAtomDocument'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '0' events
 
 Scenario: Get an atom document with events in it
-	Given I have subscribed to an atom feed with a subscription Id of '222'
+	Given I have subscribed to an atom feed with a subscription Id of 'GetAnAtomDocumentWIthEventsInIt'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When '8' events are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '8' events
 
 Scenario: Create a new head document when the maximum number of events per document is breached
-	Given I have subscribed to an atom feed with a subscription Id of '69857'
+	Given I have subscribed to an atom feed with a subscription Id of 'CreateANewHeadDocument'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When '2' more events then the maximum per document are raised within my domain
 	And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should receive an atom document with a link to the next document in the stream from 'http://localhost:3600/events/atom/feed/'
 
 Scenario: Retrieve documents by document id
-	Given I have subscribed to an atom feed with a subscription Id of '33333'
+	Given I have subscribed to an atom feed with a subscription Id of 'RetrieveDocumentsByDocumentId'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	When '2' more events then the maximum per document are raised within my domain
-	And I get the named feed from 'http://localhost:3600/events/atom/feed/33333'
-	Then it should have a self reference of 'http://localhost:3600/events/atom/document/33333_1'
-	Then it should have a previous reference of 'http://localhost:3600/events/atom/document/33333_0'
+	And I get the named feed from 'http://localhost:3600/events/atom/feed/RetrieveDocumentsByDocumentId'
+	Then it should have a self reference of 'http://localhost:3600/events/atom/document/documentId:RetrieveDocumentsByDocumentId:1'
+	Then it should have a previous reference of 'http://localhost:3600/events/atom/document/documentId:RetrieveDocumentsByDocumentId:0'
 	Then I should be able to retrieve the earlier document by issuing a GET to its url
 	And the earlier document should have a link to the new head document
 
 Scenario: Cancel an event subscription
-	Given I have subscribed to an atom feed with a subscription Id of '44444'
+	Given I have subscribed to an atom feed with a subscription Id of 'CancelAnEventSubscription'
 	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
 	And '1' events are raised within my domain
 	When I cancel the subscription
