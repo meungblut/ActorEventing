@@ -33,19 +33,19 @@ namespace Euventing.Atom.Burst
             eventQueueOnThisNode = ActorLocations.LocalQueueActor;
         }
 
-        private void PollSubscriptionQueue(IActorRef actorRef)
+        private void PollSubscriptionQueue()
         {
             var eventsToRequest = atomDocumentSettings.NumberOfEventsPerDocument;
 
-            LogTraceInfo($"Asking for {eventsToRequest} events from node {actorRef.Path}");
+            LogTraceInfo($"Asking for {eventsToRequest} events from node {eventQueueOnThisNode.Path}");
 
-            actorRef.Tell(new RequestEvents(eventsToRequest, lastEventIdProcessed, FeedId));
+            eventQueueOnThisNode.Tell(new RequestEvents(eventsToRequest, lastEventIdProcessed, FeedId));
         }
 
         private void Process(DeleteSubscriptionMessage deleteSubscription)
         {
             LogTraceInfo($"Cancelling document");
-
+            eventQueueOnThisNode.Tell(new FeedDeleted(FeedId));
             feedCancelled = true;
         }
 
@@ -78,9 +78,7 @@ namespace Euventing.Atom.Burst
                 LogTraceInfo($"Saving event with id {itemEnvelope.ItemToStore.Id} " +
                              $"and sequence number {itemEnvelope.ItemSequenceNumber} to repo with document id {DocumentId.Id}");
 
-                itemEnvelope.ItemToStore.DocumentId = this.CurrentDocumentId;
-
-                _repository.Add((itemEnvelope.ItemToStore));
+                _repository.Add(this.CurrentDocumentId, itemEnvelope.ItemToStore);
 
                 lastEventIdProcessed = itemEnvelope.ItemSequenceNumber;
 
@@ -103,7 +101,7 @@ namespace Euventing.Atom.Burst
 
         private void Process(PollForEvents request)
         {
-            PollSubscriptionQueue(request.AddressToPoll);
+            PollSubscriptionQueue();
         }
 
         protected void MutateInternalState(AtomDocumentCreatedEvent documentCreated)
@@ -115,7 +113,7 @@ namespace Euventing.Atom.Burst
             this.Title = documentCreated.Title;
             this.FeedId = documentCreated.DocumentId.FeedId;
 
-            PollSubscriptionQueue(eventQueueOnThisNode);
+            PollSubscriptionQueue();
         }
 
         private void MutateInternalState(RecoveryCompleted complete)
@@ -138,6 +136,16 @@ namespace Euventing.Atom.Burst
             ((dynamic)this).MutateInternalState((dynamic)message);
 
             return true;
+        }
+    }
+
+    internal class FeedDeleted
+    {
+        public FeedId FeedId { get; }
+
+        public FeedDeleted(FeedId feedId)
+        {
+            FeedId = feedId;
         }
     }
 

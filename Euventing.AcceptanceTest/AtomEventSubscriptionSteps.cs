@@ -23,11 +23,11 @@ namespace Euventing.AcceptanceTest
         private IEventPublisher publisher;
         private string subscriptionId;
         private SyndicationFeed retrievedFeed;
-        private static int eventsPerDocument = 12;
+        private static int _eventsPerDocument = 12;
 
         private static BurstingEventSystemHost inProcessHost;
         private static OutOfProcessProcessClusterMember outOfProcessClusterMembersHost;
-        private AtomClient _atomClient;
+        private readonly AtomClient _atomClient = new AtomClient();
 
         [Given(@"I have an eventing url at '(.*)'")]
         public void GivenIHaveAnEventingUrlAt(string url)
@@ -39,7 +39,7 @@ namespace Euventing.AcceptanceTest
         [BeforeFeature]
         public static void StartEventHosts()
         {
-            inProcessHost = new BurstingEventSystemHost(6483, "akkaSystem", "inmem", "127.0.0.1:6483", 3600, eventsPerDocument);
+            inProcessHost = new BurstingEventSystemHost(6483, "akkaSystem", "inmem", "127.0.0.1:6483", 3600, _eventsPerDocument);
             inProcessHost.Start();
             //outOfProcessClusterMembersHost = new OutOfProcessProcessClusterMember(eventsPerDocument);
             //outOfProcessClusterMembersHost.Start();
@@ -53,9 +53,12 @@ namespace Euventing.AcceptanceTest
             //outOfProcessClusterMembersHost.Stop();
         }
 
-        [AfterScenario("atomEvents", "multiNode")]
+        [AfterScenario()]
         public void UnsubscribeFromMessages()
         {
+            if (string.IsNullOrEmpty(subscriptionId))
+                return;
+
             var client = new SubscriptionClient(url);
             client.Unsubscribe(subscriptionId).Wait();
         }
@@ -63,8 +66,15 @@ namespace Euventing.AcceptanceTest
         [Given(@"atom documents contain '(.*)' events")]
         public void GivenAtomDocumentsContainEvents(int events)
         {
-            eventsPerDocument = events;
+            _eventsPerDocument = events;
         }
+
+        [Given(@"a subscription id of '(.*)'")]
+        public void GivenASubscriptionIdOf(string subscriptionId)
+        {
+            this.subscriptionId = subscriptionId;
+        }
+
 
         [Given(@"I PUT a message to '(.*)' with the body")]
         public void GivenIputaMessageToWithTheBody(string url, string requestBody)
@@ -91,7 +101,7 @@ namespace Euventing.AcceptanceTest
         [When(@"'(.*)' more events then the maximum per document are raised within my domain")]
         public void WhenMoreEventsThenTheMaximumPerDocumentAreRaisedWithinMyDomain(int extraEvents)
         {
-            RaiseEvents(eventsPerDocument + extraEvents);
+            RaiseEvents(_eventsPerDocument + extraEvents);
         }
 
 
@@ -212,7 +222,6 @@ namespace Euventing.AcceptanceTest
 
         private SyndicationFeed GetFeed(string atomUrl)
         {
-            _atomClient = new AtomClient();
             retrievedFeed = _atomClient.GetFeed(atomUrl + subscriptionId, TimeSpan.FromSeconds(3)).Result;
             return retrievedFeed;
         }

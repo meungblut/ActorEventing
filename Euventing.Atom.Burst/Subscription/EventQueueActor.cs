@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
@@ -42,7 +43,15 @@ namespace Euventing.Atom.Burst.Subscription
             if (message is DomainEvent)
                 PersistAsync(message, x => Enqueue((DomainEvent)x));
 
+            if (message is FeedDeleted)
+                FeedHasStoppedListening((FeedDeleted)message);
+
             return true;
+        }
+
+        private void FeedHasStoppedListening(FeedDeleted message)
+        {
+            lowestItemTracker.RemoveListener(message.FeedId);
         }
 
         private void Enqueue(DomainEvent message)
@@ -54,13 +63,19 @@ namespace Euventing.Atom.Burst.Subscription
 
         private void GetEvents(RequestEvents eventRequest)
         {
+            lowestItemTracker.AddEntry(eventRequest.LastProcessedId, eventRequest.FeedId.Id);
+            queuedItems.RemoveItemsWithIndexLowerThan(lowestItemTracker.GetLowestValue() + 1);
+
             LogTraceInfo($"Received event request for {eventRequest.EventsToSend} events with {eventRequest.LastProcessedId} last events from actor {Context.Sender.Path}");
 
             List<ItemEnvelope<AtomEntry>> eventEnvelope = queuedItems.Get(eventRequest.EventsToSend, eventRequest.LastProcessedId, eventRequest.FeedId);
+
+            if (eventEnvelope.Count > 0)
+                LogTraceInfo($"Returning events {string.Join(",", (from p in eventEnvelope select p.ItemToStore.Id).ToArray())} events with {eventRequest.LastProcessedId} last events from actor {Context.Sender.Path}");
+
             RequestedEvents<AtomEntry> events = new RequestedEvents<AtomEntry>(eventEnvelope, queueAddress);
             Context.Sender.Tell(events, Context.Self);
-            lowestItemTracker.AddEntry(eventRequest.LastProcessedId, eventRequest.FeedId.Id);
-            queuedItems.RemoveItemsWithIndexLowerThan(lowestItemTracker.GetLowestValue());
+
         }
 
         private void MutateInternalState(RecoveryCompleted complete)

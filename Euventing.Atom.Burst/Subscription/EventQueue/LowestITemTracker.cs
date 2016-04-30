@@ -16,5 +16,11 @@ namespace Euventing.Atom.Burst.Subscription.EventQueue
         {
             return data.Min(x => x.Value);
         }
+
+        public void RemoveListener(string trackerId)
+        {
+            long valueToSatisfyOutParameterOnly;
+            data.TryRemove(trackerId, out valueToSatisfyOutParameterOnly);
+        }
     }
 }

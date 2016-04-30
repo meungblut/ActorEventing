@@ -47,5 +47,20 @@ namespace Euventing.Atom.Burst.Tests
 
             Assert.AreEqual(42, tracker.GetLowestValue());
         }
+
+        [Test]
+        public void UpdateTheLowestValueWhenAPollerStopsUpdating()
+        {
+            var code = Guid.NewGuid().ToString();
+            var code1 = Guid.NewGuid().ToString();
+            tracker.AddEntry(42, code);
+            tracker.AddEntry(40, code1);
+
+            Assert.AreEqual(40, tracker.GetLowestValue());
+
+            tracker.RemoveListener(code1);
+
+            Assert.AreEqual(42, tracker.GetLowestValue());
+        }
     }
 }

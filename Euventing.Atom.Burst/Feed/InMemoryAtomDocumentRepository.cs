@@ -8,21 +8,23 @@ namespace Euventing.Atom.Burst.Feed
 {
     public class InMemoryAtomDocumentRepository : IAtomDocumentRepository
     {
-        private static readonly List<AtomEntry> entries = new List<AtomEntry>();
+        private static readonly Dictionary<string, List<AtomEntry>> entries = new Dictionary<string, List<AtomEntry>>();
 
-        public void Add(AtomEntry entry)
+        public void Add(string id, AtomEntry entry)
         {
-            entries.Add(entry);
-        }
+            if (!entries.ContainsKey(id))
+                entries.Add(id, new List<AtomEntry>());
 
-        public void Add(IEnumerable<AtomEntry> events)
-        {
-            entries.AddRange(events);
+            entries[id].Add(entry);
         }
 
         public Task<AtomDocument> GetDocument(string documentId)
         {
-            var atomEntries = entries.Where(x => x.DocumentId.Id == documentId).ToList();
+            List<AtomEntry> atomEntries = new List<AtomEntry>();
+
+            if (entries.ContainsKey(documentId))
+                atomEntries = entries[documentId];
+
             var document = new AtomDocument("", "", new FeedId(""), new DocumentId(documentId), new DocumentId(documentId), atomEntries);
             return Task.FromResult(document);
         }

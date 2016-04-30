@@ -8,7 +8,6 @@ namespace Euventing.Atom.Document
 {
     public class AtomEntry
     {
-        public DocumentId DocumentId { get; set; }
         public string Title { get; set; }
         public string Id { get; set; }
         public DateTime Updated { get; set; }

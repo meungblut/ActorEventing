@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Text;
@@ -32,6 +33,17 @@ namespace Euventing.AcceptanceTest.Client
             RetrievedString = response.Content.ReadAsStringAsync().Result;
 
             return await response.Content.ReadAsStreamAsync();
+        }
+
+        public async Task ReadAllDocuments(string url)
+        {
+            var atomDocument = await GetFeed(url, TimeSpan.FromSeconds(1));
+            while (atomDocument.Links.Any(x => x.RelationshipType == "prev-archive"))
+            {
+                await
+                    GetFeed(atomDocument.Links.First(x => x.RelationshipType == "prev-archive").Uri.ToString(),
+                        TimeSpan.FromSeconds(1));
+            }
         }
     }
 }

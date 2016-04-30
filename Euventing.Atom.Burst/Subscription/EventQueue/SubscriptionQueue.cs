@@ -15,9 +15,9 @@ namespace Euventing.Atom.Burst.Subscription.EventQueue
             items = new List<ItemEnvelope<T>>();
         }
 
-        public void Add(T atomEntry, long lastSequenceNr)
+        public void Add(T atomEntry, long sequenceNumber)
         {
-            items.Add(new ItemEnvelope<T>(lastSequenceNr, atomEntry));
+            items.Add(new ItemEnvelope<T>(sequenceNumber, atomEntry));
         }
 
         public void RemoveItemsWithIndexLowerThan(long sequenceNumber)

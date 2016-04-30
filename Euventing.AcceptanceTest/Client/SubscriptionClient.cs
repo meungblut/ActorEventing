@@ -50,7 +50,14 @@ namespace Euventing.AcceptanceTest.Client
                 = await client.DeleteAsync(subscriptionUrl + "/" + subscriptionId);
 
             if (!httpResponseMessage.IsSuccessStatusCode)
-                throw new CouldNotCreateSubscriptionException(httpResponseMessage.ReasonPhrase);
+                throw new CouldNotDeleteSubscriptionException(httpResponseMessage.ReasonPhrase);
+        }
+    }
+
+    public class CouldNotDeleteSubscriptionException : Exception
+    {
+        public CouldNotDeleteSubscriptionException(string reasonPhrase) : base(reasonPhrase)
+        {
         }
     }
 }

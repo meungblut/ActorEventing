@@ -105,6 +105,15 @@ Scenario: Raise events on two nodes
     And I get the feed from 'http://localhost:3600/events/atom/feed/'
 	Then I should have an atom document with '4' events
 
+	
+Scenario: Raise events and read at the same time on the same node
+	Given I have subscribed to an atom feed with a subscription Id of '987654'
+	And I wait for the subscription to be created at'http://localhost:3600/subscriptions/'
+	When '10000' events are raised within my domain
+    And I get the feed from 'http://localhost:3600/events/atom/feed/'
+	And '10000' events are raised within my domain
+    And I get the feed from 'http://localhost:3600/events/atom/feed/'
+
 	@ignore
 Scenario: Raise events and read at the same time
 	Given I have subscribed to an atom feed with a subscription Id of '987654321'
