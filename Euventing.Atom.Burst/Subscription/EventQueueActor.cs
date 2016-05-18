@@ -68,7 +68,12 @@ namespace Euventing.Atom.Burst.Subscription
 
             LogTraceInfo($"Received event request for {eventRequest.EventsToSend} events with {eventRequest.LastProcessedId} last events from actor {Context.Sender.Path}");
 
-            List<ItemEnvelope<AtomEntry>> eventEnvelope = queuedItems.Get(eventRequest.EventsToSend, eventRequest.LastProcessedId, eventRequest.FeedId);
+            List<ItemEnvelope<AtomEntry>> eventEnvelope;
+
+            if (eventRequest.LastProcessedId == 0)
+                eventEnvelope = queuedItems.Get(eventRequest.EventsToSend, eventRequest.EarliestEventsToSend);
+                else
+                eventEnvelope = queuedItems.Get(eventRequest.EventsToSend, eventRequest.LastProcessedId, eventRequest.FeedId);
 
             if (eventEnvelope.Count > 0)
                 LogTraceInfo($"Returning events {string.Join(",", (from p in eventEnvelope select p.ItemToStore.Id).ToArray())} events with {eventRequest.LastProcessedId} last events from actor {Context.Sender.Path}");

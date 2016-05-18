@@ -41,8 +41,8 @@ namespace Euventing.AcceptanceTest
         {
             inProcessHost = new BurstingEventSystemHost(6483, "akkaSystem", "inmem", "127.0.0.1:6483", 3600, _eventsPerDocument);
             inProcessHost.Start();
-            //outOfProcessClusterMembersHost = new OutOfProcessProcessClusterMember(eventsPerDocument);
-            //outOfProcessClusterMembersHost.Start();
+            outOfProcessClusterMembersHost = new OutOfProcessProcessClusterMember(_eventsPerDocument);
+            outOfProcessClusterMembersHost.Start();
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
@@ -50,7 +50,7 @@ namespace Euventing.AcceptanceTest
         public static void StopEventHosts()
         {
             inProcessHost.Stop();
-            //outOfProcessClusterMembersHost.Stop();
+            outOfProcessClusterMembersHost.Stop();
         }
 
         [AfterScenario()]

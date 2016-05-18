@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Euventing.Atom.Document;
 
@@ -17,7 +18,7 @@ namespace Euventing.Atom.Burst.Subscription.EventQueue
 
         public void Add(T atomEntry, long sequenceNumber)
         {
-            items.Add(new ItemEnvelope<T>(sequenceNumber, atomEntry));
+            items.Add(new ItemEnvelope<T>(sequenceNumber, DateTime.Now,  atomEntry));
         }
 
         public void RemoveItemsWithIndexLowerThan(long sequenceNumber)
@@ -28,6 +29,11 @@ namespace Euventing.Atom.Burst.Subscription.EventQueue
         public List<ItemEnvelope<T>> Get(int maxEventsToSend, long lastNumberProcessed, FeedId requester)
         {
             return items.Where(x => x.ItemSequenceNumber > lastNumberProcessed).Take(maxEventsToSend).ToList();
+        }
+
+        public List<ItemEnvelope<T>> Get(int maxEventsToSend, DateTime earliestEventToSend)
+        {
+            return items.Where(x => x.RaisedDate > earliestEventToSend).Take(maxEventsToSend).ToList();
         }
     }
 }

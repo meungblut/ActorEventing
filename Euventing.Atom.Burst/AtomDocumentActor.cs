@@ -10,20 +10,17 @@ using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst
 {
-    public class AtomDocumentActor : AtomDocumentActorBase, IWithUnboundedStash
+    public class AtomDocumentActor : AtomDocumentActorBase
     {
         protected Cluster Cluster;
         private readonly IAtomDocumentSettings atomDocumentSettings;
         private int entriesInCurrentDocument;
-
         private bool feedCancelled = false;
-
         private long lastEventIdProcessed;
         private readonly IAtomDocumentRepository _repository;
-
         private readonly IActorRef eventQueueOnThisNode;
-
         private DocumentId CurrentDocumentId;
+        private DateTime DocumentCreationDate;
 
         public AtomDocumentActor(IAtomDocumentSettings settings, IAtomDocumentRepository repository)
         {
@@ -39,7 +36,7 @@ namespace Euventing.Atom.Burst
 
             LogTraceInfo($"Asking for {eventsToRequest} events from node {eventQueueOnThisNode.Path}");
 
-            eventQueueOnThisNode.Tell(new RequestEvents(eventsToRequest, lastEventIdProcessed, FeedId));
+            eventQueueOnThisNode.Tell(new RequestEvents(eventsToRequest, lastEventIdProcessed, FeedId, DocumentCreationDate));
         }
 
         private void Process(DeleteSubscriptionMessage deleteSubscription)
@@ -112,6 +109,8 @@ namespace Euventing.Atom.Burst
             this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.Title = documentCreated.Title;
             this.FeedId = documentCreated.DocumentId.FeedId;
+
+            DocumentCreationDate = DateTime.Now;
 
             PollSubscriptionQueue();
         }
