@@ -10,7 +10,7 @@ using Euventing.Core.Messages;
 
 namespace Euventing.Atom.Burst
 {
-    public class AtomDocumentActor : AtomDocumentActorBase
+    public class QueuePollingAtomDocumentActor : AtomDocumentActorBase
     {
         protected Cluster Cluster;
         private readonly IAtomDocumentSettings atomDocumentSettings;
@@ -22,7 +22,7 @@ namespace Euventing.Atom.Burst
         private DocumentId CurrentDocumentId;
         private DateTime DocumentCreationDate;
 
-        public AtomDocumentActor(IAtomDocumentSettings settings, IAtomDocumentRepository repository)
+        public QueuePollingAtomDocumentActor(IAtomDocumentSettings settings, IAtomDocumentRepository repository)
         {
             _repository = repository;
             atomDocumentSettings = settings;

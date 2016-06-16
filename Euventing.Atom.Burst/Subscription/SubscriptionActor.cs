@@ -77,9 +77,9 @@ namespace Euventing.Atom.Burst.Subscription
             foreach (var member in cluster.ReadView.Members)
             {
                 var props =
-                    Props.Create<AtomDocumentActor>(
+                    Props.Create(
                         () =>
-                            new AtomDocumentActor(new AtomDocumentSettings(),
+                            new EventSubscribingAtomDocumentActor(new AtomDocumentSettings(),
                                 new InMemoryAtomDocumentRepository()));
 
                 var atomDocument =
