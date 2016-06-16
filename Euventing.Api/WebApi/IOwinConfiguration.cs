@@ -1,6 +1,6 @@
 ﻿using Owin;
 
-namespace Euventing.Api.WebApi
+namespace Eventing.Api.WebApi
 {
     public interface IOwinConfiguration
     {

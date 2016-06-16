@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
-using Euventing.Atom.Document;
-using Euventing.Core.Messages;
-using Euventing.Core.Subscriptions;
+using Eventing.Atom.Document;
+using Eventing.Core.Messages;
+using Eventing.Core.Subscriptions;
 
-namespace Euventing.Atom.Burst.Subscription
+namespace Eventing.Atom.Burst.Subscription
 {
     public class SubscriptionManager : ISubscriptionManager
     {

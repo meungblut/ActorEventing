@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Akka.Cluster;
-using Akka.Event;
-using Akka.Persistence;
-using Euventing.Core;
+using Eventing.Core;
 
-namespace Euventing.Atom.Document.Actors
+namespace Eventing.Atom.Document.Actors
 {
     public abstract class AtomDocumentActorBase : PersistentActorBase
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
 
-namespace Euventing.Atom.Burst.Subscription.EventQueue
+namespace Eventing.Atom.Burst.Subscription.EventQueue
 {
     public class LowestItemTracker
     {

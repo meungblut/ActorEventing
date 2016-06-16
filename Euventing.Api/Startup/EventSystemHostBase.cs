@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Euventing.Api.WebApi;
+﻿using Eventing.Api.WebApi;
 using TinyIoC;
 
-namespace Euventing.Api.Startup
+namespace Eventing.Api.Startup
 {
     public abstract class EventSystemHostBase
     {

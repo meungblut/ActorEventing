@@ -1,7 +1,7 @@
 ﻿using Akka.Cluster.Sharding;
 using Akka.Event;
 
-namespace Euventing.Atom.Burst.Subscription
+namespace Eventing.Atom.Burst.Subscription
 {
     public class LoggingMessageExtractorDecorator : IMessageExtractor
     {

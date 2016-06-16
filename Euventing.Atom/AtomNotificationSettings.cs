@@ -1,7 +1,7 @@
-﻿using Euventing.Atom.Document.Actors.ShardSupport.Document;
-using Euventing.Core.Notifications;
+﻿using Eventing.Atom.Document.Actors.ShardSupport.Document;
+using Eventing.Core.Notifications;
 
-namespace Euventing.Atom
+namespace Eventing.Atom
 {
     public class AtomNotificationSettings : NotificationSettings
     {

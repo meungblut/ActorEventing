@@ -1,7 +1,7 @@
 using System;
 using Akka.Actor;
 
-namespace Euventing.Atom.Burst
+namespace Eventing.Atom.Burst
 {
     public class PollForEvents
     {

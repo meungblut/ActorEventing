@@ -1,7 +1,7 @@
 ﻿using System;
-using Euventing.Core.Messages;
+using Eventing.Core.Messages;
 
-namespace Euventing.Test.Shared
+namespace Eventing.Test.Shared
 {
     public class DummyEvent : DomainEvent
     {

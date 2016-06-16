@@ -3,7 +3,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Euventing.InMemoryPersistence
+namespace Eventing.InMemoryPersistence
 {
     public class PropertyIgnoringCamelCaseResolver : CamelCasePropertyNamesContractResolver
     {

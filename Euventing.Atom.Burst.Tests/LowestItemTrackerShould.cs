@@ -1,8 +1,8 @@
 ﻿using System;
-using Euventing.Atom.Burst.Subscription.EventQueue;
+using Eventing.Atom.Burst.Subscription.EventQueue;
 using NUnit.Framework;
 
-namespace Euventing.Atom.Burst.Tests
+namespace Eventing.Atom.Burst.Tests
 {
     public class LowestItemTrackerShould
     {

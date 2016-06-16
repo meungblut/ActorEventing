@@ -1,6 +1,6 @@
-﻿using Euventing.Core.Messages;
+﻿using Eventing.Core.Messages;
 
-namespace Euventing.Core.Notifications
+namespace Eventing.Core.Notifications
 {
     public interface IEventNotifier
     {

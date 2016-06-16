@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using Euventing.Core;
+using Eventing.Core;
 using NLog;
 
-namespace Euventing.Test.Shared
+namespace Eventing.Test.Shared
 {
     public class EventRaisingController : ApiController
     {

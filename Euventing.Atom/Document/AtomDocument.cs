@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Euventing.Atom.Document
+namespace Eventing.Atom.Document
 {
     public class AtomDocument
     {

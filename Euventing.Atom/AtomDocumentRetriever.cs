@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Akka.Actor;
-using Euventing.Atom.Document;
-using Euventing.Atom.Document.Actors.ShardSupport.Document;
-using Euventing.Atom.Serialization;
-using Euventing.Core.Messages;
+using Eventing.Atom.Document;
+using Eventing.Atom.Document.Actors.ShardSupport.Document;
+using Eventing.Atom.Serialization;
+using Eventing.Core.Messages;
 
-namespace Euventing.Atom
+namespace Eventing.Atom
 {
     public class AtomDocumentRetriever : IAtomDocumentRetriever
     {

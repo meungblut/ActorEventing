@@ -1,6 +1,6 @@
 ﻿using Akka.Actor;
 
-namespace Euventing.Atom.Document
+namespace Eventing.Atom.Document
 {
     public interface IAtomDocumentActorFactory
     {

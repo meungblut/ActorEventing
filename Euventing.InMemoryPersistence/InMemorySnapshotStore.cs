@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Akka.Persistence;
 using Akka.Persistence.Snapshot;
 
-namespace Euventing.InMemoryPersistence
+namespace Eventing.InMemoryPersistence
 {
     public class InMemorySnapshotStore : SnapshotStore
     {

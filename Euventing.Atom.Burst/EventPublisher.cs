@@ -1,9 +1,9 @@
 ﻿using Akka.Actor;
-using Euventing.Atom.Burst.Subscription;
-using Euventing.Core;
-using Euventing.Core.Messages;
+using Eventing.Atom.Burst.Subscription;
+using Eventing.Core;
+using Eventing.Core.Messages;
 
-namespace Euventing.Atom.Burst
+namespace Eventing.Atom.Burst
 {
     public class EventPublisher : IEventPublisher
     {

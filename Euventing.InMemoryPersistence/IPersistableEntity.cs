@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Euventing.InMemoryPersistence
+namespace Eventing.InMemoryPersistence
 {
     public interface IPersistableEntity
     {

@@ -1,7 +1,7 @@
 using System;
-using Euventing.Core.Messages;
+using Eventing.Core.Messages;
 
-namespace Euventing.ConsoleHost
+namespace Eventing.ConsoleHost
 {
     public class DummyDomainEvent : DomainEvent
     {

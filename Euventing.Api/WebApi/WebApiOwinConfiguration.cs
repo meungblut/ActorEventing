@@ -5,7 +5,7 @@ using System.Web.Http.Dispatcher;
 using Newtonsoft.Json;
 using Owin;
 
-namespace Euventing.Api.WebApi
+namespace Eventing.Api.WebApi
 {
     public class WebApiOwinConfiguration : IOwinConfiguration
     {

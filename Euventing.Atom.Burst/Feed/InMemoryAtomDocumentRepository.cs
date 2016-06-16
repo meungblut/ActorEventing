@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Euventing.Atom.Burst.Subscription;
-using Euventing.Atom.Document;
+using Eventing.Atom.Burst.Subscription;
+using Eventing.Atom.Document;
 
-namespace Euventing.Atom.Burst.Feed
+namespace Eventing.Atom.Burst.Feed
 {
     public class InMemoryAtomDocumentRepository : IAtomDocumentRepository
     {

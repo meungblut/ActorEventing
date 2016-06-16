@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using Akka.Actor;
 using Akka.Persistence;
-using Euventing.Core;
+using Eventing.Core;
 
-namespace Euventing.Atom.Document.Actors
+namespace Eventing.Atom.Document.Actors
 {
     public class AtomFeedActor : AtomFeedActorBase
     {

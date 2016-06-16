@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Euventing.Atom.Document;
+﻿using Eventing.Atom.Document;
 
-namespace Euventing.Atom.Serialization
+namespace Eventing.Atom.Serialization
 {
     public class AtomDocumentSerialiser
     {

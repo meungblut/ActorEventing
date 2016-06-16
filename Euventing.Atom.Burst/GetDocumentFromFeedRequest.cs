@@ -1,8 +1,7 @@
-﻿using System;
-using Euventing.Atom.Document;
-using Euventing.Core.Messages;
+﻿using Eventing.Atom.Document;
+using Eventing.Core.Messages;
 
-namespace Euventing.Atom.Burst
+namespace Eventing.Atom.Burst
 {
     public class GetDocumentFromFeedRequest
     {

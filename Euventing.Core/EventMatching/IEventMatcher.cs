@@ -1,4 +1,4 @@
-﻿namespace Euventing.Core.EventMatching
+﻿namespace Eventing.Core.EventMatching
 {
     public interface IEventMatcher
     {

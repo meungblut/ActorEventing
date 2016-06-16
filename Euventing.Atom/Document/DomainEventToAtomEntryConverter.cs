@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Euventing.Atom.Serialization;
-using Euventing.Core.Messages;
+using Eventing.Atom.Serialization;
+using Eventing.Core.Messages;
 
-namespace Euventing.Atom.Document
+namespace Eventing.Atom.Document
 {
     public class DomainEventToAtomEntryConverter
     {

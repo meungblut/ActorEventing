@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Euventing.InMemoryPersistence
+namespace Eventing.InMemoryPersistence
 {
     public interface IPersistableEntityRepository
     {

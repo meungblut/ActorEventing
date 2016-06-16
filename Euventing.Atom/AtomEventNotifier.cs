@@ -1,12 +1,11 @@
-﻿using System;
-using Akka.Actor;
-using Euventing.Atom.Document;
-using Euventing.Atom.Document.Actors.ShardSupport.Document;
-using Euventing.Core;
-using Euventing.Core.Messages;
-using Euventing.Core.Notifications;
+﻿using Akka.Actor;
+using Eventing.Atom.Document;
+using Eventing.Atom.Document.Actors.ShardSupport.Document;
+using Eventing.Core;
+using Eventing.Core.Messages;
+using Eventing.Core.Notifications;
 
-namespace Euventing.Atom
+namespace Eventing.Atom
 {
     public class AtomEventNotifier : IEventNotifier
     {

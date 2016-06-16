@@ -1,16 +1,16 @@
-﻿using Euventing.Api.WebApi;
-using Euventing.Atom;
-using Euventing.Atom.Burst;
-using Euventing.Atom.Burst.Feed;
-using Euventing.Atom.Burst.Subscription;
-using Euventing.Atom.Document;
-using Euventing.Atom.Logging;
-using Euventing.Core;
-using Euventing.Core.Logging;
-using Euventing.Core.Subscriptions;
-using AtomDocumentRetriever = Euventing.Atom.Burst.AtomDocumentRetriever;
+﻿using Eventing.Api.WebApi;
+using Eventing.Atom;
+using Eventing.Atom.Burst;
+using Eventing.Atom.Burst.Feed;
+using Eventing.Atom.Burst.Subscription;
+using Eventing.Atom.Document;
+using Eventing.Atom.Logging;
+using Eventing.Core;
+using Eventing.Core.Logging;
+using Eventing.Core.Subscriptions;
+using AtomDocumentRetriever = Eventing.Atom.Burst.AtomDocumentRetriever;
 
-namespace Euventing.Api.Startup
+namespace Eventing.Api.Startup
 {
     public class BurstingEventSystemHost : EventSystemHostBase
     {

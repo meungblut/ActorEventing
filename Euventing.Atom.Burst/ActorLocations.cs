@@ -1,7 +1,6 @@
-﻿using System;
-using Akka.Actor;
+﻿using Akka.Actor;
 
-namespace Euventing.Atom.Burst
+namespace Eventing.Atom.Burst
 {
     internal static class ActorLocations
     {

@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Euventing.Atom.Document;
-using Euventing.Core.Messages;
+using Eventing.Atom.Document;
+using Eventing.Core.Messages;
 
-namespace Euventing.Atom
+namespace Eventing.Atom
 {
     public interface IAtomDocumentRetriever
     {

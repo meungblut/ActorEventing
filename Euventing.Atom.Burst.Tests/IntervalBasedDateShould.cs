@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace Euventing.Atom.Burst.Tests
+namespace Eventing.Atom.Burst.Tests
 {
     public class IntervalBasedDateShould
     {

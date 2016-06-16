@@ -3,16 +3,15 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Euventing.Api.Messages;
-using Euventing.Atom;
-using Euventing.Core;
-using Euventing.Core.EventMatching;
-using Euventing.Core.Messages;
-using Euventing.Core.Subscriptions;
+using Eventing.Api.Messages;
+using Eventing.Atom;
+using Eventing.Core.EventMatching;
+using Eventing.Core.Messages;
+using Eventing.Core.Subscriptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Euventing.Api.Controllers
+namespace Eventing.Api.Controllers
 {
     public class EventSubscriptionController : ApiController
     {

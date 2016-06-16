@@ -2,7 +2,7 @@
 using Akka.Actor;
 using Akka.Configuration;
 
-namespace Euventing.Core
+namespace Eventing.Core
 {
     public class ShardedActorSystemFactory : IActorSystemFactory
     {

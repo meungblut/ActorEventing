@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Euventing.AcceptanceTest.Client
+namespace Eventing.AcceptanceTest.Client
 {
     public class SubscriptionClient
     {

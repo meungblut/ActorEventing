@@ -1,8 +1,8 @@
 ﻿using Akka.Actor;
 using Akka.Cluster.Tools.PublishSubscribe;
-using Euventing.Core.Messages;
+using Eventing.Core.Messages;
 
-namespace Euventing.Core.Publishing
+namespace Eventing.Core.Publishing
 {
     public class DistributedPubSubEventPublisher : IEventPublisher
     {

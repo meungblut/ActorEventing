@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Euventing.Atom.Document;
+using Eventing.Atom.Document;
 
-namespace Euventing.Atom.Burst.Subscription.EventQueue
+namespace Eventing.Atom.Burst.Subscription.EventQueue
 {
     public class SubscriptionQueue<T>
     {

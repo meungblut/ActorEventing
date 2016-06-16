@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using Euventing.Atom;
-using Euventing.Core;
-using Euventing.Core.EventMatching;
-using Euventing.Core.Messages;
-using Euventing.Core.Startup;
+using Eventing.Api.Startup;
+using Eventing.Atom;
+using Eventing.Core;
+using Eventing.Core.EventMatching;
+using Eventing.Core.Messages;
+using Eventing.Core.Subscriptions;
+using Eventing.Test.Shared;
 using NLog;
-using Euventing.Api.Startup;
-using Euventing.Core.Subscriptions;
-using Euventing.Test.Shared;
 
-namespace Euventing.ConsoleHost
+namespace Eventing.ConsoleHost
 {
     public class Program
     {

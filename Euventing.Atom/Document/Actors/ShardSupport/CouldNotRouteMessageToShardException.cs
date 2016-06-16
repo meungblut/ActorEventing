@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Euventing.Atom.Document.Actors.ShardSupport
+namespace Eventing.Atom.Document.Actors.ShardSupport
 {
     public class CouldNotRouteMessageToShardException : Exception
     {

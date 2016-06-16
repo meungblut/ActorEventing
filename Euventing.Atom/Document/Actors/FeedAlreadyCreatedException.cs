@@ -1,6 +1,6 @@
 using System;
 
-namespace Euventing.Atom.Document.Actors
+namespace Eventing.Atom.Document.Actors
 {
     public class FeedAlreadyCreatedException : Exception
     {

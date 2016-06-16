@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Euventing.Core
+namespace Eventing.Core
 {
     [Serializable]
     public class CouldNotProcessPersistenceMessage : Exception

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Euventing.Core.Notifications
+namespace Eventing.Core.Notifications
 {
     public class NotificationSettings
     {

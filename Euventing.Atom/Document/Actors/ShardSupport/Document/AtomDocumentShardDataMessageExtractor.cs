@@ -1,7 +1,7 @@
 ﻿using Akka.Cluster.Sharding;
 using Akka.Persistence;
 
-namespace Euventing.Atom.Document.Actors.ShardSupport.Document
+namespace Eventing.Atom.Document.Actors.ShardSupport.Document
 {
     public class AtomDocumentShardDataMessageExtractor : IMessageExtractor
     {

@@ -1,6 +1,6 @@
 using Akka.Actor;
 
-namespace Euventing.Atom.Burst.Feed
+namespace Eventing.Atom.Burst.Feed
 {
     public interface IAtomFeedActorRefFactory
     {

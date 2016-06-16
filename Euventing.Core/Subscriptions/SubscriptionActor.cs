@@ -1,11 +1,8 @@
-﻿using System;
-using Akka.Cluster.Tools.PublishSubscribe;
-using Akka.Event;
-using Akka.Persistence;
-using Euventing.Core.Messages;
-using Euventing.Core.Notifications;
+﻿using Akka.Cluster.Tools.PublishSubscribe;
+using Eventing.Core.Messages;
+using Eventing.Core.Notifications;
 
-namespace Euventing.Core.Subscriptions
+namespace Eventing.Core.Subscriptions
 {
     public class SubscriptionActor : PersistentActorBase
     {

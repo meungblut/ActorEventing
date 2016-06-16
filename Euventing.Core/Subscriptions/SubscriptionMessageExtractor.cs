@@ -1,8 +1,8 @@
 ﻿using Akka.Cluster.Sharding;
 using Akka.Persistence;
-using Euventing.Core.Messages;
+using Eventing.Core.Messages;
 
-namespace Euventing.Core.Subscriptions
+namespace Eventing.Core.Subscriptions
 {
     public class SubscriptionMessageExtractor : IMessageExtractor
     {

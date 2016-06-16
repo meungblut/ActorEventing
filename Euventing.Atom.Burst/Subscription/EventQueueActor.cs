@@ -3,12 +3,12 @@ using System.Linq;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
-using Euventing.Atom.Burst.Subscription.EventQueue;
-using Euventing.Atom.Document;
-using Euventing.Core;
-using Euventing.Core.Messages;
+using Eventing.Atom.Burst.Subscription.EventQueue;
+using Eventing.Atom.Document;
+using Eventing.Core;
+using Eventing.Core.Messages;
 
-namespace Euventing.Atom.Burst.Subscription
+namespace Eventing.Atom.Burst.Subscription
 {
     public class EventQueueActor : PersistentActorBase, IWithUnboundedStash
     {

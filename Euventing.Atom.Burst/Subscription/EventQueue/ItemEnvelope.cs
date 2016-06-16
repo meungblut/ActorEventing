@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Euventing.Atom.Burst.Subscription.EventQueue
+namespace Eventing.Atom.Burst.Subscription.EventQueue
 {
     public class ItemEnvelope<T>
     {

@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Euventing.Core.EventMatching;
-using Euventing.Core.Messages;
-using Euventing.Core.Publishing;
-using Euventing.Core.Subscriptions;
-using Euventing.Core.Test.LocalEventNotification;
+using Eventing.Core.EventMatching;
+using Eventing.Core.Messages;
+using Eventing.Core.Publishing;
+using Eventing.Core.Subscriptions;
+using Eventing.Core.Test.LocalEventNotification;
 using NUnit.Framework;
 
-namespace Euventing.Core.Test
+namespace Eventing.Core.Test
 {
     public class EventPublisherShould
     {

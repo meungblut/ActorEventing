@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TinyIoC;
 
-namespace Euventing.Api
+namespace Eventing.Api
 {
     public class TinyIocContainerImplementation : IIocContainer
     {

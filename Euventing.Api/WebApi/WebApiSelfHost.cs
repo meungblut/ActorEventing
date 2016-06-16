@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Euventing.Api.WebApi
+namespace Eventing.Api.WebApi
 {
     public class WebApiSelfHost
     {

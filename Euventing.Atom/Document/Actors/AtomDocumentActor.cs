@@ -5,7 +5,7 @@ using Akka.Cluster.Sharding;
 using Akka.Dispatch.SysMsg;
 using Akka.Persistence;
 
-namespace Euventing.Atom.Document.Actors
+namespace Eventing.Atom.Document.Actors
 {
     public class AtomDocumentActor : AtomDocumentActorBase
     {

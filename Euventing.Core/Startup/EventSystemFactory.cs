@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Akka.Actor;
-using Euventing.Core.Publishing;
-using Euventing.Core.Subscriptions;
+using Eventing.Core.Publishing;
+using Eventing.Core.Subscriptions;
 
-namespace Euventing.Core.Startup
+namespace Eventing.Core.Startup
 {
     public class EventSystemFactory
     {

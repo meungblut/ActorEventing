@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Euventing.Api
+namespace Eventing.Api
 {
     public interface IIocContainer
     {

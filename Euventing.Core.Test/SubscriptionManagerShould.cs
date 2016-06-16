@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Data.SqlClient;
-using System.Threading;
 using System.Threading.Tasks;
-using Akka.Actor;
-using Euventing.Core.EventMatching;
-using Euventing.Core.Messages;
-using Euventing.Core.Test.LocalEventNotification;
+using Eventing.Core.EventMatching;
+using Eventing.Core.Messages;
+using Eventing.Core.Subscriptions;
+using Eventing.Core.Test.LocalEventNotification;
 using NUnit.Framework;
-using Akka.Cluster;
-using Euventing.Core.Subscriptions;
 
-namespace Euventing.Core.Test
+namespace Eventing.Core.Test
 {
     public class SubscriptionManagerShould
     {

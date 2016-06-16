@@ -1,6 +1,6 @@
-﻿using Euventing.Core.Messages;
+﻿using Eventing.Core.Messages;
 
-namespace Euventing.Atom
+namespace Eventing.Atom
 {
     public class GetHeadDocumentForFeedRequest
     {

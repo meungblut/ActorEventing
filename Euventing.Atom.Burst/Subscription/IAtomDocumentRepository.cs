@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Euventing.Atom.Document;
+using Eventing.Atom.Document;
 
-namespace Euventing.Atom.Burst.Subscription
+namespace Eventing.Atom.Burst.Subscription
 {
     public interface IAtomDocumentRepository
     {

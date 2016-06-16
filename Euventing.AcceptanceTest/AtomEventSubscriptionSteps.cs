@@ -5,15 +5,15 @@ using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading;
-using Euventing.AcceptanceTest.Hosting;
+using Eventing.AcceptanceTest.Client;
+using Eventing.AcceptanceTest.Hosting;
+using Eventing.Api.Startup;
+using Eventing.Core;
+using Eventing.Test.Shared;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
-using Euventing.Core;
-using Euventing.AcceptanceTest.Client;
-using Euventing.Api.Startup;
-using Euventing.Test.Shared;
 
-namespace Euventing.AcceptanceTest
+namespace Eventing.AcceptanceTest
 {
     [Binding]
     public class AtomEventSubscriptionSteps

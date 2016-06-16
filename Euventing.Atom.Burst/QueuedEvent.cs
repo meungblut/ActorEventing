@@ -1,6 +1,6 @@
-﻿using Euventing.Atom.Document;
+﻿using Eventing.Atom.Document;
 
-namespace Euventing.Atom.Burst
+namespace Eventing.Atom.Burst
 {
     public class QueuedEvent
     {

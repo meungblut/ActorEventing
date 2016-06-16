@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Akka.Actor;
-using Euventing.Atom.Burst.Subscription.EventQueue;
+using Eventing.Atom.Burst.Subscription.EventQueue;
 
-namespace Euventing.Atom.Burst.Subscription
+namespace Eventing.Atom.Burst.Subscription
 {
     internal class RequestedEvents<T>
     {

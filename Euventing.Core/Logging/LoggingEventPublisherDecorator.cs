@@ -1,8 +1,8 @@
 ﻿using System;
-using Euventing.Core.Messages;
+using Eventing.Core.Messages;
 using NLog;
 
-namespace Euventing.Core.Logging
+namespace Eventing.Core.Logging
 {
     public class LoggingEventPublisherDecorator : IEventPublisher
     {

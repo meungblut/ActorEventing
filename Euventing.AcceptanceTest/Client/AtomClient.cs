@@ -3,11 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.ServiceModel.Syndication;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Euventing.AcceptanceTest.Client
+namespace Eventing.AcceptanceTest.Client
 {
     public class AtomClient
     {

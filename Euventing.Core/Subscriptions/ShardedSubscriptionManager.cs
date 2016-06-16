@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
-using Euventing.Core.Messages;
+using Eventing.Core.Messages;
 
-namespace Euventing.Core.Subscriptions
+namespace Eventing.Core.Subscriptions
 {
     public class ShardedSubscriptionManager : ISubscriptionManager
     {

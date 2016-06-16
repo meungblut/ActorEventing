@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
-using Euventing.Atom.Burst.Subscription;
-using Euventing.Atom.Document;
-using Euventing.Atom.Serialization;
-using Euventing.Core.Messages;
+using Eventing.Atom.Burst.Subscription;
+using Eventing.Atom.Document;
+using Eventing.Atom.Serialization;
+using Eventing.Core.Messages;
 
-namespace Euventing.Atom.Burst
+namespace Eventing.Atom.Burst
 {
     public class AtomDocumentRetriever : IAtomDocumentRetriever
     {

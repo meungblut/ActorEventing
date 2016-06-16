@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Euventing.Atom.Document;
-using Euventing.Atom.Serialization;
-using Euventing.Core.Messages;
+using Eventing.Atom.Document;
+using Eventing.Atom.Serialization;
+using Eventing.Core.Messages;
 using NLog;
 
-namespace Euventing.Atom.Logging
+namespace Eventing.Atom.Logging
 {
     public class LoggingAtomDocumentRetrieverDecorator : IAtomDocumentRetriever
     {

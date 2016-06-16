@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Euventing.InMemoryPersistence
+namespace Eventing.InMemoryPersistence
 {
     public class LoggingPersistableEntityRepositoryDecorator : IPersistableEntityRepository
     {

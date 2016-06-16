@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Akka.Actor;
-using Euventing.Atom.Document;
-using Euventing.Atom.Document.Actors.ShardSupport.Document;
-using Euventing.Core.Startup;
+﻿using Akka.Actor;
+using Eventing.Atom.Document;
+using Eventing.Atom.Document.Actors.ShardSupport.Document;
+using Eventing.Core.Startup;
 
-namespace Euventing.Atom
+namespace Eventing.Atom
 {
     public class AtomSubsystemConfiguration : ISubsytemConfiguration
     {

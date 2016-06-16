@@ -1,8 +1,8 @@
 ﻿using Akka.Cluster.Sharding;
 using Akka.Persistence;
-using Euventing.Core;
+using Eventing.Core;
 
-namespace Euventing.Atom.Document.Actors.ShardSupport.Feed
+namespace Eventing.Atom.Document.Actors.ShardSupport.Feed
 {
     public class AtomFeedShardDataMessageExtractor : IMessageExtractor
     {

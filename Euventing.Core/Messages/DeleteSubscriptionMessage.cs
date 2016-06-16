@@ -1,4 +1,4 @@
-﻿namespace Euventing.Core.Messages
+﻿namespace Eventing.Core.Messages
 {
     public class DeleteSubscriptionMessage
     {

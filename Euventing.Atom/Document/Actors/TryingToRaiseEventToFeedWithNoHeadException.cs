@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Euventing.Atom.Document.Actors
+namespace Eventing.Atom.Document.Actors
 {
     [Serializable]
     internal class TryingToRaiseEventToFeedWithNoHeadException : Exception

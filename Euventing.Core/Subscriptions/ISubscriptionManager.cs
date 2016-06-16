@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Euventing.Core.Messages;
+using Eventing.Core.Messages;
 
-namespace Euventing.Core.Subscriptions
+namespace Eventing.Core.Subscriptions
 {
     public interface ISubscriptionManager
     {

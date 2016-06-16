@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace Euventing.AcceptanceTest.Hosting
+namespace Eventing.AcceptanceTest.Hosting
 {
     internal class OutOfProcessProcessClusterMember
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Euventing.Api
+namespace Eventing.Api
 {
     public class NoStartupConfigurationsException : Exception
     {

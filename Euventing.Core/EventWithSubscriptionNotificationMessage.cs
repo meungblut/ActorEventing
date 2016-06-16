@@ -1,6 +1,6 @@
-﻿using Euventing.Core.Messages;
+﻿using Eventing.Core.Messages;
 
-namespace Euventing.Core
+namespace Eventing.Core
 {
     public class EventWithSubscriptionNotificationMessage
     {

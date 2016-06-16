@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
 
-namespace Euventing.Api.WebApi
+namespace Eventing.Api.WebApi
 {
     public class IocHttpWebApiControllerActivator : IHttpControllerActivator
     {

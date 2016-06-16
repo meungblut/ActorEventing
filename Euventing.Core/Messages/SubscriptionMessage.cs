@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Euventing.Core.EventMatching;
+﻿using Eventing.Core.EventMatching;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
-namespace Euventing.Core.Messages
+namespace Eventing.Core.Messages
 {
     public class SubscriptionMessage
     {

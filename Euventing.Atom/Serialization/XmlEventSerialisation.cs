@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Euventing.Atom.Serialization
+namespace Eventing.Atom.Serialization
 {
     namespace Tesco.Eventing.ExternalPublishing.Protocol
     {

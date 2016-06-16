@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Euventing.AcceptanceTest.Client
+namespace Eventing.AcceptanceTest.Client
 {
     [Serializable]
     internal class CouldNotCreateSubscriptionException : Exception

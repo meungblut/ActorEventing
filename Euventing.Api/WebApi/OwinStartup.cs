@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.Owin.Hosting;
 using Owin;
 
-namespace Euventing.Api.WebApi
+namespace Eventing.Api.WebApi
 {
     public class OwinStartup
     {
@@ -55,7 +55,7 @@ namespace Euventing.Api.WebApi
 
             if (!configurationObjects.Any())
             {
-                throw new Euventing.Api.WebApi.NoStartupConfigurationsException("Nothing registered in " + configurationObjects.GetType());
+                throw new NoStartupConfigurationsException("Nothing registered in " + configurationObjects.GetType());
             }
             return configurationObjects;
         }

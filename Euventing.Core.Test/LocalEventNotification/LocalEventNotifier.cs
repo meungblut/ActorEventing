@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Euventing.Core.Messages;
-using Euventing.Core.Notifications;
+﻿using System.Threading;
+using Eventing.Core.Messages;
+using Eventing.Core.Notifications;
 
-namespace Euventing.Core.Test.LocalEventNotification
+namespace Eventing.Core.Test.LocalEventNotification
 {
     public class LocalEventNotifier : IEventNotifier
     {

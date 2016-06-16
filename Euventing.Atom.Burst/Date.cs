@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Euventing.Atom.Burst
+namespace Eventing.Atom.Burst
 {
     public class Date
     {

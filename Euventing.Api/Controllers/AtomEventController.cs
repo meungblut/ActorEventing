@@ -3,12 +3,12 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Euventing.Atom;
-using Euventing.Atom.Document;
-using Euventing.Atom.Serialization;
-using Euventing.Core.Messages;
+using Eventing.Atom;
+using Eventing.Atom.Document;
+using Eventing.Atom.Serialization;
+using Eventing.Core.Messages;
 
-namespace Euventing.Api.Controllers
+namespace Eventing.Api.Controllers
 {
     public class AtomEventController : ApiController
     {

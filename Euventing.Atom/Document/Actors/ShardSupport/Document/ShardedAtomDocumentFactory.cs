@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Cluster.Sharding;
 
-namespace Euventing.Atom.Document.Actors.ShardSupport.Document
+namespace Eventing.Atom.Document.Actors.ShardSupport.Document
 {
     public class ShardedAtomDocumentFactory : IAtomDocumentActorFactory
     {

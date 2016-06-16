@@ -1,15 +1,14 @@
-﻿using Euventing.Api.WebApi;
-using Euventing.Atom;
-using Euventing.Atom.Document;
-using Euventing.Atom.Document.Actors.ShardSupport.Document;
-using Euventing.Atom.Logging;
-using Euventing.Core;
-using Euventing.Core.Logging;
-using Euventing.Core.Publishing;
-using Euventing.Core.Subscriptions;
-using TinyIoC;
+﻿using Eventing.Api.WebApi;
+using Eventing.Atom;
+using Eventing.Atom.Document;
+using Eventing.Atom.Document.Actors.ShardSupport.Document;
+using Eventing.Atom.Logging;
+using Eventing.Core;
+using Eventing.Core.Logging;
+using Eventing.Core.Publishing;
+using Eventing.Core.Subscriptions;
 
-namespace Euventing.Api.Startup
+namespace Eventing.Api.Startup
 {
     public class EventSystemHost : EventSystemHostBase
     {

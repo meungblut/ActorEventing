@@ -2,7 +2,7 @@
 using Akka.Cluster;
 using Akka.Event;
 
-namespace Euventing.Atom
+namespace Eventing.Atom
 {
     public class ClusterEventListener : UntypedActor
     {

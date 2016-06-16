@@ -1,7 +1,7 @@
 ﻿using Akka.Event;
 using Akka.Persistence;
 
-namespace Euventing.Core
+namespace Eventing.Core
 {
     public abstract class PersistentActorBase : PersistentActor
     {

@@ -1,12 +1,12 @@
 ﻿using System;
 using Akka.Cluster;
 using Akka.Persistence;
-using Euventing.Atom.Burst.Subscription;
-using Euventing.Atom.Document;
-using Euventing.Atom.Document.Actors;
-using Euventing.Core.Messages;
+using Eventing.Atom.Burst.Subscription;
+using Eventing.Atom.Document;
+using Eventing.Atom.Document.Actors;
+using Eventing.Core.Messages;
 
-namespace Euventing.Atom.Burst
+namespace Eventing.Atom.Burst
 {
     public class EventSubscribingAtomDocumentActor : AtomDocumentActorBase
     {
