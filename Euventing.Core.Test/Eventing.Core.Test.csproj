@@ -7,7 +7,7 @@
     <ProjectGuid>{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.Core.Test</RootNamespace>
+    <RootNamespace>Eventing.Core.Test</RootNamespace>
     <AssemblyName>Eventing.Core.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

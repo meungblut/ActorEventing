@@ -7,7 +7,7 @@
     <ProjectGuid>{34575E3F-3B5B-437D-B551-E9DEC5B325D8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.InMemoryPersistence</RootNamespace>
+    <RootNamespace>Eventing.InMemoryPersistence</RootNamespace>
     <AssemblyName>Eventing.InMemoryPersistence</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

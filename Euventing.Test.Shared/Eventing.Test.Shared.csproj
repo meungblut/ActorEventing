@@ -7,7 +7,7 @@
     <ProjectGuid>{09D4DC80-2ED7-4D1D-8542-57D9596400F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.Test.Shared</RootNamespace>
+    <RootNamespace>Eventing.Test.Shared</RootNamespace>
     <AssemblyName>Eventing.Test.Shared</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

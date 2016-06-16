@@ -7,7 +7,7 @@
     <ProjectGuid>{4454C7C7-BD4B-4897-B1CA-EAB60BADFFCD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.Atom</RootNamespace>
+    <RootNamespace>Eventing.Atom</RootNamespace>
     <AssemblyName>Eventing.Atom</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

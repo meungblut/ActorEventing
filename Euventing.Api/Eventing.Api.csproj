@@ -7,7 +7,7 @@
     <ProjectGuid>{70D1E426-9CD3-418D-AD21-5218B6742F99}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.Api</RootNamespace>
+    <RootNamespace>Eventing.Api</RootNamespace>
     <AssemblyName>Eventing.Api</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

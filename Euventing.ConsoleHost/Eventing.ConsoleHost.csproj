@@ -7,7 +7,7 @@
     <ProjectGuid>{F2A4F054-EAD5-4DFD-904B-FED6EF1AFB62}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.ConsoleHost</RootNamespace>
+    <RootNamespace>Eventing.ConsoleHost</RootNamespace>
     <AssemblyName>Eventing.ConsoleHost</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

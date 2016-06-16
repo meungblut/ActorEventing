@@ -7,7 +7,7 @@
     <ProjectGuid>{D95822CD-502D-4E0E-88FE-BBBF34123871}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.Core</RootNamespace>
+    <RootNamespace>Eventing.Core</RootNamespace>
     <AssemblyName>Eventing.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

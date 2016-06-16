@@ -7,7 +7,7 @@
     <ProjectGuid>{B997F72F-2EC2-4163-AF1C-726A4D8A7645}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.Atom.Burst.Tests</RootNamespace>
+    <RootNamespace>Eventing.Atom.Burst.Tests</RootNamespace>
     <AssemblyName>Eventing.Atom.Burst.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

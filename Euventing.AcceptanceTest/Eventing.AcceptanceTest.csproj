@@ -7,7 +7,7 @@
     <ProjectGuid>{8D801709-582D-40AB-A0E8-85CCCB36EE8F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.AcceptanceTest</RootNamespace>
+    <RootNamespace>Eventing.AcceptanceTest</RootNamespace>
     <AssemblyName>Eventing.AcceptanceTest</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
