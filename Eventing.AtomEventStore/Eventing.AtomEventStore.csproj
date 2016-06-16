@@ -44,10 +44,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AtomEventStoreEventPublisher.cs" />
+    <Compile Include="AtomEventStoreReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Euventing.Atom\Eventing.Atom.csproj">
+      <Project>{4454C7C7-BD4B-4897-B1CA-EAB60BADFFCD}</Project>
+      <Name>Eventing.Atom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Euventing.Core\Eventing.Core.csproj">
+      <Project>{d95822cd-502d-4e0e-88fe-bbbf34123871}</Project>
+      <Name>Eventing.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

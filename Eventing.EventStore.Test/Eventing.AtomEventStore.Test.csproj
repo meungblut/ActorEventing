@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=3.2.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.2.1\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,13 +44,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AtomEventStoreEventPublisherShould.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Euventing.Core\Eventing.Core.csproj">
+      <Project>{d95822cd-502d-4e0e-88fe-bbbf34123871}</Project>
+      <Name>Eventing.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Euventing.Test.Shared\Eventing.Test.Shared.csproj">
+      <Project>{09D4DC80-2ED7-4D1D-8542-57D9596400F0}</Project>
+      <Name>Eventing.Test.Shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Eventing.AtomEventStore\Eventing.AtomEventStore.csproj">
       <Project>{63617db1-9715-4561-8a28-548fcac419d4}</Project>
       <Name>Eventing.AtomEventStore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
