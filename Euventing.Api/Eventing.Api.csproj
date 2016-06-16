@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Euventing.Api</RootNamespace>
-    <AssemblyName>Euventing.Api</AssemblyName>
+    <AssemblyName>Eventing.Api</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -108,17 +108,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Euventing.Atom.Burst\Euventing.Atom.Burst.csproj">
+    <ProjectReference Include="..\Euventing.Atom.Burst\Eventing.Atom.Burst.csproj">
       <Project>{cb575587-dc7d-4b99-98b8-2d39261f86ac}</Project>
-      <Name>Euventing.Atom.Burst</Name>
+      <Name>Eventing.Atom.Burst</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Euventing.Atom\Euventing.Atom.csproj">
+    <ProjectReference Include="..\Euventing.Atom\Eventing.Atom.csproj">
       <Project>{4454c7c7-bd4b-4897-b1ca-eab60badffcd}</Project>
-      <Name>Euventing.Atom</Name>
+      <Name>Eventing.Atom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Euventing.Core\Euventing.Core.csproj">
+    <ProjectReference Include="..\Euventing.Core\Eventing.Core.csproj">
       <Project>{d95822cd-502d-4e0e-88fe-bbbf34123871}</Project>
-      <Name>Euventing.Core</Name>
+      <Name>Eventing.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

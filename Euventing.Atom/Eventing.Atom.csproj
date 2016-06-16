@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Euventing.Atom</RootNamespace>
-    <AssemblyName>Euventing.Atom</AssemblyName>
+    <AssemblyName>Eventing.Atom</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -138,9 +138,9 @@
     <Compile Include="Document\Actors\ShardSupport\Document\AtomDocumentShardDataMessageExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Euventing.Core\Euventing.Core.csproj">
+    <ProjectReference Include="..\Euventing.Core\Eventing.Core.csproj">
       <Project>{d95822cd-502d-4e0e-88fe-bbbf34123871}</Project>
-      <Name>Euventing.Core</Name>
+      <Name>Eventing.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

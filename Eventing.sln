@@ -3,27 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Core", "Euventing.Core\Euventing.Core.csproj", "{D95822CD-502D-4E0E-88FE-BBBF34123871}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.Core", "Euventing.Core\Eventing.Core.csproj", "{D95822CD-502D-4E0E-88FE-BBBF34123871}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Core.Test", "Euventing.Core.Test\Euventing.Core.Test.csproj", "{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.Core.Test", "Euventing.Core.Test\Eventing.Core.Test.csproj", "{74536709-8CBF-4C2F-ADF1-7CADC7E72C9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.InMemoryPersistence", "Euventing.InMemoryPersistence\Euventing.InMemoryPersistence.csproj", "{34575E3F-3B5B-437D-B551-E9DEC5B325D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.InMemoryPersistence", "Euventing.InMemoryPersistence\Eventing.InMemoryPersistence.csproj", "{34575E3F-3B5B-437D-B551-E9DEC5B325D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Atom", "Euventing.Atom\Euventing.Atom.csproj", "{4454C7C7-BD4B-4897-B1CA-EAB60BADFFCD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.Atom", "Euventing.Atom\Eventing.Atom.csproj", "{4454C7C7-BD4B-4897-B1CA-EAB60BADFFCD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{A8494E4B-ED9B-422C-A951-C8B368A6DFEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.ConsoleHost", "Euventing.ConsoleHost\Euventing.ConsoleHost.csproj", "{F2A4F054-EAD5-4DFD-904B-FED6EF1AFB62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.ConsoleHost", "Euventing.ConsoleHost\Eventing.ConsoleHost.csproj", "{F2A4F054-EAD5-4DFD-904B-FED6EF1AFB62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.AcceptanceTest", "Euventing.AcceptanceTest\Euventing.AcceptanceTest.csproj", "{8D801709-582D-40AB-A0E8-85CCCB36EE8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.AcceptanceTest", "Euventing.AcceptanceTest\Eventing.AcceptanceTest.csproj", "{8D801709-582D-40AB-A0E8-85CCCB36EE8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Api", "Euventing.Api\Euventing.Api.csproj", "{70D1E426-9CD3-418D-AD21-5218B6742F99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.Api", "Euventing.Api\Eventing.Api.csproj", "{70D1E426-9CD3-418D-AD21-5218B6742F99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Test.Shared", "Euventing.Test.Shared\Euventing.Test.Shared.csproj", "{09D4DC80-2ED7-4D1D-8542-57D9596400F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.Test.Shared", "Euventing.Test.Shared\Eventing.Test.Shared.csproj", "{09D4DC80-2ED7-4D1D-8542-57D9596400F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Atom.Burst", "Euventing.Atom.Burst\Euventing.Atom.Burst.csproj", "{CB575587-DC7D-4B99-98B8-2D39261F86AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.Atom.Burst", "Euventing.Atom.Burst\Eventing.Atom.Burst.csproj", "{CB575587-DC7D-4B99-98B8-2D39261F86AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euventing.Atom.Burst.Tests", "Euventing.Atom.Burst.Tests\Euventing.Atom.Burst.Tests.csproj", "{B997F72F-2EC2-4163-AF1C-726A4D8A7645}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventing.Atom.Burst.Tests", "Euventing.Atom.Burst.Tests\Eventing.Atom.Burst.Tests.csproj", "{B997F72F-2EC2-4163-AF1C-726A4D8A7645}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

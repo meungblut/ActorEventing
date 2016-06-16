@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CB575587-DC7D-4B99-98B8-2D39261F86AC}</ProjectGuid>
+    <ProjectGuid>{D95822CD-502D-4E0E-88FE-BBBF34123871}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Euventing.Atom.Burst</RootNamespace>
-    <AssemblyName>Euventing.Atom.Burst</AssemblyName>
+    <RootNamespace>Euventing.Core</RootNamespace>
+    <AssemblyName>Eventing.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,16 +34,33 @@
       <HintPath>..\packages\Akka.1.0.6\lib\net45\Akka.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Akka.Cluster">
+    <Reference Include="Akka.Cluster, Version=1.0.6.17, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Akka.Cluster.1.0.6.17-beta\lib\net45\Akka.Cluster.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Akka.Cluster.Sharding, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Akka.Cluster.Sharding.1.0.6\lib\net45\Akka.Cluster.Sharding.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Akka.Cluster.Tools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.Cluster.Tools.1.0.6\lib\net45\Akka.Cluster.Tools.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Akka.Logger.NLog, Version=1.0.6.16, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.Logger.NLog.1.0.6\lib\net45\Akka.Logger.NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Akka.Persistence, Version=1.0.6.17, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Akka.Persistence.1.0.6.17-beta\lib\net45\Akka.Persistence.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Akka.Remote, Version=1.0.6.16, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.Remote.1.0.6\lib\net45\Akka.Remote.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Akka.Serialization.Wire, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.Serialization.Wire.1.0.6.17-beta\lib\net45\Akka.Serialization.Wire.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Google.ProtocolBuffers, Version=2.4.1.555, Culture=neutral, PublicKeyToken=55f7125234beb589, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.ProtocolBuffers.2.4.1.555\lib\net40\Google.ProtocolBuffers.dll</HintPath>
@@ -53,8 +70,16 @@
       <HintPath>..\packages\Google.ProtocolBuffers.2.4.1.555\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Helios, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Helios.1.4.1\lib\net45\Helios.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=3.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.3.0.0.0\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -69,49 +94,44 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Wire, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Wire.0.0.6\lib\Wire.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActorLocations.cs" />
-    <Compile Include="AtomDocumentRetriever.cs" />
-    <Compile Include="Date.cs" />
-    <Compile Include="EventPublisher.cs" />
-    <Compile Include="GetDocumentFromFeedRequest.cs" />
-    <Compile Include="DocumentFull.cs" />
-    <Compile Include="Feed\IAtomFeedActorRefFactory.cs" />
-    <Compile Include="Feed\InMemoryAtomDocumentRepository.cs" />
-    <Compile Include="Feed\UnshardedAtomFeedActorRefFactory.cs" />
-    <Compile Include="IntervalBasedDate.cs" />
-    <Compile Include="PollForEvents.cs" />
-    <Compile Include="QueuedEvent.cs" />
-    <Compile Include="EventSubscribingAtomDocumentActor.cs" />
-    <Compile Include="Subscription\EventQueue\LowestITemTracker.cs" />
-    <Compile Include="Subscription\SubscriptionManager.cs" />
-    <Compile Include="Subscription\SubscriptionActor.cs" />
-    <Compile Include="Subscription\SubscriptionMessageExtractor.cs" />
-    <Compile Include="Subscription\EventQueue\ItemEnvelope.cs" />
-    <Compile Include="Subscription\EventQueue\SubscriptionQueue.cs" />
-    <Compile Include="Subscription\IAtomDocumentRepository.cs" />
-    <Compile Include="Subscription\LoggingMessageExtractorDecorator.cs" />
-    <Compile Include="Subscription\RequestedEvents.cs" />
-    <Compile Include="QueuePollingAtomDocumentActor.cs" />
-    <Compile Include="RequestEvents.cs" />
+    <Compile Include="CouldNotProcessPersistenceMessage.cs" />
+    <Compile Include="IEventPublisher.cs" />
+    <Compile Include="Logging\LoggingEventPublisherDecorator.cs" />
+    <Compile Include="Messages\DeleteSubscriptionMessage.cs" />
+    <Compile Include="EventMatching\AllEventMatcher.cs" />
+    <Compile Include="EventMatching\IEventMatcher.cs" />
+    <Compile Include="PersistentActorBase.cs" />
+    <Compile Include="Publishing\DistributedPubSubEventPublisher.cs" />
+    <Compile Include="EventWithSubscriptionNotificationMessage.cs" />
+    <Compile Include="IActorSystemFactory.cs" />
+    <Compile Include="Messages\DomainEvent.cs" />
+    <Compile Include="Messages\NotificationChannel.cs" />
+    <Compile Include="Messages\NullSubscription.cs" />
+    <Compile Include="Messages\SubscriptionId.cs" />
+    <Compile Include="Messages\SubscriptionMessage.cs" />
+    <Compile Include="Messages\SubscriptionQuery.cs" />
+    <Compile Include="Messages\UserId.cs" />
+    <Compile Include="Notifications\IEventNotifier.cs" />
+    <Compile Include="Notifications\NotificationSettings.cs" />
+    <Compile Include="Notifications\NotifierFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Subscription\EventQueueActor.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Euventing.Atom\Euventing.Atom.csproj">
-      <Project>{4454c7c7-bd4b-4897-b1ca-eab60badffcd}</Project>
-      <Name>Euventing.Atom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Euventing.Core\Euventing.Core.csproj">
-      <Project>{d95822cd-502d-4e0e-88fe-bbbf34123871}</Project>
-      <Name>Euventing.Core</Name>
-    </ProjectReference>
+    <Compile Include="ShardedActorSystemFactory.cs" />
+    <Compile Include="Startup\EventSystemFactory.cs" />
+    <Compile Include="Startup\ISubsytemConfiguration.cs" />
+    <Compile Include="Subscriptions\ISubscriptionManager.cs" />
+    <Compile Include="Subscriptions\ShardedSubscriptionManager.cs" />
+    <Compile Include="Subscriptions\SubscriptionActor.cs" />
+    <Compile Include="Subscriptions\SubscriptionMessageExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
