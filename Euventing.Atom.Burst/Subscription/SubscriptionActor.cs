@@ -82,12 +82,16 @@ namespace Eventing.Atom.Burst.Subscription
                             new EventSubscribingAtomDocumentActor(new AtomDocumentSettings(),
                                 new InMemoryAtomDocumentRepository()));
 
+                var nameOfActorToDeployOnNode = $"atomActor_{member.Address.GetHashCode()}_{subscriptionMessage.SubscriptionId.Id}";
+
+                LogTraceInfo($"About to deploy actor with name {nameOfActorToDeployOnNode} onto node {member.Address}");
+
                 var atomDocument =
                      Context.ActorOf(
                          props
                          .WithDeploy(
                              new Deploy(
-                                 new RemoteScope(member.Address))), "atomActor_" + member.Address.GetHashCode() + "_" + subscriptionMessage.SubscriptionId.Id);
+                                 new RemoteScope(member.Address))), nameOfActorToDeployOnNode);
 
                 atomDocument.Tell(
                     new CreateAtomDocumentCommand(
@@ -129,7 +133,7 @@ namespace Eventing.Atom.Burst.Subscription
 
         private void MutateInternalState(RecoveryCompleted recoveryCompleted)
         {
-            UnstashAll();
+            //UnstashAll();
         }
 
         private void MutateInternalState(object unhandledObject)

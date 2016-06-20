@@ -135,36 +135,16 @@ namespace Eventing.Core
                                 auto-initialize = on
                                 connection-string = ""Data Source=c:\\data\\store.db;Version=3;""
                             }
-                            inmem {
-                                # Class name of the plugin.
-                                class = ""Euventing.InMemoryPersistence.InMemoryJournal, Euventing.InMemoryPersistence""
-                                # Dispatcher for the plugin actor.
-                                plugin-dispatcher = ""akka.actor.default-dispatcher""
-                            }
-                            inmem1 {
-                                # Class name of the plugin.
-                               class = ""Akka.Persistence.Couchbase.InMemoryJournal, Akka.Persistence.Couchbase""
-                                # Dispatcher for the plugin actor.
-                                plugin-dispatcher = ""akka.actor.default-dispatcher""
-                            }
-                            couchbase {
-                                class = ""Akka.Persistence.Couchbase.CouchbaseJournal, Akka.Persistence.Couchbase""
-                                plugin-dispatcher = ""akka.actor.default-dispatcher""
-                                bucket-name = ""test""
-                                cluster-username = ""Administrator""
-                                cluster-password = ""genericpassword""
-                                bucket-password = ""genericpassword""
-                                n1qlUri = ""http://10.211.55.9:8091/pools""
-                                viewAndQueryUri = ""http://10.211.55.9:8091""
-                                viewAndQueryPort = 8091
-                                server = ""10.211.55.9""
-                            }
                             sql-server {
                                 class = ""Akka.Persistence.SqlServer.Journal.SqlServerJournal, Akka.Persistence.SqlServer""
                                 plugin-dispatcher = ""akka.actor.default-dispatcher""
                                 table-name = eventjournal
                                 auto-initialize = true
                                 connection-string = ""Server=localhost\\SQLEXPRESS;Database=myDataBase;User Id=myUsername;Password=myPassword;""
+                            }
+                            local {
+                                class = ""Akka.Persistence.Journal.MemoryJournal, Akka.Persistence""
+                                plugin-dispatcher = ""akka.actor.default-dispatcher""
                             }
                         }
                         snapshot-store {
@@ -176,31 +156,9 @@ namespace Eventing.Core
                                 auto-initialize = on
                                 connection-string = ""Data Source=c:\\data\\store1.db;Version=3;""
                             }
-                            inmem {
-                                class = ""Euventing.InMemoryPersistence.InMemorySnapshotStore, Euventing.InMemoryPersistence""
-                                # Dispatcher for the plugin actor.
-                                plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
-                                # Dispatcher for streaming snapshot IO.
-                                stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
-                            }
-                            inmem1 {
-                                class = ""Akka.Persistence.Couchbase.InMemorySnapshotStore, Akka.Persistence.Couchbase""
-                                # Dispatcher for the plugin actor.
-                                plugin-dispatcher = ""akka.persistence.dispatchers.default-plugin-dispatcher""
-                                # Dispatcher for streaming snapshot IO.
-                                stream-dispatcher = ""akka.persistence.dispatchers.default-stream-dispatcher""
-                            }
-                            couchbase {
-                                class = ""Akka.Persistence.Couchbase.CouchbaseSnapshot, Akka.Persistence.Couchbase""
+                            local {
+                                class = ""Akka.Persistence.Snapshot.LocalSnapshotStore, Akka.Persistence""
                                 plugin-dispatcher = ""akka.actor.default-dispatcher""
-                                bucket-name = ""test""
-                                cluster-username = ""Administrator""
-                                cluster-password = ""genericpassword""
-                                bucket-password = ""genericpassword""
-                                n1qlUri = ""http://10.211.55.9:8091/pools""
-                                viewAndQueryUri = ""http://10.211.55.9:8091""
-                                viewAndQueryPort = 8091
-                                server = ""10.211.55.9""
                             }
                             sql-server {
                                 class = ""Akka.Persistence.SqlServer.Snapshot.SqlServerSnapshotStore, Akka.Persistence.SqlServer""

@@ -39,7 +39,7 @@ namespace Eventing.AcceptanceTest
         [BeforeFeature]
         public static void StartEventHosts()
         {
-            inProcessHost = new BurstingEventSystemHost(6483, "akkaSystem", "inmem", "127.0.0.1:6483", 3600, _eventsPerDocument);
+            inProcessHost = new BurstingEventSystemHost(6483, "akkaSystem", "local", "127.0.0.1:6483", 3600, _eventsPerDocument);
             inProcessHost.Start();
             outOfProcessClusterMembersHost = new OutOfProcessProcessClusterMember(_eventsPerDocument);
             outOfProcessClusterMembersHost.Start();

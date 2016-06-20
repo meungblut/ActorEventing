@@ -6,7 +6,6 @@ using Eventing.Core.Messages;
 namespace Eventing.AtomEventStore
 {
     public class AtomEventStoreReader : IAtomDocumentRetriever
-
     {
         public Task<AtomDocument> GetDocument(DocumentId documentId)
         {

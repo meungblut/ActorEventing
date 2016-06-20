@@ -15,10 +15,9 @@ namespace Eventing.Atom.Burst
         private readonly IAtomDocumentRepository repository;
         private DocumentId CurrentDocumentId;
         private readonly DomainEventToAtomEntryConverter converter = new DomainEventToAtomEntryConverter();
-
+        private int numberOfEvents;
         private DateTime DocumentCreationDate;
 
-        private IntervalBasedDate dateInterval;
         private TimeSpan timeBeforeMovingToNextDocumentId = TimeSpan.FromSeconds(10);
 
         public EventSubscribingAtomDocumentActor(IAtomDocumentSettings settings, IAtomDocumentRepository repository)
@@ -36,8 +35,17 @@ namespace Eventing.Atom.Burst
 
         private void Process(DomainEvent domainEvent)
         {
-            var documentId = new DocumentId(CurrentDocumentId.FeedId, dateInterval.Current.ToFileTime());
             repository.Add(this.CurrentDocumentId, converter.ConvertDomainEventToAtomEntry(domainEvent));
+            numberOfEvents++;
+
+            LogTraceInfo($"Added event {numberOfEvents} to document with a maximum of {atomDocumentSettings.NumberOfEventsPerDocument} to document {CurrentDocumentId.Id}");
+
+            if (numberOfEvents > atomDocumentSettings.NumberOfEventsPerDocument)
+            {
+                numberOfEvents = 0;
+                this.CurrentDocumentId = CurrentDocumentId.Add(1);
+                LogTraceInfo("Moving To Next Document");
+            }
         }
 
         private void Process(CreateAtomDocumentCommand createDocument)
@@ -64,7 +72,7 @@ namespace Eventing.Atom.Burst
 
         private void MutateInternalState(RecoveryCompleted complete)
         {
-            this.UnstashAll();
+            //this.UnstashAll();
         }
 
         protected override bool ReceiveCommand(object message)

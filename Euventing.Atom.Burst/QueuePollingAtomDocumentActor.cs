@@ -90,7 +90,7 @@ namespace Eventing.Atom.Burst
             if (entriesInCurrentDocument > atomDocumentSettings.NumberOfEventsPerDocument)
             {
                 DocumentId = DocumentId.Add(1);
-                LogTraceInfo($"Setting new head to {DocumentId} ");
+                LogTraceInfo($"Setting new head to {DocumentId}");
                 Context.Parent.Tell(new DocumentMovedToNewId(DocumentId));
                 entriesInCurrentDocument = 0;
             }
@@ -117,7 +117,7 @@ namespace Eventing.Atom.Burst
 
         private void MutateInternalState(RecoveryCompleted complete)
         {
-            this.UnstashAll();
+            //this.UnstashAll();
         }
 
         protected override bool ReceiveCommand(object message)

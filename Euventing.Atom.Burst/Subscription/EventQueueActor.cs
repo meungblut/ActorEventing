@@ -29,8 +29,8 @@ namespace Eventing.Atom.Burst.Subscription
             if (message is DomainEvent)
                 Enqueue((DomainEvent)message);
 
-            if (message is RecoveryCompleted)
-                this.UnstashAll();
+            //if (message is RecoveryCompleted)
+            //    this.UnstashAll();
 
             return true;
         }
@@ -85,7 +85,7 @@ namespace Eventing.Atom.Burst.Subscription
 
         private void MutateInternalState(RecoveryCompleted complete)
         {
-            this.UnstashAll();
+            //this.UnstashAll();
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class DeleteSubscriptionMessage
     {
-        public SubscriptionId SubscriptionId { get; private set; }
+        public SubscriptionId SubscriptionId { get; set; }
 
         public DeleteSubscriptionMessage(SubscriptionId subscriptionId)
         {

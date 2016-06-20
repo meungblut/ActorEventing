@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Akka.Actor;
 using Akka.Persistence;
 using Akka.Persistence.Journal;
 
@@ -16,14 +17,15 @@ namespace Eventing.InMemoryPersistence
             repository = new InMemoryPersistableEntityRepository();
         }
 
-        public override Task ReplayMessagesAsync(string persistenceId, long fromSequenceNr, long toSequenceNr, long max, Action<IPersistentRepresentation> replayCallback)
+        public override Task ReplayMessagesAsync(IActorContext context, string persistenceId, long fromSequenceNr, long toSequenceNr, long max,
+            Action<IPersistentRepresentation> recoveryCallback)
         {
             Console.WriteLine("Replaying messages for Persistence Id:" + persistenceId);
             var persistentRepresentations = repository.GetData<JournalEntry>(persistenceId, fromSequenceNr, toSequenceNr, max);
 
             foreach (var persistentRepresentation in persistentRepresentations)
             {
-                replayCallback((IPersistentRepresentation)persistentRepresentation.Payload);
+                recoveryCallback((IPersistentRepresentation)persistentRepresentation.Payload);
             }
             return Task.FromResult(false);
         }
@@ -33,7 +35,7 @@ namespace Eventing.InMemoryPersistence
             return Task.FromResult(repository.GetMaxSequenceNumber(persistenceId));
         }
 
-        protected override async Task WriteMessagesAsync(IEnumerable<IPersistentRepresentation> messages)
+        protected override Task WriteMessagesAsync(IEnumerable<Akka.Persistence.AtomicWrite> messages)
         {
             var batch = new List<JournalEntry>();
             foreach (IPersistentRepresentation message in messages)
@@ -43,6 +45,16 @@ namespace Eventing.InMemoryPersistence
                 batch.Add(new JournalEntry(message.PersistenceId, message.SequenceNr, message));
             }
             await repository.Save(batch);
+        }
+
+        protected override Task DeleteMessagesToAsync(string persistenceId, long toSequenceNr)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override async Task WriteMessagesAsync(IEnumerable<IPersistentRepresentation> messages)
+        {
+
         }
 
         protected override Task DeleteMessagesToAsync(string persistenceId, long toSequenceNr, bool isPermanent)
