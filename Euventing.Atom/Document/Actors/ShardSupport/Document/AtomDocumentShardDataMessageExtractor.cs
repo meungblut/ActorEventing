@@ -53,6 +53,8 @@ namespace Eventing.Atom.Document.Actors.ShardSupport.Document
 
         public string ShardId(object message)
         {
+            return "1";
+
             if (message is DocumentId)
                 return ((DocumentId)message).Id.GetHashCode().ToString();
 

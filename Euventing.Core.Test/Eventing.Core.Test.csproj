@@ -125,7 +125,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DummyDomainEvent.cs" />
-    <Compile Include="EventPublisherShould.cs" />
     <Compile Include="LocalEventNotification\LocalEventNotifier.cs" />
     <Compile Include="LocalEventNotification\LocalEventNotificationChannel.cs" />
     <Compile Include="LocalEventNotification\LocalNotificationSettings.cs" />

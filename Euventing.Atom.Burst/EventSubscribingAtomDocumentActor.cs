@@ -1,4 +1,5 @@
 ﻿using System;
+using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
 using Eventing.Atom.Burst.Subscription;
@@ -16,9 +17,7 @@ namespace Eventing.Atom.Burst
         private DocumentId CurrentDocumentId;
         private readonly DomainEventToAtomEntryConverter converter = new DomainEventToAtomEntryConverter();
         private int numberOfEvents;
-        private DateTime DocumentCreationDate;
-
-        private TimeSpan timeBeforeMovingToNextDocumentId = TimeSpan.FromSeconds(10);
+        private IActorRef subscriptionActor;
 
         public EventSubscribingAtomDocumentActor(IAtomDocumentSettings settings, IAtomDocumentRepository repository)
         {
@@ -45,11 +44,14 @@ namespace Eventing.Atom.Burst
                 numberOfEvents = 0;
                 this.CurrentDocumentId = CurrentDocumentId.Add(1);
                 LogTraceInfo("Moving To Next Document");
+                subscriptionActor.Tell(new NewDocumentAddedEvent(new DocumentId(CurrentDocumentId.Id)));
             }
         }
 
         private void Process(CreateAtomDocumentCommand createDocument)
         {
+            subscriptionActor = Context.Sender;
+
             var createdEvent = new AtomDocumentCreatedEvent(
                 createDocument.Title,
                 createDocument.Author,
@@ -66,13 +68,11 @@ namespace Eventing.Atom.Burst
             this.EarlierEventsDocumentId = documentCreated.EarlierEventsDocumentId;
             this.Title = documentCreated.Title;
             this.FeedId = documentCreated.DocumentId.FeedId;
-
-            DocumentCreationDate = DateTime.Now;
         }
 
         private void MutateInternalState(RecoveryCompleted complete)
         {
-            //this.UnstashAll();
+            LogTraceInfo("Recovery completed");
         }
 
         protected override bool ReceiveCommand(object message)

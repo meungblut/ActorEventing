@@ -59,6 +59,7 @@ namespace Eventing.Atom.Burst.Subscription
 
         public string ShardId(object message)
         {
+            return "1";
             if (message is SaveSnapshotSuccess)
                 return ((SaveSnapshotSuccess)message).Metadata.PersistenceId.GetHashCode().ToString();
 

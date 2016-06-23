@@ -1,5 +1,6 @@
 ﻿using Akka.Cluster.Sharding;
 using Akka.Event;
+using Eventing.Core.Messages;
 
 namespace Eventing.Atom.Burst.Subscription
 {
@@ -16,6 +17,9 @@ namespace Eventing.Atom.Burst.Subscription
 
         public string EntityId(object message)
         {
+            if (message is SubscriptionMessage)
+                _adapter.Log(LogLevel.InfoLevel, $"SubscriptionMesage id was {((SubscriptionMessage)message).SubscriptionId.Id}");
+                
             _adapter.Log(LogLevel.InfoLevel,  $"Getting entity id for type {message.GetType()} from {_messageExtractor.GetType()}");
             var result = _messageExtractor.EntityId(message);
             _adapter.Log(LogLevel.InfoLevel, $"Entity id was {result}");

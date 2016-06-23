@@ -14,7 +14,7 @@
 9) Allow a shared nothing deployment
 10) Minimal dependencies (utilise existing db & caching, for example)
 
-The subscriber will SUBSCRIBE to an api url and be sent a subscription URL. Once they have connected to that URL, they will be 'sent' events until they unsubscribe.
+The subscriber will SUBSCRIBE to an api url and be sent a subscription URL. Once they have subscribed, they will be 'sent' events until they unsubscribe.
 
 Background: Create Url
 	And I have an eventing url at 'http://localhost:3600/subscriptions'

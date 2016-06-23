@@ -56,10 +56,6 @@
       <Project>{09D4DC80-2ED7-4D1D-8542-57D9596400F0}</Project>
       <Name>Eventing.Test.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventing.AtomEventStore\Eventing.AtomEventStore.csproj">
-      <Project>{63617db1-9715-4561-8a28-548fcac419d4}</Project>
-      <Name>Eventing.AtomEventStore</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

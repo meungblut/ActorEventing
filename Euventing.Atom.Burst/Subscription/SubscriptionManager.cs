@@ -18,7 +18,7 @@ namespace Eventing.Atom.Burst.Subscription
 
             var props = Props.Create(() => new SubscriptionActor(atomDocumentSettings));
 
-            var messageExtractor = new SubscriptionMessageExtractor();
+            var messageExtractor = new LoggingMessageExtractorDecorator(new SubscriptionMessageExtractor(), actorSystem.Log);
 
             SubscriptionActorRef = ClusterSharding.Get(actorSystem).Start(
                 typeName: "SubscriptionActor",

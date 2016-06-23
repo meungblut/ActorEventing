@@ -60,6 +60,11 @@ namespace Eventing.Atom.Burst.Subscription
             Sender.Tell(headDocumentIdForFeed);
         }
 
+        private void Process(NewDocumentAddedEvent newDocumentAddedEvent)
+        {
+            Persist(newDocumentAddedEvent, MutateInternalState);
+        }
+
         private void Process(SubscriptionMessage subscription)
         {
             Persist(subscription, MutateInternalState);
@@ -129,6 +134,11 @@ namespace Eventing.Atom.Burst.Subscription
             headDocumentIdForFeed = new DocumentId(subscription.SubscriptionId.Id, 0);
 
             CreateFeedActor(subscription);
+        }
+
+        private void MutateInternalState(NewDocumentAddedEvent newDocumentAddedEvent)
+        {
+            this.headDocumentIdForFeed = newDocumentAddedEvent.DocumentId;
         }
 
         private void MutateInternalState(RecoveryCompleted recoveryCompleted)
