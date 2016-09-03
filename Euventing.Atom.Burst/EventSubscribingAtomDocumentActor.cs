@@ -2,6 +2,8 @@
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
+using CassandraRepository;
+using Eventing.Atom.Burst.Feed;
 using Eventing.Atom.Burst.Subscription;
 using Eventing.Atom.Document;
 using Eventing.Atom.Document.Actors;
@@ -19,9 +21,12 @@ namespace Eventing.Atom.Burst
         private int numberOfEvents;
         private IActorRef subscriptionActor;
 
-        public EventSubscribingAtomDocumentActor(IAtomDocumentSettings settings, IAtomDocumentRepository repository)
+        public EventSubscribingAtomDocumentActor(IAtomDocumentSettings settings)
         {
-            this.repository = repository;
+            //var decoratedRepository = new CassandraAtomDocumentRepository(new SingletonCassandraSessionFactory(new ClusterConfiguration("cassandra", "cassandra", "192.168.99.100", 32896)));
+            var decoratedRepository = new InMemoryAtomDocumentRepository();
+            repository = new LoggingAtomDocumentRepositoryDecorator(LoggingAdapter, decoratedRepository);
+
             atomDocumentSettings = settings;
             Context.System.EventStream.Subscribe(Context.Self, typeof(DomainEvent));
         }
@@ -34,10 +39,10 @@ namespace Eventing.Atom.Burst
 
         private void Process(DomainEvent domainEvent)
         {
-            repository.Add(this.CurrentDocumentId, converter.ConvertDomainEventToAtomEntry(domainEvent));
+            repository.Add(this.CurrentDocumentId, converter.ConvertDomainEventToAtomEntry(domainEvent)).Wait();
             numberOfEvents++;
 
-            LogTraceInfo($"Added event {numberOfEvents} to document with a maximum of {atomDocumentSettings.NumberOfEventsPerDocument} to document {CurrentDocumentId.Id}");
+            LogTraceInfo($"Fish Added event {numberOfEvents} to document with a maximum of {atomDocumentSettings.NumberOfEventsPerDocument} to document {CurrentDocumentId.Id}");
 
             if (numberOfEvents > atomDocumentSettings.NumberOfEventsPerDocument)
             {

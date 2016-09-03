@@ -75,7 +75,7 @@ namespace Eventing.Atom.Burst
                 LogTraceInfo($"Saving event with id {itemEnvelope.ItemToStore.Id} " +
                              $"and sequence number {itemEnvelope.ItemSequenceNumber} to repo with document id {DocumentId.Id}");
 
-                _repository.Add(this.CurrentDocumentId, itemEnvelope.ItemToStore);
+                _repository.Add(this.CurrentDocumentId, itemEnvelope.ItemToStore).Wait();
 
                 lastEventIdProcessed = itemEnvelope.ItemSequenceNumber;
 

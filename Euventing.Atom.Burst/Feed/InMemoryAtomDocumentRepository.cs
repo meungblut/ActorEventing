@@ -9,7 +9,7 @@ namespace Eventing.Atom.Burst.Feed
     {
         private static readonly Dictionary<string, List<AtomEntry>> entries = new Dictionary<string, List<AtomEntry>>();
 
-        public void Add(string id, AtomEntry entry)
+        public async Task Add(string id, AtomEntry entry)
         {
             if (!entries.ContainsKey(id))
                 entries.Add(id, new List<AtomEntry>());

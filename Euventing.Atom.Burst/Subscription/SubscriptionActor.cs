@@ -2,6 +2,7 @@
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Persistence;
+using CassandraRepository;
 using Eventing.Atom.Burst.Feed;
 using Eventing.Atom.Document;
 using Eventing.Core;
@@ -16,10 +17,13 @@ namespace Eventing.Atom.Burst.Subscription
         private readonly List<IActorRef> documentActors = new List<IActorRef>();
         private readonly IAtomDocumentSettings atomDocumentSettings;
 
+        private readonly IAtomDocumentRepository atomRepository;
+
         private DocumentId headDocumentIdForFeed;
 
         public SubscriptionActor(IAtomDocumentSettings settings)
         {
+            //atomRepository = new InMemoryAtomDocumentRepository();
             atomDocumentSettings = settings;
             cluster = Cluster.Get(Context.System);
         }
@@ -84,8 +88,7 @@ namespace Eventing.Atom.Burst.Subscription
                 var props =
                     Props.Create(
                         () =>
-                            new EventSubscribingAtomDocumentActor(new AtomDocumentSettings(),
-                                new InMemoryAtomDocumentRepository()));
+                            new EventSubscribingAtomDocumentActor(new AtomDocumentSettings()));
 
                 var nameOfActorToDeployOnNode = $"atomActor_{member.Address.GetHashCode()}_{subscriptionMessage.SubscriptionId.Id}";
 

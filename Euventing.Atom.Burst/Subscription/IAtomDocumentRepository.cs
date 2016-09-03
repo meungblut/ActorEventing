@@ -5,7 +5,7 @@ namespace Eventing.Atom.Burst.Subscription
 {
     public interface IAtomDocumentRepository
     {
-        void Add(string id, AtomEntry entry);
+        Task Add(string id, AtomEntry entry);
 
         Task<AtomDocument> GetDocument(string documentId);
     }
